@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台湾PK数据分析工具</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#d62828',
+            secondary: '#f77f00',
+            neutral: '#f5f5f5',
+            dark: '#333333',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .sticky-col {
+        position: sticky;
+        z-index: 20;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .hit-cell {
+        @apply bg-primary/20 text-primary font-bold;
+      }
+      .miss-cell {
+        @apply text-gray-400;
+      }
+      .btn-active {
+        @apply bg-primary text-white;
+      }
+      .btn-hover {
+        @apply hover:bg-primary/80 hover:text-white transition-colors duration-200;
+      }
+      .number-row {
+        @apply flex justify-center space-x-1 mb-1;
+      }
+      .fixed-width-period {
+        width: 120px;
+      }
+      .fixed-width-data {
+        width: 150px;
+      }
+      .sticky-bg-white {
+        background-color: white !important;
+      }
+      .sticky-bg-gray-100 {
+        background-color: #f3f4f6 !important;
+      }
+      .sticky-bg-gray-50 {
+        background-color: #f9fafb !important;
+      }
+      .slider-container {
+        @apply relative h-6 mt-2 mb-4;
+      }
+      .slider-track {
+        @apply absolute h-2 w-full bg-gray-200 rounded-full;
+      }
+      .slider-thumb {
+        @apply absolute w-5 h-5 bg-primary rounded-full cursor-pointer -mt-1.5 -ml-2.5;
+      }
+      .slider-fill {
+        @apply absolute h-2 bg-primary rounded-full;
+      }
+      .vertical-slider-container {
+        @apply absolute right-0 top-0 h-full w-4 flex items-center justify-center z-10;
+      }
+      .vertical-slider-track {
+        @apply absolute h-full w-1 bg-gray-200 rounded-full;
+      }
+      .vertical-slider-thumb {
+        @apply absolute w-4 h-6 bg-primary rounded-md cursor-pointer -ml-1.5;
+      }
+      .vertical-slider-fill {
+        @apply absolute w-1 bg-primary rounded-full;
+      }
+      /* 限制表格容器高度，最多显示11行 */
+      .table-container {
+        max-height: calc(11 * 52px); /* 每行约52px高度 */
+        overflow-y: auto;
+        position: relative;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-dark min-h-screen flex flex-col">
+  <!-- 密钥倒计时通知栏 -->
+  <div id="keyCountdown" class="bg-primary text-white py-2 px-4 text-center hidden">
+    <span>密钥有效期剩余: <strong id="daysRemaining">0</strong> 天</span>
+  </div>
+  
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm sticky-header">
+  <!-- 标题区域 - 移至最顶部 -->
+  <div class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
+      <h1 class="text-xl md:text-2xl font-bold text-primary flex items-center">
+        <i class="fa fa-line-chart mr-2"></i>台湾PK数据分析工具
+      </h1>
+      <div class="flex items-center space-x-2 mt-2 md:mt-0">
+        <button id="helpBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="帮助">
+          <i class="fa fa-question-circle text-gray-500"></i>
+        </button>
+        <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="切换主题">
+          <i class="fa fa-moon-o text-gray-500"></i>
+        </button>
+      </div>
+    </div>
+    
+  <!-- 工具栏区域 - 移至标题下方 -->
+  <div class="bg-gray-800 text-white py-2">
+    <div class="container mx-auto px-4">
+      <div class="flex space-x-4">
+        <button id="dataAnalysisBtn" class="px-4 py-1 rounded bg-primary text-white font-medium">数据分析</button>
+        <button id="fiveStarBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">五星做号</button>
+      </div>
+    </div>
+  </div>
+  </header>
+
+  <!-- 主要内容 -->
+  <main class="flex-1 container mx-auto px-4 py-6">
+    <!-- 数据分析页面 -->
+    <div id="dataAnalysisPage">
+      <!-- 数据输入区域 -->
+      <section class="bg-white rounded-lg shadow-md p-5 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+          <div class="flex-1">
+            <label for="numbersInput" class="block text-sm font-medium text-gray-700 mb-1">手动输入数据（支持格式：期数 数据，如：202504181232 02,05,01,04,07,10,09,03,06,08 ）</label>
+            <textarea id="numbersInput" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" placeholder="202504181232 02,05,01,04,07,10,09,03,06,08"></textarea>
+          </div>
+          <div class="flex flex-col gap-3 w-full md:w-auto">
+            <button id="calcBtn" class="px-4 py-2 bg-primary text-white rounded-md flex items-center justify-center btn-hover">
+              <i class="fa fa-calculator mr-2"></i>计算分析
+            </button>
+            <button id="autoFetchBtn" class="px-4 py-2 bg-secondary text-white rounded-md flex items-center justify-center btn-hover">
+              <i class="fa fa-refresh mr-2"></i>自动获取数据
+            </button>
+            <button id="uploadDataBtn" class="px-4 py-2 bg-gray-600 text-white rounded-md flex items-center justify-center btn-hover">
+              <i class="fa fa-upload mr-2"></i>上传数据文件
+            </button>
+          </div>
+        </div>
+        <div id="output" class="mt-3 text-sm text-primary"></div>
+      </section>
+
+      <!-- 筛选和统计控制区域 -->
+      <section class="bg-white rounded-lg shadow-md p-5 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 胆码数筛选 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">胆码数筛选：</label>
+            <div id="numButtons" class="flex flex-wrap gap-2"></div>
+          </div>
+          
+          <!-- 中出筛选 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">中出筛选：</label>
+            <div id="hitButtons" class="flex flex-wrap gap-2"></div>
+          </div>
+          
+          <!-- 自定义组合 -->
+          <div class="md:col-span-2">
+            <label for="customCombos" class="block text-sm font-medium text-gray-700 mb-1">自定义组合（用空格分隔不同组合，每个组合内的数字用逗号分隔）：</label>
+            <textarea id="customCombos" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" placeholder="1,2,3 1,2,4"></textarea>
+          </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="flex flex-wrap gap-3 mt-5">
+          <button id="sortToggle" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
+            <i class="fa fa-sort mr-2"></i><span id="sortText">按连中次数排序</span>
+          </button>
+          <button id="statBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
+            <i class="fa fa-bar-chart mr-2"></i>更新统计
+          </button>
+          <button id="exportBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
+            <i class="fa fa-download mr-2"></i>导出数据
+          </button>
+          <button id="clearBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
+            <i class="fa fa-trash mr-2"></i>清空数据
+          </button>
+        </div>
+        
+        <!-- 统计摘要 -->
+        <div id="summary" class="mt-4 p-3 bg-gray-50 rounded-md text-sm font-medium"></div>
+      </section>
+
+      <!-- 结果表格 -->
+      <section class="bg-white rounded-lg shadow-md p-5 overflow-x-auto relative">
+        <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
+          <h2 class="text-lg font-semibold">数据分析结果</h2>
+          <div class="flex flex-wrap gap-2">
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="30">30期</button>
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="50">50期</button>
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="100">100期</button>
+            <div class="flex items-center gap-1">
+              <input type="number" id="customPeriod" min="1" max="1000" value="30" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <button id="customPeriodBtn" class="px-3 py-1 rounded-md bg-gray-200 btn-hover">自定义</button>
+            </div>
+          </div>
+          <div class="text-sm text-gray-500">
+            <span id="periodCount">0</span> 期数据
+          </div>
+        </div>
+        
+        <!-- 水平滑块 -->
+        <div class="slider-container">
+          <div class="slider-track"></div>
+          <div class="slider-fill" id="horizontalFill"></div>
+          <div class="slider-thumb" id="horizontalThumb"></div>
+        </div>
+        
+        <div class="relative">
+          <div class="overflow-x-auto scrollbar-hide" id="tableContainer">
+            <table id="resultTable" class="min-w-full divide-y divide-gray-200">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          
+          <!-- 垂直滑块 -->
+          <div class="vertical-slider-container" id="verticalSlider">
+            <div class="vertical-slider-track"></div>
+            <div class="vertical-slider-fill" id="verticalFill"></div>
+            <div class="vertical-slider-thumb" id="verticalThumb"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <!-- 五星做号页面（按图片布局） -->
+    <div id="fiveStarPage" class="hidden">
+      <div class="container mx-auto py-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+           <!-- 下方添加区域 - 所有模块统一容器 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="modules-container">
+            <!-- 左侧卡片 - 模块1 (5组筛选条件) -->
+        <div id="module1" class="border border-gray-200 rounded-lg p-4 five-star-module">
+          <!-- 模块级共享容错选择器 -->
+          <div class="flex items-center mb-2 pb-4 border-b">
+            <span class="text-gray-600 mr-2">模块容错</span>
+            <select class="tolerance-min border border-gray-300 rounded px-2 py-1 text-sm" data-module="1">
+              <option>0</option>
+            </select>
+            <span class="mx-2">至</span>
+            <select class="tolerance-max border border-gray-300 rounded px-2 py-1 text-sm" data-module="1">
+              <option>0</option>
+            </select>
+          </div>
+          
+          <!-- 第1组筛选条件 -->
+          <div class="filter-group mb-2 pb-0 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="1">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="1">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="1" data-group="1">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="1" data-group="1">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="1" data-group="1">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="1" data-group="1">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="1" data-group="1">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="1" data-group="1">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="1" data-group="1">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="1">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="1">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="1">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="1">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="1" data-group="1">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="1" data-group="1">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="1" data-group="1">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第2组筛选条件 -->
+          <div class="filter-group mb-2 pb-0 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="2">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="2">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="1" data-group="2">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="1" data-group="2">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="1" data-group="2">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="1" data-group="2">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="1" data-group="2">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="1" data-group="2">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="1" data-group="2">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="2">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="2">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="2">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="2">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="1" data-group="2">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="1" data-group="2">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="1" data-group="2">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第3组筛选条件 -->
+          <div class="filter-group mb-2 pb-0 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="3">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="3">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="1" data-group="3">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="1" data-group="3">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="1" data-group="3">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="1" data-group="3">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="1" data-group="3">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="1" data-group="3">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="1" data-group="3">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="3">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="3">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="3">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="3">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="1" data-group="3">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="1" data-group="3">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="1" data-group="3">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第4组筛选条件 -->
+          <div class="filter-group mb-2 pb-0 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="4">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="4">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="1" data-group="4">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="1" data-group="4">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="1" data-group="4">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="1" data-group="4">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="1" data-group="4">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="1" data-group="4">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="1" data-group="4">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="4">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="4">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="4">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="4">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="1" data-group="4">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="1" data-group="4">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="1" data-group="4">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第5组筛选条件 -->
+          <div class="filter-group mb-2 pb-0">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="5">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="5">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="1" data-group="5">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="1" data-group="5">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="1" data-group="5">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="1" data-group="5">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="1" data-group="5">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="1" data-group="5">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="1" data-group="5">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="5">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="5">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="5">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="5">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="1" data-group="5">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="1" data-group="5">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="1" data-group="5">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 输入区域 -->
+          <div class="flex mb-2">
+            <input type="text" placeholder="输入结果" class="result-input flex-1 border border-gray-300 rounded-l px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" data-module="1">
+            <button class="clear-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm" data-module="1">清</button>
+            <button class="reverse-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm rounded-r" data-module="1">反</button>
+          </div>
+          <div class="text-red-500 text-sm mb-4 result-count" data-module="1">共0注</div>
+          
+          <!-- 操作按钮区域 -->
+          <div class="flex gap-2">
+            <button class="generate-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="1">做号</button>
+            <button class="copy-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="1">复制</button>
+            <button onclick="addModule(1)" class="add-btn w-10 bg-green-600 text-white py-2 rounded hover:bg-green-700" data-module="1">+</button>
+            <button onclick="removeModule(1)" class="remove-btn w-10 bg-red-600 text-white py-2 rounded hover:bg-red-700" data-module="1">-</button>
+          </div>
+        </div>
+            
+            <!-- 右侧卡片 - 模块2 (结构与模块1相同，data-module="2") -->
+        <div id="module2" class="border border-gray-200 rounded-lg p-4 five-star-module">
+          <!-- 模块级共享容错选择器 -->
+          <div class="flex items-center mb-2 pb-4 border-b">
+            <span class="text-gray-600 mr-2">模块容错</span>
+            <select class="tolerance-min border border-gray-300 rounded px-2 py-1 text-sm" data-module="2">
+              <option>0</option>
+            </select>
+            <span class="mx-2">至</span>
+            <select class="tolerance-max border border-gray-300 rounded px-2 py-1 text-sm" data-module="2">
+              <option>0</option>
+            </select>
+          </div>
+          
+          <!-- 第1组筛选条件 -->
+          <div class="filter-group mb-2 pb-2 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="1">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="1">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="2" data-group="1">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="2" data-group="1">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="2" data-group="1">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="2" data-group="1">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="2" data-group="1">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="2" data-group="1">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="2" data-group="1">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="1">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="1">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="1">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="1">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="2" data-group="1">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="2" data-group="1">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="2" data-group="1">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第2组筛选条件 -->
+          <div class="filter-group mb-2 pb-2 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="2">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="2">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="2" data-group="2">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="2" data-group="2">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="2" data-group="2">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="2" data-group="2">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="2" data-group="2">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="2" data-group="2">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="2" data-group="2">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="2">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="2">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="2">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="2">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="2" data-group="2">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="2" data-group="2">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="2" data-group="2">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第3组筛选条件 -->
+          <div class="filter-group mb-2 pb-2 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="3">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="3">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="2" data-group="3">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="2" data-group="3">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="2" data-group="3">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="2" data-group="3">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="2" data-group="3">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="2" data-group="3">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="2" data-group="3">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="3">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="3">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="3">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="3">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="2" data-group="3">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="2" data-group="3">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="2" data-group="3">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第4组筛选条件 -->
+          <div class="filter-group mb-2 pb-2 border-b">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="4">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="4">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="2" data-group="4">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="2" data-group="4">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="2" data-group="4">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="2" data-group="4">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="2" data-group="4">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="2" data-group="4">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="2" data-group="4">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="4">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="4">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="4">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="4">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="2" data-group="4">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="2" data-group="4">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="2" data-group="4">5胆</button>
+            </div>
+          </div>
+          
+          <!-- 第5组筛选条件 -->
+          <div class="filter-group mb-2 pb-0">
+            <div class="flex flex-wrap gap-2 mb-2 number-buttons">
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="5">01</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="5">02</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="3" data-module="2" data-group="5">03</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="4" data-module="2" data-group="5">04</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="5" data-module="2" data-group="5">05</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="6" data-module="2" data-group="5">06</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="7" data-module="2" data-group="5">07</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="8" data-module="2" data-group="5">08</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="9" data-module="2" data-group="5">09</button>
+              <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="5">10</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="5">0胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="5">1胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="5">2胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="3" data-module="2" data-group="5">3胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="4" data-module="2" data-group="5">4胆</button>
+              <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="2" data-group="5">5胆</button>
+            </div>
+          </div>
+          
+          <!-- module2 输入区域和操作按钮区域与module1相同 -->
+          <div class="flex mb-2">
+            <input type="text" placeholder="输入结果" class="result-input flex-1 border border-gray-300 rounded-l px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" data-module="2">
+            <button class="clear-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm" data-module="2">清</button>
+            <button class="reverse-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm rounded-r" data-module="2">反</button>
+          </div>
+          <div class="text-red-500 text-sm mb-4 result-count" data-module="2">共0注</div>
+          
+          <div class="flex gap-2">
+            <button class="generate-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="2">做号</button>
+            <button class="copy-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="2">复制</button>
+            <button onclick="addModule(2)" class="add-btn w-10 bg-green-600 text-white py-2 rounded hover:bg-green-700" data-module="2">+</button>
+            <button onclick="removeModule(2)" class="remove-btn w-10 bg-red-600 text-white py-2 rounded hover:bg-red-700" data-module="2">-</button>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    // 页面切换功能 - 确保此代码块完整添加
+    document.addEventListener('DOMContentLoaded', function() {
+      // 获取页面元素
+      const dataAnalysisBtn = document.getElementById('dataAnalysisBtn');
+      const fiveStarBtn = document.getElementById('fiveStarBtn');
+      const dataAnalysisPage = document.getElementById('dataAnalysisPage');
+      const fiveStarPage = document.getElementById('fiveStarPage');
+      
+      // 验证元素是否存在
+      if (!dataAnalysisBtn || !fiveStarBtn || !dataAnalysisPage || !fiveStarPage) {
+        console.error('页面切换所需元素未找到');
+        return;
+      }
+      
+      // 数据分析页面按钮点击事件
+      dataAnalysisBtn.addEventListener('click', function() {
+        dataAnalysisPage.classList.remove('hidden');
+        fiveStarPage.classList.add('hidden');
+        dataAnalysisBtn.classList.add('bg-primary');
+        dataAnalysisBtn.classList.remove('bg-gray-600');
+        fiveStarBtn.classList.add('bg-gray-600');
+        fiveStarBtn.classList.remove('bg-primary');
+      });
+      
+      // 五星做号页面按钮点击事件
+      fiveStarBtn.addEventListener('click', function() {
+        dataAnalysisPage.classList.add('hidden');
+        fiveStarPage.classList.remove('hidden');
+        fiveStarBtn.classList.add('bg-primary');
+        fiveStarBtn.classList.remove('bg-gray-600');
+        dataAnalysisBtn.classList.add('bg-gray-600');
+        dataAnalysisBtn.classList.remove('bg-primary');
+      });
+    });
+
+    // 五星做号功能实现
+    document.addEventListener('DOMContentLoaded', function() {
+      // 为两个模块初始化五星做号功能
+      initFiveStarModule(1);
+      initFiveStarModule(2);
+    });
+
+    // 初始化五星做号模块
+    function initFiveStarModule(moduleId) {
+      // 模块状态存储 - 修改为按组存储条件
+      const moduleState = {
+        groups: [
+            { selectedNumbers: [], selectedDamas: [] }, // 组1
+            { selectedNumbers: [], selectedDamas: [] }, // 组2
+            { selectedNumbers: [], selectedDamas: [] }, // 组3
+            { selectedNumbers: [], selectedDamas: [] }, // 组4
+            { selectedNumbers: [], selectedDamas: [] }  // 组5
+        ],
+        results: [],         // 当前显示结果
+        allPermutations: [], // 所有排列组合
+        originalResults: [], // 原始筛选结果
+        isReversed: false    // 是否显示反向结果
+      };
+
+      // 获取模块元素
+      const module = document.getElementById(`module${moduleId}`);
+      const numberButtons = module.querySelectorAll('.number-btn');
+      const damaButtons = module.querySelectorAll('.dama-btn');
+      const generateBtn = module.querySelector('.generate-btn');
+      const copyBtn = module.querySelector('.copy-btn');
+      const clearBtn = module.querySelector('.clear-btn');
+      const reverseBtn = module.querySelector('.reverse-btn');
+      const resultInput = module.querySelector('.result-input');
+      const resultCount = module.querySelector('.result-count');
+      const toleranceMinSelect = module.querySelector('.tolerance-min');
+      const toleranceMaxSelect = module.querySelector('.tolerance-max');
+
+      // 数字按钮点击事件 - 按组存储
+      numberButtons.forEach(btn => {
+          btn.addEventListener('click', function() {
+              const number = parseInt(this.dataset.number);
+              const group = parseInt(this.dataset.group);
+              const groupState = moduleState.groups[group - 1];
+
+              const index = groupState.selectedNumbers.indexOf(number);
+              if (index === -1) {
+                  groupState.selectedNumbers.push(number);
+                  this.classList.add('bg-primary', 'text-white');
+              } else {
+                  groupState.selectedNumbers.splice(index, 1);
+                  this.classList.remove('bg-primary', 'text-white');
+              }
+          });
+      });
+
+      // 胆码按钮点击事件 - 按组存储
+      damaButtons.forEach(btn => {
+          btn.addEventListener('click', function() {
+              const dama = parseInt(this.dataset.dama);
+              const group = parseInt(this.dataset.group);
+              const groupState = moduleState.groups[group - 1];
+
+              const index = groupState.selectedDamas.indexOf(dama);
+              if (index === -1) {
+                  groupState.selectedDamas.push(dama);
+                  this.classList.add('bg-primary', 'text-white');
+              } else {
+                  groupState.selectedDamas.splice(index, 1);
+                  this.classList.remove('bg-primary', 'text-white');
+              }
+          });
+      });
+
+      // 容错选择事件
+      toleranceMinSelect.addEventListener('change', function() {
+        moduleState.toleranceMin = parseInt(this.value);
+      });
+
+      toleranceMaxSelect.addEventListener('change', function() {
+        moduleState.toleranceMax = parseInt(this.value);
+      });
+
+      // 做号按钮点击事件
+      generateBtn.addEventListener('click', function() {
+        // 生成所有可能的5个数字的排列 (从1-10中选择)
+        const allNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        const permutations = permute(allNumbers, 5);
+        
+        // 存储所有排列组合
+        moduleState.allPermutations = permutations;
+        
+        // 根据选中的数字和胆码筛选结果
+        // 筛选满足所有组条件的组合
+        const filteredResults = permutations.filter(comb => {
+            // 检查是否满足所有组的条件
+            return moduleState.groups.every(group => {
+                // 空条件组直接通过
+                if (group.selectedNumbers.length === 0 && group.selectedDamas.length === 0) {
+                    return true;
+                }
+
+                // 计算组合与当前组选中数字的交集
+                const intersection = comb.filter(num => group.selectedNumbers.includes(num));
+                const matchCount = intersection.length;
+
+                // 新逻辑：根据胆码选择情况应用不同规则
+        if (group.selectedDamas.length === 0) {
+            // 未选择胆码：匹配任意数量的选中数字(至少1个)
+            return matchCount > 0;
+        } else {
+            // 已选择胆码：严格匹配指定的胆码数量
+            return group.selectedDamas.some(dama => matchCount === dama);
+        }
+            });
+        });
+
+        // 存储原始筛选结果并重置反向状态
+        moduleState.results = filteredResults;
+        moduleState.originalResults = [...filteredResults];
+        updateResultDisplay();
+      });
+
+      // 复制按钮点击事件
+      copyBtn.addEventListener('click', function() {
+        if (moduleState.results.length === 0) {
+          // 修改无结果提示为文本显示
+          resultCount.innerHTML = '<span style="color: red;">没有可复制的结果</span>';
+          setTimeout(() => {
+            resultCount.textContent = `共${moduleState.results.length}注`;
+          }, 2000);
+          return;
+        }
+
+        // 将所有结果转换为字符串
+        const allResults = moduleState.results.map(comb => comb.join(',')).join(' ');
+
+        // 复制到剪贴板
+        navigator.clipboard.writeText(allResults).then(() => {
+          // 成功提示：在计数后添加红色文本
+          const originalText = resultCount.textContent;
+          resultCount.innerHTML = `${originalText} <span style="color: red;">已复制 ${moduleState.results.length} 组号码</span>`;
+          
+          // 2秒后恢复原始文本
+          setTimeout(() => {
+            resultCount.textContent = originalText;
+          }, 2000);
+        }).catch(err => {
+          console.error('复制失败:', err);
+          // 错误提示：显示红色错误文本
+          resultCount.innerHTML = '<span style="color: red;">复制失败，请手动复制</span>';
+          setTimeout(() => {
+            resultCount.textContent = `共${moduleState.results.length}注`;
+          }, 2000);
+        });
+      });
+
+      // 清除按钮点击事件
+      clearBtn.addEventListener('click', function() {
+        // 修复：按组清除选中状态
+        moduleState.groups.forEach(group => {
+            group.selectedNumbers = [];
+            group.selectedDamas = [];
+        });
+        moduleState.results = [];
+        moduleState.originalResults = [];
+        moduleState.isReversed = false;
+        
+        // 清除所有按钮选中状态
+        numberButtons.forEach(btn => btn.classList.remove('bg-primary', 'text-white'));
+        damaButtons.forEach(btn => btn.classList.remove('bg-primary', 'text-white'));
+        
+        resultInput.value = '';
+        resultCount.textContent = '共0注';
+      });
+
+      // 反选按钮点击事件 - 修改为显示筛选结果的补集
+      reverseBtn.addEventListener('click', function() {
+        // 检查是否已生成结果
+        if (moduleState.allPermutations.length === 0 || moduleState.originalResults.length === 0) {
+          alert('请先点击"做号"生成结果');
+          return;
+        }
+
+        // 切换反向状态
+        if (!moduleState.isReversed) {
+          // 生成原始结果的补集（所有组合中排除原始结果）
+          // 创建原始结果的字符串表示集合用于快速查找
+          const originalSet = new Set(moduleState.originalResults.map(comb => comb.join(',')));
+          // 筛选出不在原始结果中的所有组合
+          const complementResults = moduleState.allPermutations.filter(comb => 
+            !originalSet.has(comb.join(','))
+          );
+          moduleState.results = complementResults;
+          moduleState.isReversed = true;
+        } else {
+          // 恢复显示原始结果
+          moduleState.results = moduleState.originalResults;
+          moduleState.isReversed = false;
+        }
+
+        updateResultDisplay();
+      });
+
+      // 更新结果显示
+      function updateResultDisplay() {
+        const totalCount = moduleState.results.length;
+        const displayResults = totalCount > 500 ? moduleState.results.slice(0, 500) : moduleState.results;
+        const displayText = displayResults.map(comb => comb.map(num => num.toString().padStart(2, '0')).join(',')).join(' ');
+        resultInput.value = totalCount > 500 ? displayText + '...' : displayText;
+        resultCount.textContent = `共${totalCount}注`;
+      }
+  }
+
+  // 添加单个模块 - 从任何模块点击都在最后添加
+function addModule(currentModuleId) {
+  const modulesContainer = document.getElementById('modules-container');
+  const moduleElements = modulesContainer.querySelectorAll('.five-star-module');
+
+  // 检查模块数量上限（最多10个）
+  if (moduleElements.length >= 14) {
+    alert('最多只能添加14个模块');
+    return;
+  }
+
+  // 获取最后一个模块ID并递增
+  const lastModuleId = parseInt(moduleElements[moduleElements.length - 1].id.replace('module', ''));
+  const newModuleId = lastModuleId + 1;
+
+  // 克隆当前模块
+  const currentModule = document.getElementById(`module${currentModuleId}`);
+  const newModule = currentModule.cloneNode(true);
+  newModule.id = `module${newModuleId}`;
+  newModule.querySelectorAll('[data-module]').forEach(el => {
+    el.dataset.module = newModuleId;
+  });
+  resetModuleState(newModule);
+
+  // 克隆当前模块后添加以下代码
+  const newAddBtn = newModule.querySelector('.add-btn');
+  newAddBtn.setAttribute('onclick', `addModule(${newModuleId})`);
+
+  const newRemoveBtn = newModule.querySelector('.remove-btn');
+  newRemoveBtn.setAttribute('onclick', `removeModule(${newModuleId})`);
+
+  // 直接添加到模块容器末尾
+  modulesContainer.appendChild(newModule);
+
+  // 初始化新模块
+  initFiveStarModule(newModuleId);
+}
+
+// 移除单个模块 - 确保最少保留2个
+function removeModule(moduleId) {
+  const modulesContainer = document.getElementById('modules-container');
+  const moduleElements = modulesContainer.querySelectorAll('.five-star-module');
+  const moduleToRemove = document.getElementById(`module${moduleId}`);
+
+  // 确保至少保留2个模块
+  if (moduleElements.length <= 2) {
+    alert('至少保留2个模块');
+    return;
+  }
+
+  // 移除模块
+  moduleToRemove.remove();
+}
+
+  // 重置模块状态的辅助函数
+  function resetModuleState(module) {
+    // 清除克隆模块的选中状态和结果
+    module.querySelectorAll('.number-btn, .dama-btn').forEach(btn => {
+      btn.classList.remove('bg-primary', 'text-white');
+    });
+    module.querySelector('.result-input').value = '';
+    module.querySelector('.result-count').textContent = '共0注';
+  }
+
+  // 排列组合生成函数 (从数组中选择k个元素的所有排列)
+  function permute(arr, k) {
+      const result = [];
+      if (k === 1) return arr.map(num => [num]);
+
+      arr.forEach((current, index, original) => {
+        const remaining = [...original.slice(0, index), ...original.slice(index + 1)];
+        const permutations = permute(remaining, k - 1);
+        const combined = permutations.map(p => [current, ...p]);
+        result.push(...combined);
+      });
+
+      return result;
+    }
+  </script>
+
+  <!-- 页脚 -->
+  <footer class="bg-white border-t border-gray-200 py-4">
+    <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>台湾PK数据分析工具 © 2025</p>
+    </div>
+  </footer>
+
+  <!-- 帮助模态框 -->
+  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-5 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-xl font-semibold">使用帮助</h3>
+        <button id="closeHelpBtn" class="text-gray-400 hover:text-gray-600">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      <div class="p-5">
+        <h4 class="font-medium text-lg mb-2">功能介绍</h4>
+        <p class="mb-4">台湾PK数据分析工具可以帮助您分析和预测台湾PK的开奖结果，通过统计历史数据和组合的命中情况，为您提供参考依据。</p>
+        
+        <h4 class="font-medium text-lg mb-2">使用方法</h4>
+        <ol class="list-decimal list-inside space-y-2 mb-4">
+          <li>您可以手动输入数据或使用自动获取功能获取最新的开奖结果</li>
+          <li>选择胆码数和中出条件来筛选感兴趣的组合</li>
+          <li>您也可以添加自定义组合进行分析</li>
+          <li>使用排序功能可以按照连中次数或遗漏次数对组合进行排序</li>
+          <li>表格中的"连"表示历史最大连中次数，"漏"表示历史最大遗漏次数</li>
+          <li>您可以通过表格上方的期数按钮选择显示最新的30期、50期或100期数据</li>
+          <li>使用表格上方的水平滑块可以左右滚动表格内容</li>
+          <li>使用表格右侧的垂直滑块可以上下滚动表格内容</li>
+        </ol>
+        
+        <h4 class="font-medium text-lg mb-2">数据格式</h4>
+        <p class="mb-4">手动输入数据时，请按照"期数 数据"的格式，例如：202504181232 02,05,01,04,07,10,09,03,06,08 </p>
+        
+        <h4 class="font-medium text-lg mb-2">快捷键</h4>
+        <ul class="list-disc list-inside space-y-1">
+          <li>在输入框中按下Enter键可快速计算</li>
+          <li>使用Ctrl+S可保存当前数据</li>
+        </ul>
+      </div>
+      <div class="p-5 border-t border-gray-200 flex justify-end">
+        <button id="gotItBtn" class="px-4 py-2 bg-primary text-white rounded-md btn-hover">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 密钥验证模态框 -->
+  <div id="keyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <div class="text-center mb-6">
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">请输入访问密钥</h3>
+        <p class="text-gray-600">该功能需要有效的访问密钥才能使用</p>
+      </div>
+      
+      <div class="mb-4">
+        <input type="text" id="keyInput" placeholder="请输入32位访问密钥" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200">
+      </div>
+      
+      <div class="flex gap-3">
+        <button id="verifyKeyBtn" class="w-full px-4 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/80 transition-colors">验证密钥</button>
+        <!-- 移除取消按钮 -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 全局变量
+    let history = [];
+    let period = 1;
+    let autoFetchTimer = null;
+    let fileHandle = null;
+    let seenPeriods = new Set();
+    let latestCheckedPeriod = null;
+    let fileReaderTimer = null;
+    let sortByHit = true; // true=按连中次数排序, false=按遗漏次数排序
+    let displayPeriods = 30; // 默认显示30期数据
+
+// 密钥验证相关变量
+let isKeyValid = false;
+const KEY_STORAGE_KEY = 'pk4_access_key';
+const KEY_MODAL = document.getElementById('keyModal');
+const KEY_INPUT = document.getElementById('keyInput');
+
+// DOM元素
+    const outputEl = document.getElementById('output');
+    const tableContainer = document.getElementById('tableContainer');
+    const horizontalThumb = document.getElementById('horizontalThumb');
+    const horizontalFill = document.getElementById('horizontalFill');
+    const verticalSlider = document.getElementById('verticalSlider');
+    const verticalThumb = document.getElementById('verticalThumb');
+    const verticalFill = document.getElementById('verticalFill');
+    
+    // 初始化胆码数按钮
+    const numButtons = document.getElementById('numButtons');
+    for(let i=1; i<=10; i++){
+      const b = document.createElement('button');
+      b.className = 'px-3 py-1 rounded-md bg-gray-200 btn-hover';
+      b.dataset.num = i;
+      b.textContent = i;
+      numButtons.appendChild(b);
+    }
+    
+    // 初始化中出按钮
+    const hitButtons = document.getElementById('hitButtons');
+    [0, 1, 2, 3, 4, 5].forEach(h => {
+      const b = document.createElement('button');
+      b.className = 'px-3 py-1 rounded-md bg-gray-200 btn-hover';
+      b.dataset.hit = h;
+      b.textContent = h + '胆';
+      hitButtons.appendChild(b);
+    });
+    
+    // 单选按钮组
+    function singleSelect(btns) {
+      btns.forEach(b => b.addEventListener('click', () => {
+        btns.forEach(x => x.classList.remove('btn-active'));
+        b.classList.add('btn-active');
+        renderTable();
+      }));
+    }
+    
+    // 多选按钮组
+    function multiToggle(btns) {
+      btns.forEach(b => b.addEventListener('click', () => {
+        b.classList.toggle('btn-active');
+        renderTable();
+      }));
+    }
+    
+    // 设置默认选中 - 胆码数默认改为5
+    document.querySelector('#numButtons button[data-num="5"]').classList.add('btn-active');
+    document.querySelector('#hitButtons button[data-hit="2"]').classList.add('btn-active');
+    
+    // 初始化按钮事件
+singleSelect(Array.from(numButtons.children));
+multiToggle(Array.from(hitButtons.children));
+
+// 密钥倒计时更新函数
+function updateKeyCountdown(expirationTimestamp) {
+    const now = new Date();
+    const expirationDate = new Date(expirationTimestamp * 1000);
+    const timeDiff = expirationDate - now;
+    
+    // 计算剩余天数（向上取整）
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    
+    // 更新显示
+    const countdownEl = document.getElementById('keyCountdown');
+    const daysEl = document.getElementById('daysRemaining');
+    
+    daysEl.textContent = daysRemaining;
+    countdownEl.classList.remove('hidden');
+    
+    // 设置样式（根据剩余天数改变背景色）
+    if (daysRemaining <= 3) {
+        countdownEl.classList.remove('bg-primary');
+        countdownEl.classList.add('bg-amber-500');
+    } else if (daysRemaining <= 1) {
+        countdownEl.classList.remove('bg-primary', 'bg-amber-500');
+        countdownEl.classList.add('bg-red-500');
+    }
+}
+
+// 添加设备指纹生成函数（从密钥生成器复制）
+function generateDeviceFingerprint() {
+    const userAgent = navigator.userAgent;
+    const screenResolution = screen.width + 'x' + screen.height;
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const language = navigator.language;
+    
+    const fingerprintRaw = userAgent + screenResolution + timezoneOffset + language;
+    let hash = 0;
+    for (let i = 0; i < fingerprintRaw.length; i++) {
+        const char = fingerprintRaw.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // 转换为32位整数
+    }
+    return Math.abs(hash).toString(36);
+}
+
+// 密钥验证按钮事件
+const verifyKeyBtn = document.getElementById('verifyKeyBtn');
+verifyKeyBtn.addEventListener('click', function() {
+    const key = KEY_INPUT.value.trim();
+    if (!key) {
+        alert('请输入密钥');
+        return;
+    }
+    
+    try {
+        const result = verifyKey(key);
+        if (result.valid) {
+            // 记录已使用的nonce
+            const usedNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
+            usedNonces.push(result.data.nonce);
+            localStorage.setItem('usedNonces', JSON.stringify(usedNonces));
+            
+            // 使用文件唯一标识存储密钥
+            const fileId = generateFileIdentifier();
+            localStorage.setItem(`validKey_${fileId}`, key);
+            localStorage.setItem(`keyExpiry_${fileId}`, result.data.expiry);
+            
+            // 确保模态框隐藏
+            KEY_MODAL.classList.add('hidden');
+            KEY_MODAL.style.display = 'none';
+            
+            // 更新密钥状态和倒计时
+            isKeyValid = true;
+            updateKeyCountdown(result.data.expiry);
+        } else {
+            alert('密钥验证失败: ' + result.reason);
+        }
+    } catch (e) {
+        console.error('密钥验证过程出错:', e);
+        alert('验证过程中发生错误: ' + e.message);
+    }
+});
+
+
+// 页面加载时检查保存的密钥
+window.addEventListener('load', function() {
+    try {
+        const fileId = generateFileIdentifier();
+        const validKey = localStorage.getItem(`validKey_${fileId}`);
+        const keyExpiry = localStorage.getItem(`keyExpiry_${fileId}`);
+        
+        if (validKey && keyExpiry && Math.floor(new Date().getTime() / 1000) < keyExpiry) {
+            // 密钥有效，直接更新倒计时
+            isKeyValid = true;
+            updateKeyCountdown(keyExpiry);
+            KEY_MODAL.classList.add('hidden');
+            KEY_MODAL.style.display = 'none';
+        } else {
+            // 密钥无效或不存在，显示验证模态框
+            KEY_MODAL.classList.remove('hidden');
+            KEY_MODAL.style.display = 'flex';
+        }
+    } catch (e) {
+        console.error('页面加载时密钥检查出错:', e);
+        KEY_MODAL.classList.remove('hidden');
+        KEY_MODAL.style.display = 'flex';
+    }
+});
+
+// 解析输入数据
+function parseInput(line) {
+      // 处理文件行数据，支持多种分隔符
+      let parts;
+      if (line.includes('\t')) {
+        parts = line.trim().split(/\t+/);
+      } else if (line.includes(' ')) {
+        parts = line.trim().split(/\s+/);
+      } else {
+        return null;
+      }
+      
+      if (parts.length < 2) return null;
+      
+      const period = parts[0].trim();
+      
+      // 尝试多种可能的数字分隔符
+      let nums;
+      if (parts[1].includes(',')) {
+        nums = parts[1].split(',').map(n => parseInt(n.trim(), 10));
+      } else if (parts[1].includes(' ')) {
+        nums = parts[1].split(' ').map(n => parseInt(n.trim(), 10));
+      } else {
+        return null;
+      }
+      
+      if (nums.length !== 10 || nums.some(isNaN)) return null;
+      
+      return { period, data: nums };
+    }
+
+// 密钥验证函数
+function verifyKey(key) {
+    try {
+        // 分步解码并添加错误捕获
+        const decodedB64 = atob(key);
+        const jsonStr = decodeURIComponent(escape(decodedB64));
+        const keyData = JSON.parse(jsonStr);
+        
+        // 验证必要字段存在
+        if (!keyData.expiry || !keyData.nonce || !keyData.deviceFingerprint) {
+            return { valid: false, reason: '密钥缺少必要字段' };
+        }
+
+        const currentTime = new Date().getTime();
+        
+        // 修改时间比较逻辑，将当前时间转换为秒级时间戳
+        if (Math.floor(currentTime / 1000) > keyData.expiry) {
+            return { valid: false, reason: '密钥已过期' };
+        }
+
+        // 2. 设备指纹验证（新增）
+        const currentFingerprint = generateDeviceFingerprint();
+        if (keyData.deviceFingerprint !== currentFingerprint) {
+            return { valid: false, reason: '此密钥不可在当前设备使用' };
+        }
+
+        // 检查密钥是否已被使用（增强版）
+        const usedNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
+        if (usedNonces.includes(keyData.nonce)) {
+            return { valid: false, reason: '密钥已被使用' };
+        }
+        
+        // 添加防重放检查：验证通过后立即记录nonce
+        usedNonces.push(keyData.nonce);
+        localStorage.setItem('usedNonces', JSON.stringify(usedNonces));
+        
+        return { valid: true, data: keyData };
+    } catch (e) {
+        // 详细错误类型判断
+        if (e instanceof DOMException && e.name === 'InvalidCharacterError') {
+            return { valid: false, reason: '密钥Base64解码失败' };
+        } else if (e instanceof SyntaxError) {
+            return { valid: false, reason: '密钥JSON格式无效' };
+        } else {
+            return { valid: false, reason: '验证过程异常: ' + e.message };
+        }
+    }
+}
+
+// 手动录入
+function manualCalc() {
+    if (!isKeyValid) {
+        KEY_MODAL.classList.remove('hidden');
+        alert('请先验证有效的密钥');
+        return;
+    }
+  const lines = document.getElementById('numbersInput').value.trim().split(/\n+/).filter(Boolean);
+  if (!lines.length) {
+    outputEl.textContent = '请输入数据';
+    return;
+  }
+      
+      let addedCount = 0;
+      for (const l of lines) {
+        const parsed = parseInput(l);
+        if (!parsed) {
+          outputEl.textContent = '格式错误：请输入正确的数据格式';
+          return;
+        }
+        
+        const { period, data } = parsed;
+        const fmt = data.join(',');
+        
+        // 检查是否已存在相同期数或相同数据
+        if (seenPeriods.has(period) || (history.length && history[history.length-1].input === fmt)) continue;
+        
+        history.push({ period, data, input: fmt });
+        seenPeriods.add(period);
+        addedCount++;
+      }
+      
+      document.getElementById('numbersInput').value = '';
+      outputEl.textContent = addedCount > 0 ? `成功添加 ${addedCount} 期数据` : '没有新数据添加';
+      document.getElementById('periodCount').textContent = history.length;
+      
+      // 确保数据按期数排序
+      history.sort((a, b) => {
+        const pa = a.period.toString();
+        const pb = b.period.toString();
+        return pb.localeCompare(pa); // 降序排序，最新的期数在最前面
+      });
+      
+      renderTable();
+    }
+    
+    // 绑定手动计算按钮事件
+    document.getElementById('calcBtn').addEventListener('click', manualCalc);
+    document.getElementById('numbersInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        manualCalc();
+      }
+    });
+    
+    // 自动获取数据
+    async function autoFetch() {
+    if (!isKeyValid) {
+        KEY_MODAL.classList.remove('hidden');
+        alert('请先验证有效的密钥');
+        return;
+    }
+  try {
+    outputEl.textContent = '正在获取数据...';
+    const res = await fetch('https://api.duoqu.online/data?id=406&limit=1&key=ibjweyjfzt');
+        const r = await res.json();
+        
+        if (r.info === 'success' && r.data.length) {
+          const arr = r.data[0].openNumber.split(',').map(Number);
+          const period = r.data[0].period || (period++);
+          const fmt = arr.join(',');
+          
+          if (seenPeriods.has(period) || (history.length && history[history.length-1].input === fmt)) {
+            outputEl.textContent = '已是最新数据';
+            return;
+          }
+          
+          history.push({ period, data: arr, input: fmt });
+          seenPeriods.add(period);
+          document.getElementById('periodCount').textContent = history.length;
+          outputEl.textContent = `成功获取第 ${period} 期数据`;
+          
+          // 确保数据按期数排序
+          history.sort((a, b) => {
+            const pa = a.period.toString();
+            const pb = b.period.toString();
+            return pb.localeCompare(pa);
+          });
+          
+          renderTable();
+        } else {
+          outputEl.textContent = '获取数据失败：' + (r.message || '未知错误');
+        }
+      } catch (err) {
+        outputEl.textContent = `获取数据错误：${err.message}`;
+      }
+    }
+    
+    // 绑定自动获取按钮事件
+    document.getElementById('autoFetchBtn').addEventListener('click', () => {
+      if (autoFetchTimer) {
+        clearInterval(autoFetchTimer);
+        autoFetchTimer = null;
+        document.getElementById('autoFetchBtn').innerHTML = '<i class="fa fa-refresh mr-2"></i>自动获取数据';
+        outputEl.textContent = '已停止自动获取';
+      } else {
+        autoFetch();
+        autoFetchTimer = setInterval(autoFetch, 5000);
+        document.getElementById('autoFetchBtn').innerHTML = '<i class="fa fa-stop mr-2"></i>停止自动获取';
+        outputEl.textContent = '已开始自动获取数据，每5秒更新一次';
+      }
+    });
+    
+    // 生成组合
+    function combinations(arr, k) {
+    if (!isKeyValid) {
+        KEY_MODAL.classList.remove('hidden');
+        alert('请先验证有效的密钥');
+        return [];
+    }
+  const res = [];
+
+  (function dfs(s, cur) {
+        if (cur.length === k) {
+          res.push(cur.slice());
+          return;
+        }
+        for (let i = s; i < arr.length; i++) {
+          cur.push(arr[i]);
+          dfs(i + 1, cur);
+          cur.pop();
+        }
+      })(0, []);
+      
+      return res;
+    }
+    
+    // 计算历史最大统计
+    function getHistoricalMaxStats(rows, keys) {
+      const maxStats = {};
+      
+      keys.forEach(key => {
+        let maxHit = 0, maxMiss = 0, hSt = 0, mSt = 0;
+        
+        rows.forEach(r => {
+          if (r.cells[key].hit) {
+            hSt++;
+            mSt = 0;
+            if (hSt > maxHit) maxHit = hSt;
+          } else {
+            mSt++;
+            hSt = 0;
+            if (mSt > maxMiss) maxMiss = mSt;
+          }
+        });
+        
+        maxStats[key] = { maxHit, maxMiss };
+      });
+      
+      return maxStats;
+    }
+    
+    // 计算当前连续连中 - 从最新一期开始计算
+    function getCurrentHitStreaks(rows, keys) {
+      const currHit = {};
+      
+      keys.forEach(key => {
+        let streak = 0;
+        // 从最新一期(索引0)开始检查
+        for (let i = 0; i < rows.length; i++) {
+          if (rows[i].cells[key].hit) streak++;
+          else break; // 一旦遇到未命中，停止计数
+        }
+        currHit[key] = streak;
+      });
+      
+      return currHit;
+    }
+    
+    // 计算当前连续遗漏 - 从最新一期开始计算
+    function getCurrentMissStreaks(rows, keys) {
+      const currMiss = {};
+      
+      keys.forEach(key => {
+        let streak = 0;
+        // 从最新一期(索引0)开始检查
+        for (let i = 0; i < rows.length; i++) {
+          if (!rows[i].cells[key].hit) streak++;
+          else break; // 一旦遇到命中，停止计数
+        }
+        currMiss[key] = streak;
+      });
+      
+      return currMiss;
+    }
+    
+    // 渲染表格
+    function renderTable() {
+      const thead = document.querySelector('#resultTable thead');
+      const tbody = document.querySelector('#resultTable tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+      
+      // 获取要显示的历史数据
+      const displayHistory = history.slice(0, displayPeriods);
+      
+      if (!displayHistory.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 100;
+        td.className = 'py-4 text-center text-gray-500';
+        td.textContent = '暂无数据，请先输入或获取数据';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        updateSliders();
+        return;
+      }
+      
+      // 筛选
+      const k = +document.querySelector('#numButtons .btn-active')?.dataset.num || 0;
+      const hits = Array.from(document.querySelectorAll('#hitButtons .btn-active')).map(b => +b.dataset.hit);
+      
+      // 所有组合
+      const base = [...Array(10)].map((_, i) => i + 1);
+      const combos = (k > 0 && k <= 10) ? combinations(base, k) : [];
+      const custom = document.getElementById('customCombos').value.trim()
+                      .split(/\s+/).filter(Boolean)
+                      .map(s => s.split(',').map(n => +n).filter(n => !isNaN(n)));
+      const all = [...combos, ...custom].filter(c => c.length > 0);
+      const keys = all.map(c => c.join(','));
+      
+      // 构建 rows - 遗漏值从下往上递增累计
+      const rows = displayHistory.map(rec => {
+        const obj = { rec, cells: {} };
+        return obj;
+      });
+      
+      // 从最旧的一期开始计算遗漏值
+      keys.forEach(key => {
+        let currentMiss = 0;
+        
+        // 从最旧的一期(索引最大)开始处理
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const rec = rows[i].rec;
+          const arr = key.split(',').map(n => +n);
+          const match = arr.filter(x => rec.data.slice(0, 5).includes(x)).length;
+          const hit = hits.length ? hits.includes(match) : false;
+          
+          if (hit) {
+            rows[i].cells[key] = { txt: key, hit: true };
+            currentMiss = 0; // 命中后重置遗漏计数
+          } else {
+            currentMiss++;
+            rows[i].cells[key] = { txt: currentMiss, hit: false };
+          }
+        }
+      });
+      
+      // 统计
+      const maxStats = getHistoricalMaxStats(rows, keys);
+      const currHit = getCurrentHitStreaks(rows, keys);
+      const currMiss = getCurrentMissStreaks(rows, keys);
+      
+      // 排序 - 严格按照最新一期开始的连中次数或遗漏次数排序
+      const sortedKeys = keys.slice().sort((a, b) => {
+        if (sortByHit) {
+          // 按连中次数排序：连中次数高的在前，如果相同则按遗漏次数高的在前
+          return currHit[b] - currHit[a] || currMiss[b] - currMiss[a];
+        } else {
+          // 按遗漏次数排序：遗漏次数高的在前，如果相同则按连中次数高的在前
+          return currMiss[b] - currMiss[a] || currHit[b] - currHit[a];
+        }
+      });
+      
+      // 更新按钮文字
+      document.getElementById('sortText').textContent = sortByHit
+        ? '按遗漏次数排序' : '按连中次数排序';
+      
+      // 摘要统计
+      const summary = document.getElementById('summary');
+      summary.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>共 ${sortedKeys.length} 注分析组合</div>
+          <div>当前显示: ${displayHistory.length} 期 / 总计: ${history.length} 期</div>
+          <div>筛选条件: ${k}码组合，命中${hits.length > 0 ? hits.join('/') : '全部'}胆`;
+      
+      // 渲染表头
+      const headerRow = document.createElement('tr');
+      headerRow.className = 'bg-gray-50';
+      
+      // 添加固定列
+      headerRow.innerHTML = `
+        <th class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 fixed-width-period sticky-bg-white">期数</th>
+        <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>
+      `;
+      
+      // 添加组合列 - 完全移除了"现连"和"现漏"显示
+      sortedKeys.forEach(key => {
+        const { maxHit, maxMiss } = maxStats[key];
+        const th = document.createElement('th');
+        th.className = 'px-3 py-2 text-center border-r border-gray-200';
+        th.innerHTML = `
+          <div class="font-medium">${key}</div>
+          <div class="text-xs text-gray-500">连:${maxHit}</div>
+          <div class="text-xs text-gray-500">漏:${maxMiss}</div>
+        `;
+        headerRow.appendChild(th);
+      });
+      
+      thead.appendChild(headerRow);
+      
+      // 渲染表体
+      rows.forEach((r, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index === 0 ? 'bg-gray-100' : (index === 1 ? 'bg-gray-50' : '');
+        
+        // 添加固定列，根据行的背景色设置相应的类
+        tr.innerHTML = `
+          <td class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 font-medium fixed-width-period ${index === 0 ? 'sticky-bg-gray-100' : (index === 1 ? 'sticky-bg-gray-50' : 'sticky-bg-white')}">${r.rec.period}</td>
+          <td class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data ${index === 0 ? 'sticky-bg-gray-100' : (index === 1 ? 'sticky-bg-gray-50' : 'sticky-bg-white')}">
+            <div class="number-row">${r.rec.data.slice(0, 5).join(',')}</div>
+            <div class="number-row">${r.rec.data.slice(5).join(',')}</div>
+          </td>
+        `;
+        
+        // 添加组合单元格
+        sortedKeys.forEach(key => {
+          const cell = r.cells[key];
+          const td = document.createElement('td');
+          td.className = `px-3 py-2 text-center border-r border-gray-200 ${cell.hit ? 'hit-cell' : 'miss-cell'}`;
+          td.textContent = cell.txt;
+          tr.appendChild(td);
+        });
+        
+        tbody.appendChild(tr);
+      });
+      
+      updateSliders();
+    }
+    
+    // 更新滑块状态
+    function updateSliders() {
+      const table = document.getElementById('resultTable');
+      const container = document.getElementById('tableContainer');
+      
+      // 水平滑块
+      const tableWidth = table.offsetWidth;
+      const containerWidth = container.offsetWidth;
+      
+      if (tableWidth > containerWidth) {
+        // 显示水平滑块
+        const horizontalSlider = document.querySelector('.slider-container');
+        horizontalSlider.style.display = 'block';
+        
+        // 计算滑块比例
+        const ratio = containerWidth / tableWidth;
+        const thumbWidth = Math.max(20, ratio * containerWidth);
+        
+        // 设置滑块样式
+        horizontalFill.style.width = `${(container.scrollLeft / (tableWidth - containerWidth)) * 100}%`;
+        horizontalThumb.style.left = `${(container.scrollLeft / (tableWidth - containerWidth)) * (containerWidth - thumbWidth)}px`;
+        horizontalThumb.style.width = `${thumbWidth}px`;
+        horizontalFill.style.width = `${(container.scrollLeft / (tableWidth - containerWidth)) * 100}%`;
+        
+        // 绑定水平滑块事件
+        let isDragging = false;
+        
+        horizontalThumb.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+          e.preventDefault();
+        });
+        
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          
+          const containerRect = container.getBoundingClientRect();
+          const newX = e.clientX - containerRect.left - thumbWidth / 2;
+          const maxX = containerWidth - thumbWidth;
+          const boundedX = Math.max(0, Math.min(newX, maxX));
+          
+          const scrollRatio = boundedX / maxX;
+          const scrollX = scrollRatio * (tableWidth - containerWidth);
+          
+          container.scrollLeft = scrollX;
+          
+          horizontalThumb.style.left = `${boundedX}px`;
+          horizontalFill.style.width = `${scrollRatio * 100}%`;
+        }
+        
+        function onMouseUp() {
+          isDragging = false;
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+        
+        // 点击轨道
+        document.querySelector('.slider-track').addEventListener('click', (e) => {
+          const containerRect = container.getBoundingClientRect();
+          const clickX = e.clientX - containerRect.left - thumbWidth / 2;
+          const maxX = containerWidth - thumbWidth;
+          const boundedX = Math.max(0, Math.min(clickX, maxX));
+          
+          const scrollRatio = boundedX / maxX;
+          const scrollX = scrollRatio * (tableWidth - containerWidth);
+          
+          container.scrollLeft = scrollX;
+          
+          horizontalThumb.style.left = `${boundedX}px`;
+          horizontalFill.style.width = `${scrollRatio * 100}%`;
+        });
+      } else {
+        // 隐藏水平滑块
+        document.querySelector('.slider-container').style.display = 'none';
+      }
+      
+      // 垂直滑块
+      const tableHeight = table.offsetHeight;
+      const containerHeight = container.offsetHeight;
+      
+      if (tableHeight > containerHeight) {
+        // 显示垂直滑块
+        verticalSlider.style.display = 'flex';
+        
+        // 计算滑块比例
+        const ratio = containerHeight / tableHeight;
+        const thumbHeight = Math.max(20, ratio * containerHeight);
+        
+        // 设置滑块样式
+        verticalFill.style.height = `${(container.scrollTop / (tableHeight - containerHeight)) * 100}%`;
+        verticalThumb.style.top = `${(container.scrollTop / (tableHeight - containerHeight)) * (containerHeight - thumbHeight)}px`;
+        verticalThumb.style.height = `${thumbHeight}px`;
+        verticalFill.style.height = `${(container.scrollTop / (tableHeight - containerHeight)) * 100}%`;
+        
+        // 绑定垂直滑块事件
+        let isDraggingVertical = false;
+        
+        verticalThumb.addEventListener('mousedown', (e) => {
+          isDraggingVertical = true;
+          document.addEventListener('mousemove', onMouseMoveVertical);
+          document.addEventListener('mouseup', onMouseUpVertical);
+          e.preventDefault();
+        });
+        
+        function onMouseMoveVertical(e) {
+          if (!isDraggingVertical) return;
+          
+          const containerRect = container.getBoundingClientRect();
+          const newY = e.clientY - containerRect.top - thumbHeight / 2;
+          const maxY = containerHeight - thumbHeight;
+          const boundedY = Math.max(0, Math.min(newY, maxY));
+          
+          const scrollRatio = boundedY / maxY;
+          const scrollY = scrollRatio * (tableHeight - containerHeight);
+          
+          container.scrollTop = scrollY;
+          
+          verticalThumb.style.top = `${boundedY}px`;
+          verticalFill.style.height = `${scrollRatio * 100}%`;
+        }
+        
+        function onMouseUpVertical() {
+          isDraggingVertical = false;
+          document.removeEventListener('mousemove', onMouseMoveVertical);
+          document.removeEventListener('mouseup', onMouseUpVertical);
+        }
+        
+        // 点击垂直轨道
+        document.querySelector('.vertical-slider-track').addEventListener('click', (e) => {
+          const containerRect = container.getBoundingClientRect();
+          const clickY = e.clientY - containerRect.top - thumbHeight / 2;
+          const maxY = containerHeight - thumbHeight;
+          const boundedY = Math.max(0, Math.min(clickY, maxY));
+          
+          const scrollRatio = boundedY / maxY;
+          const scrollY = scrollRatio * (tableHeight - containerHeight);
+          
+          container.scrollTop = scrollY;
+          
+          verticalThumb.style.top = `${boundedY}px`;
+          verticalFill.style.height = `${scrollRatio * 100}%`;
+        });
+      } else {
+        // 隐藏垂直滑块
+        verticalSlider.style.display = 'none';
+      }
+      
+      // 同步滚动和滑块
+      container.addEventListener('scroll', () => {
+        if (tableWidth > containerWidth) {
+          const ratio = container.scrollLeft / (tableWidth - containerWidth);
+          horizontalThumb.style.left = `${ratio * (containerWidth - parseInt(getComputedStyle(horizontalThumb).width))}px`;
+          horizontalFill.style.width = `${ratio * 100}%`;
+        }
+        
+        if (tableHeight > containerHeight) {
+          const ratio = container.scrollTop / (tableHeight - containerHeight);
+          verticalThumb.style.top = `${ratio * (containerHeight - parseInt(getComputedStyle(verticalThumb).height))}px`;
+          verticalFill.style.height = `${ratio * 100}%`;
+        }
+      });
+    }
+    
+    // 绑定排序按钮事件
+    document.getElementById('sortToggle').addEventListener('click', () => {
+      sortByHit = !sortByHit;
+      renderTable();
+    });
+    
+    // 绑定统计按钮事件
+    document.getElementById('statBtn').addEventListener('click', renderTable);
+    
+    // 导出数据
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      if (!history.length) {
+        outputEl.textContent = '没有数据可导出';
+        return;
+      }
+      
+      let csvContent = "期数,数据\n";
+      history.forEach(h => {
+        csvContent += `${h.period},${h.input}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `台湾PK数据_${new Date().toISOString().slice(0,10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      outputEl.textContent = '数据已导出';
+    });
+    
+    // 清空数据
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (confirm('确定要清空所有数据吗？此操作不可恢复。')) {
+        history = [];
+        period = 1;
+        seenPeriods.clear();
+        document.getElementById('periodCount').textContent = '0';
+        document.getElementById('summary').textContent = '';
+        renderTable();
+        outputEl.textContent = '数据已清空';
+      }
+    });
+    
+    // 文件上传功能
+    document.addEventListener('DOMContentLoaded', () => {
+      const pickBtn = document.getElementById('uploadDataBtn');
+      
+      pickBtn.addEventListener('click', async () => {
+        try {
+          [fileHandle] = await window.showOpenFilePicker();
+          seenPeriods.clear();
+          latestCheckedPeriod = null;
+          history = [];
+          period = 1;
+          await readInitial();
+          
+          if (fileReaderTimer) clearInterval(fileReaderTimer);
+          fileReaderTimer = setInterval(readLatestLineOnly, 3000);
+          
+          outputEl.textContent = `已加载文件: ${fileHandle.name}`;
+        } catch (err) {
+          outputEl.textContent = `文件选择错误: ${err.message}`;
+        }
+      });
+    });
+    
+    async function readInitial() {
+      if (!fileHandle) return;
+      
+      try {
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        const lines = content.trim().split('\n').filter(Boolean);
+        
+        for (const line of lines) {
+          processLine(line);
+        }
+        
+        // 确保数据按期数排序
+        history.sort((a, b) => {
+          const pa = a.period.toString();
+          const pb = b.period.toString();
+          return pb.localeCompare(pa);
+        });
+        
+        document.getElementById('periodCount').textContent = history.length;
+        renderTable();
+      } catch (err) {
+        outputEl.textContent = `读取文件错误: ${err.message}`;
+      }
+    }
+    
+    async function readLatestLineOnly() {
+      if (!fileHandle) return;
+      
+      try {
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        const firstLine = content.trim().split('\n')[0];
+        const parts = firstLine.trim().split(/\t+/);
+        
+        if (parts.length !== 2) return;
+        
+        const qihao = parts[0].trim();
+        if (qihao === latestCheckedPeriod) return;
+        
+        latestCheckedPeriod = qihao;
+        processLine(firstLine);
+        
+        document.getElementById('periodCount').textContent = history.length;
+        renderTable();
+      } catch (err) {
+        // 静默处理，避免频繁提示
+      }
+    }
+    
+    function processLine(line) {
+      // 处理文件行数据，支持多种分隔符
+      let parts;
+      if (line.includes('\t')) {
+        parts = line.trim().split(/\t+/);
+      } else if (line.includes(' ')) {
+        parts = line.trim().split(/\s+/);
+      } else {
+        return;
+      }
+      
+      if (parts.length < 2) return;
+      
+      const qihao = parts[0].trim();
+      if (seenPeriods.has(qihao)) return;
+      
+      // 尝试多种可能的数字分隔符
+      let nums;
+      if (parts[1].includes(',')) {
+        nums = parts[1].split(',').map(n => parseInt(n.trim(), 10));
+      } else if (parts[1].includes(' ')) {
+        nums = parts[1].split(' ').map(n => parseInt(n.trim(), 10));
+      } else {
+        return;
+      }
+      
+      if (nums.length !== 10 || nums.some(isNaN)) return;
+      
+      seenPeriods.add(qihao);
+      history.unshift({ period: qihao, data: nums, input: nums.join(',') }); // 插入最前面
+    }
+    
+    // 帮助模态框
+    const helpModal = document.getElementById('helpModal');
+    document.getElementById('helpBtn').addEventListener('click', () => {
+      helpModal.classList.remove('hidden');
+    });
+    
+    document.getElementById('closeHelpBtn').addEventListener('click', () => {
+      helpModal.classList.add('hidden');
+    });
+    
+    document.getElementById('gotItBtn').addEventListener('click', () => {
+      helpModal.classList.add('hidden');
+    });
+    
+    // 点击模态框外部关闭
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        helpModal.classList.add('hidden');
+      }
+    });
+    
+    // 主题切换
+    let darkMode = false;
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      darkMode = !darkMode;
+      document.body.classList.toggle('bg-gray-900', darkMode);
+      document.body.classList.toggle('text-white', darkMode);
+      document.body.classList.toggle('bg-gray-50', !darkMode);
+      document.body.classList.toggle('text-dark', !darkMode);
+      
+      const icon = document.getElementById('themeToggle').querySelector('i');
+      icon.classList.toggle('fa-moon-o', !darkMode);
+      icon.classList.toggle('fa-sun-o', darkMode);
+    });
+    
+    // 期数选择功能
+    const periodBtns = document.querySelectorAll('.period-btn');
+    periodBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // 移除所有按钮的激活状态
+        periodBtns.forEach(b => b.classList.remove('btn-active'));
+        // 添加当前按钮的激活状态
+        btn.classList.add('btn-active');
+        // 更新显示期数
+        displayPeriods = parseInt(btn.dataset.period);
+        document.getElementById('customPeriod').value = displayPeriods;
+        // 重新渲染表格
+        renderTable();
+      });
+    });
+    
+    // 自定义期数按钮
+    document.getElementById('customPeriodBtn').addEventListener('click', () => {
+      const customVal = parseInt(document.getElementById('customPeriod').value);
+      if (!isNaN(customVal) && customVal >= 1 && customVal <= 1000) {
+        displayPeriods = customVal;
+        // 移除所有按钮的激活状态
+        periodBtns.forEach(b => b.classList.remove('btn-active'));
+        // 重新渲染表格
+        renderTable();
+      } else {
+        alert('请输入1-1000之间的数字');
+      }
+    });
+    
+    // 窗口大小改变时更新滑块
+    window.addEventListener('resize', updateSliders);
+    
+    // 添加文件唯一标识生成函数
+function generateFileIdentifier() {
+    try {
+        // 获取文件内容的前1000个字符作为内容指纹
+        const content = document.documentElement.outerHTML.substring(0, 1000);
+        // 简化URL路径作为位置标识
+        const path = window.location.href.split('/').slice(-2).join('/');
+        // 结合内容和路径生成哈希
+        const combined = content + path;
+        let hash = 0;
+        for (let i = 0; i < combined.length; i++) {
+            const char = combined.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // 转换为32位整数
+        }
+        return 'file_' + Math.abs(hash).toString(36);
+    } catch (e) {
+        console.error('Failed to generate file identifier:', e);
+        return 'fallback_' + Date.now();
+    }
+}
+
+    // 初始化渲染
+    renderTable();
+  </script>
+</body>
+</html>

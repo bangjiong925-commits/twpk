@@ -14,6 +14,14 @@
     {
       "src": "/health",
       "dest": "/backend-example.js"
+    },
+    {
+      "src": "/",
+      "dest": "/TWPK.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ],
   "env": {

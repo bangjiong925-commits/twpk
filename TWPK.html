@@ -113,7 +113,7 @@
 <body class="bg-gray-50 font-sans text-dark min-h-screen flex flex-col">
   <!-- 密钥倒计时通知栏 -->
   <div id="keyCountdown" class="bg-primary text-white py-2 px-4 text-center hidden">
-    <span>密钥有效期剩余: <strong id="daysRemaining">0</strong> 天</span>
+    <span>密钥有效期剩余: <strong id="timeRemaining">0天 0小时 0分钟 0秒</strong></span>
   </div>
   
   <!-- 顶部导航 -->
@@ -1045,29 +1045,60 @@ singleSelect(Array.from(numButtons.children));
 multiToggle(Array.from(hitButtons.children));
 
 // 密钥倒计时更新函数
+let countdownInterval = null;
+
 function updateKeyCountdown(expirationTimestamp) {
-    const now = new Date();
-    const expirationDate = new Date(expirationTimestamp * 1000);
-    const timeDiff = expirationDate - now;
-    
-    // 计算剩余天数（向上取整）
-    const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-    
-    // 更新显示
     const countdownEl = document.getElementById('keyCountdown');
-    const daysEl = document.getElementById('daysRemaining');
+    const timeEl = document.getElementById('timeRemaining');
     
-    daysEl.textContent = daysRemaining;
+    // 清除之前的定时器
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+    
+    function updateDisplay() {
+        const now = new Date();
+        const expirationDate = new Date(expirationTimestamp * 1000);
+        const timeDiff = expirationDate - now;
+        
+        if (timeDiff <= 0) {
+            // 密钥已过期
+            timeEl.textContent = '已过期';
+            countdownEl.classList.remove('bg-primary', 'bg-amber-500');
+            countdownEl.classList.add('bg-red-500');
+            clearInterval(countdownInterval);
+            return;
+        }
+        
+        // 计算剩余时间
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+        
+        // 更新显示
+        timeEl.textContent = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+        
+        // 设置样式（根据剩余时间改变背景色）
+        const totalHours = days * 24 + hours;
+        if (totalHours <= 24) {
+            countdownEl.classList.remove('bg-primary', 'bg-amber-500');
+            countdownEl.classList.add('bg-red-500');
+        } else if (totalHours <= 72) {
+            countdownEl.classList.remove('bg-primary', 'bg-red-500');
+            countdownEl.classList.add('bg-amber-500');
+        } else {
+            countdownEl.classList.remove('bg-amber-500', 'bg-red-500');
+            countdownEl.classList.add('bg-primary');
+        }
+    }
+    
+    // 立即更新一次
+    updateDisplay();
     countdownEl.classList.remove('hidden');
     
-    // 设置样式（根据剩余天数改变背景色）
-    if (daysRemaining <= 3) {
-        countdownEl.classList.remove('bg-primary');
-        countdownEl.classList.add('bg-amber-500');
-    } else if (daysRemaining <= 1) {
-        countdownEl.classList.remove('bg-primary', 'bg-amber-500');
-        countdownEl.classList.add('bg-red-500');
-    }
+    // 每秒更新一次
+    countdownInterval = setInterval(updateDisplay, 1000);
 }
 
 // 添加设备指纹生成函数（从密钥生成器复制）

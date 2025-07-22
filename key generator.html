@@ -43,10 +43,10 @@
                 <div class="grid grid-cols-2 gap-3" id="durationButtons">
                     <button data-minutes="1" class="px-4 py-3 border rounded-lg btn-hover btn-active">1分钟</button>
                     <button data-days="3" class="px-4 py-3 border rounded-lg btn-hover">3天</button>
+                    <button data-days="7" class="px-4 py-3 border rounded-lg btn-hover">7天</button>
                     <button data-days="30" class="px-4 py-3 border rounded-lg btn-hover">30天</button>
                     <button data-days="90" class="px-4 py-3 border rounded-lg btn-hover">90天</button>
                     <button data-days="365" class="px-4 py-3 border rounded-lg btn-hover">365天</button>
-                    <button data-days="300" class="px-4 py-3 border rounded-lg btn-hover">300天</button>
                 </div>
             </div>
             
@@ -134,14 +134,13 @@
         // 生成安全密钥
         // 添加设备指纹生成函数
         function generateDeviceFingerprint() {
-            // 收集设备特征值（可根据需求扩展）
-            const userAgent = navigator.userAgent;
+            // 收集设备特征值（使用更宽松的指纹，允许跨浏览器使用）
             const screenResolution = screen.width + 'x' + screen.height;
             const timezoneOffset = new Date().getTimezoneOffset();
-            const language = navigator.language;
+            const language = navigator.language || 'zh-CN';
             
-            // 组合特征并哈希
-            const fingerprintRaw = userAgent + screenResolution + timezoneOffset + language;
+            // 使用更通用的特征组合，移除userAgent以支持跨浏览器
+            const fingerprintRaw = screenResolution + timezoneOffset + language;
             let hash = 0;
             for (let i = 0; i < fingerprintRaw.length; i++) {
                 const char = fingerprintRaw.charCodeAt(i);
@@ -199,9 +198,9 @@
             const salts = {
                 [1/(24*60)]: 'z9y8', // 1分钟
                 3: 'a1b2',
+                7: 'k2l3',
                 30: 'c3d4',
                 90: 'g7h8',
-                300: 'e5f6',
                 365: 'i9j0'
             };
             

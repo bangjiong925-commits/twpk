@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Fix current hit mode to display current hit count instead of miss count
+Deploy trigger: 2024-12-19 Increase custom period limit from 1000 to 10000

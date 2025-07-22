@@ -236,7 +236,7 @@
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="50">50期</button>
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="100">100期</button>
             <div class="flex items-center gap-1">
-              <input type="number" id="customPeriod" min="1" max="1000" value="30" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <input type="number" id="customPeriod" min="1" max="10000" value="30" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
               <button id="customPeriodBtn" class="px-3 py-1 rounded-md bg-gray-200 btn-hover">自定义</button>
             </div>
           </div>
@@ -2175,14 +2175,14 @@ function manualCalc() {
     // 自定义期数按钮
     document.getElementById('customPeriodBtn').addEventListener('click', () => {
       const customVal = parseInt(document.getElementById('customPeriod').value);
-      if (!isNaN(customVal) && customVal >= 1 && customVal <= 1000) {
+      if (!isNaN(customVal) && customVal >= 1 && customVal <= 10000) {
         displayPeriods = customVal;
         // 移除所有按钮的激活状态
         periodBtns.forEach(b => b.classList.remove('btn-active'));
         // 重新渲染表格
         renderTable();
       } else {
-        alert('请输入1-1000之间的数字');
+        alert('请输入1-10000之间的数字');
       }
     });
     

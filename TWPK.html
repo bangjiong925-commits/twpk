@@ -959,6 +959,7 @@ function removeModule(moduleId) {
       <div class="text-center mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-2">请输入访问密钥</h3>
         <p class="text-gray-600">该功能需要有效的访问密钥才能使用</p>
+        <p class="text-sm text-gray-500 mt-2">请联系管理员获取有效密钥</p>
       </div>
       
       <div class="mb-4">
@@ -1267,14 +1268,26 @@ window.addEventListener('load', function() {
         const validKey = localStorage.getItem(`validKey_${fileId}`);
         const keyExpiry = localStorage.getItem(`keyExpiry_${fileId}`);
         
-        if (validKey && keyExpiry && Math.floor(new Date().getTime() / 1000) < parseInt(keyExpiry)) {
-            // 密钥有效，直接更新倒计时
-            isKeyValid = true;
-            updateKeyCountdown(parseInt(keyExpiry));
-            KEY_MODAL.classList.add('hidden');
-            KEY_MODAL.style.display = 'none';
+        if (validKey && keyExpiry) {
+            const currentTime = Math.floor(new Date().getTime() / 1000);
+            const expiryTime = parseInt(keyExpiry);
+            
+            if (currentTime < expiryTime) {
+                // 密钥有效，直接更新倒计时
+                isKeyValid = true;
+                updateKeyCountdown(expiryTime);
+                KEY_MODAL.classList.add('hidden');
+                KEY_MODAL.style.display = 'none';
+            } else {
+                // 密钥已过期，清除本地存储并显示过期提示
+                localStorage.removeItem(`validKey_${fileId}`);
+                localStorage.removeItem(`keyExpiry_${fileId}`);
+                alert('您的密钥已过期，请重新验证新的密钥');
+                KEY_MODAL.classList.remove('hidden');
+                KEY_MODAL.style.display = 'flex';
+            }
         } else {
-            // 密钥无效或不存在，显示验证模态框
+            // 密钥不存在，显示验证模态框
             KEY_MODAL.classList.remove('hidden');
             KEY_MODAL.style.display = 'flex';
         }

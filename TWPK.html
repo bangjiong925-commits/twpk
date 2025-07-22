@@ -1087,22 +1087,109 @@ function generateDeviceFingerprint() {
     return Math.abs(hash).toString(36);
 }
 
+/*
+跨平台密钥一次性验证实现说明：
+
+当前实现：
+- 使用localStorage作为本地存储，确保在同一浏览器中密钥只能使用一次
+- 包含云端API调用框架，但目前使用httpbin.org作为演示
+
+真正的跨平台实现需要：
+1. 部署专门的后端服务（如Node.js + MongoDB/Redis）
+2. 创建API端点：
+   - GET /api/nonce/check/{nonce} - 检查nonce是否已使用
+   - POST /api/nonce/mark - 标记nonce为已使用
+3. 在后端维护全局的已使用nonce数据库
+4. 可选：添加nonce过期清理机制
+
+部署建议：
+- 使用免费的云服务如Vercel、Netlify Functions、Railway等
+- 数据库可使用MongoDB Atlas、Redis Cloud等免费方案
+- 确保API具有适当的速率限制和安全措施
+*/
+
+// 跨平台nonce验证API函数
+async function checkNonceUsed(nonce) {
+    try {
+        // 使用本地后端服务进行验证
+        const response = await fetch(`http://localhost:3000/api/nonce/check/${encodeURIComponent(nonce)}`, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'TWPK-KeyValidator/1.0'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('云端验证响应:', data);
+            return { used: data.used };
+        }
+        
+        // 如果API不可用，回退到localStorage
+        const localNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
+        return { used: localNonces.includes(nonce) };
+    } catch (error) {
+        console.warn('云端验证失败，使用本地验证:', error);
+        // 回退到localStorage
+        const localNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
+        return { used: localNonces.includes(nonce) };
+    }
+}
+
+// 记录已使用的nonce到云端
+async function markNonceAsUsed(nonce) {
+    try {
+        // 使用本地后端服务记录已使用的nonce
+        const response = await fetch(`http://localhost:3000/api/nonce/mark`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': 'TWPK-KeyValidator/1.0'
+            },
+            body: JSON.stringify({ 
+                nonce: nonce
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('nonce已成功记录到云端:', data);
+            return { success: true };
+        } else {
+            console.warn('云端记录失败，使用本地记录');
+        }
+    } catch (error) {
+        console.warn('云端记录失败，使用本地记录:', error);
+    }
+    
+    // 云端记录失败时，使用本地记录作为备份
+    const localNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
+    if (!localNonces.includes(nonce)) {
+        localNonces.push(nonce);
+        localStorage.setItem('usedNonces', JSON.stringify(localNonces));
+        console.log('本地记录nonce:', nonce);
+    }
+    return { success: true };
+}
+
 // 密钥验证按钮事件
 const verifyKeyBtn = document.getElementById('verifyKeyBtn');
-verifyKeyBtn.addEventListener('click', function() {
+verifyKeyBtn.addEventListener('click', async function() {
     const key = KEY_INPUT.value.trim();
     if (!key) {
         alert('请输入密钥');
         return;
     }
     
+    // 显示验证中状态
+    this.disabled = true;
+    this.textContent = '验证中...';
+    
     try {
-        const result = verifyKey(key);
+        const result = await verifyKey(key);
         if (result.valid) {
-            // 记录已使用的nonce
-            const usedNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
-            usedNonces.push(result.data.nonce);
-            localStorage.setItem('usedNonces', JSON.stringify(usedNonces));
+            // 记录已使用的nonce到云端
+            await markNonceAsUsed(result.data.nonce);
             
             // 使用文件唯一标识存储密钥
             const fileId = generateFileIdentifier();
@@ -1122,6 +1209,10 @@ verifyKeyBtn.addEventListener('click', function() {
     } catch (e) {
         console.error('密钥验证过程出错:', e);
         alert('验证过程中发生错误: ' + e.message);
+    } finally {
+        // 恢复按钮状态
+        this.disabled = false;
+        this.textContent = '验证密钥';
     }
 });
 
@@ -1183,7 +1274,7 @@ function parseInput(line) {
     }
 
 // 密钥验证函数
-function verifyKey(key) {
+async function verifyKey(key) {
     try {
         // 分步解码并添加错误捕获
         const decodedB64 = atob(key);
@@ -1208,15 +1299,11 @@ function verifyKey(key) {
             return { valid: false, reason: '此密钥不可在当前设备使用' };
         }
 
-        // 检查密钥是否已被使用（增强版）
-        const usedNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
-        if (usedNonces.includes(keyData.nonce)) {
-            return { valid: false, reason: '密钥已被使用' };
+        // 检查密钥是否已被使用（跨平台验证）
+        const nonceCheckResult = await checkNonceUsed(keyData.nonce);
+        if (nonceCheckResult.used) {
+            return { valid: false, reason: '密钥已被使用，每个密钥只能使用一次' };
         }
-        
-        // 添加防重放检查：验证通过后立即记录nonce
-        usedNonces.push(keyData.nonce);
-        localStorage.setItem('usedNonces', JSON.stringify(usedNonces));
         
         return { valid: true, data: keyData };
     } catch (e) {

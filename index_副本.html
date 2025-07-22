@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台湾PK密钥验证系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // 3秒后自动跳转
+        setTimeout(function() {
+            window.location.href = './TWPK.html';
+        }, 3000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 台湾PK密钥验证系统</h1>
+        <p><span class="loading"></span>正在加载验证系统...</p>
+        <p>系统将在3秒后自动跳转</p>
+        <div>
+            <a href="./TWPK.html" class="btn">立即进入验证系统</a>
+            <a href="./key generator.html" class="btn">密钥生成器</a>
+        </div>
+        <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+            跨平台密钥一次性验证工具<br>
+            支持多平台访问，安全可靠
+        </p>
+    </div>
+</body>
+</html>

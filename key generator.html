@@ -41,7 +41,7 @@
             <div class="mb-6">
                 <label class="block text-gray-700 font-medium mb-2">选择密钥有效期</label>
                 <div class="grid grid-cols-2 gap-3" id="durationButtons">
-                    <button data-days="1" class="px-4 py-3 border rounded-lg btn-hover">1天</button>
+                    <button data-minutes="1" class="px-4 py-3 border rounded-lg btn-hover">1分钟</button>
                     <button data-days="3" class="px-4 py-3 border rounded-lg btn-hover btn-active">3天</button>
                     <button data-days="30" class="px-4 py-3 border rounded-lg btn-hover">30天</button>
                     <button data-days="90" class="px-4 py-3 border rounded-lg btn-hover">90天</button>
@@ -86,7 +86,11 @@
             btn.addEventListener('click', () => {
                 durationButtons.forEach(b => b.classList.remove('btn-active'));
                 btn.classList.add('btn-active');
-                selectedDays = parseInt(btn.dataset.days);
+                if (btn.dataset.minutes) {
+                    selectedDays = parseInt(btn.dataset.minutes) / (24 * 60); // 转换分钟为天数
+                } else {
+                    selectedDays = parseInt(btn.dataset.days);
+                }
             });
         });
         
@@ -151,7 +155,12 @@
         function generateSecureKey(days) {
             // 添加缺失的变量定义
             const expirationDate = new Date();
-            expirationDate.setDate(expirationDate.getDate() + days);
+            if (days < 1) {
+                // 如果是分钟级别，使用分钟计算
+                expirationDate.setMinutes(expirationDate.getMinutes() + Math.round(days * 24 * 60));
+            } else {
+                expirationDate.setDate(expirationDate.getDate() + days);
+            }
             
             // 生成更强的24字节随机nonce
             const nonceArray = new Uint8Array(24);
@@ -188,7 +197,7 @@
         function generateIdentifier(days) {
             // 使用不同的盐值确保不同有效期的密钥不会有重复片段
             const salts = {
-                1: 'z9y8',
+                [1/(24*60)]: 'z9y8', // 1分钟
                 3: 'a1b2',
                 30: 'c3d4',
                 90: 'g7h8',

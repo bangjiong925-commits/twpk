@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Add history toggle button for max miss/hit stats with sorting
+Deploy trigger: 2024-12-19 Fix syntax errors in history toggle functionality

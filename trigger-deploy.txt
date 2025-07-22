@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Fix reversed logic for current/history toggle modes
+Deploy trigger: 2024-12-19 Swap button labels: current to history, history to current

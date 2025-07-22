@@ -221,8 +221,8 @@
             <div class="flex gap-1">
               <!-- 当前/历史切换 -->
               <div class="flex rounded-md overflow-hidden border border-gray-300">
-                <button id="currentBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm">当前</button>
-                <button id="historyBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm btn-active">历史</button>
+                <button id="currentBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm">历史</button>
+                <button id="historyBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm btn-active">当前</button>
               </div>
               <!-- 遗漏/连中切换 -->
               <div class="flex rounded-md overflow-hidden border border-gray-300">
@@ -1649,16 +1649,7 @@ function manualCalc() {
       
       // 排序 - 根据历史切换状态和排序方式进行排序
       const sortedKeys = keys.slice().sort((a, b) => {
-        if (!showHistoryMax) {
-          // 当前模式
-          if (!sortByHit) {
-            // 当前遗漏：按当前最小遗漏从左往右排序（遗漏低的在前）
-            return currMiss[a] - currMiss[b] || currHit[b] - currHit[a];
-          } else {
-            // 当前连中：按当前最大连中从左往右排序（连中高的在前）
-            return currHit[b] - currHit[a] || currMiss[a] - currMiss[b];
-          }
-        } else {
+        if (showHistoryMax) {
           // 历史模式
           const { maxHit: maxHitA, maxMiss: maxMissA } = maxStats[a];
           const { maxHit: maxHitB, maxMiss: maxMissB } = maxStats[b];
@@ -1669,6 +1660,15 @@ function manualCalc() {
           } else {
             // 历史遗漏：按历史最小遗漏从左往右排序（遗漏低的在前）
             return maxMissA - maxMissB || maxHitB - maxHitA;
+          }
+        } else {
+          // 当前模式
+          if (sortByHit) {
+            // 当前连中：按当前最大连中从左往右排序（连中高的在前）
+            return currHit[b] - currHit[a] || currMiss[a] - currMiss[b];
+          } else {
+            // 当前遗漏：按当前最小遗漏从左往右排序（遗漏低的在前）
+            return currMiss[a] - currMiss[b] || currHit[b] - currHit[a];
           }
         }
       });
@@ -1701,22 +1701,7 @@ function manualCalc() {
         const th = document.createElement('th');
         th.className = 'px-3 py-2 text-center border-r border-gray-200';
         
-        if (!showHistoryMax) {
-          // 当前模式
-          if (!sortByHit) {
-            // 当前遗漏：显示当前最大遗漏
-            th.innerHTML = `
-              <div class="font-medium">${key}</div>
-              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
-            `;
-          } else {
-            // 当前连中：显示当前最大遗漏
-            th.innerHTML = `
-              <div class="font-medium">${key}</div>
-              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
-            `;
-          }
-        } else {
+        if (showHistoryMax) {
           // 历史模式
           if (sortByHit) {
             // 历史连中：显示历史最大连中
@@ -1729,6 +1714,21 @@ function manualCalc() {
             th.innerHTML = `
               <div class="font-medium">${key}</div>
               <div class="text-xs text-gray-500">漏:${maxMiss}</div>
+            `;
+          }
+        } else {
+          // 当前模式
+          if (sortByHit) {
+            // 当前连中：显示当前最大遗漏
+            th.innerHTML = `
+              <div class="font-medium">${key}</div>
+              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
+            `;
+          } else {
+            // 当前遗漏：显示当前最大遗漏
+            th.innerHTML = `
+              <div class="font-medium">${key}</div>
+              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
             `;
           }
         }

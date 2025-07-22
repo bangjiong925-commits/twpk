@@ -1650,25 +1650,25 @@ function manualCalc() {
       // 排序 - 根据历史切换状态和排序方式进行排序
       const sortedKeys = keys.slice().sort((a, b) => {
         if (showHistoryMax) {
-          // 显示历史最大遗漏时的排序
-          if (sortByHit) {
-            // 按连中次数排序：连中次数高的在前，如果相同则按遗漏次数高的在前
-            return currHit[b] - currHit[a] || currMiss[b] - currMiss[a];
-          } else {
-            // 按遗漏次数排序：遗漏次数高的在前，如果相同则按连中次数高的在前
-            return currMiss[b] - currMiss[a] || currHit[b] - currHit[a];
-          }
-        } else {
-          // 显示历史最大连中时的排序
+          // 历史模式
           const { maxHit: maxHitA, maxMiss: maxMissA } = maxStats[a];
           const { maxHit: maxHitB, maxMiss: maxMissB } = maxStats[b];
           
           if (sortByHit) {
-            // 历史最大连中从左往右排序（连中高的在前）
+            // 历史连中：按历史最大连中从左往右排序（连中高的在前）
             return maxHitB - maxHitA || maxMissA - maxMissB;
           } else {
-            // 历史最小遗漏从左往右排序（遗漏低的在前）
+            // 历史遗漏：按历史最小遗漏从左往右排序（遗漏低的在前）
             return maxMissA - maxMissB || maxHitB - maxHitA;
+          }
+        } else {
+          // 当前模式
+          if (sortByHit) {
+            // 当前连中：按当前最大连中从左往右排序（连中高的在前）
+            return currHit[b] - currHit[a] || currMiss[a] - currMiss[b];
+          } else {
+            // 当前遗漏：按当前最小遗漏从左往右排序（遗漏低的在前）
+            return currMiss[a] - currMiss[b] || currHit[b] - currHit[a];
           }
         }
       });
@@ -1695,24 +1695,42 @@ function manualCalc() {
         <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>
       `;
       
-      // 添加组合列 - 根据切换状态显示历史最大遗漏或连中
+      // 添加组合列 - 根据切换状态显示对应的数据
       sortedKeys.forEach(key => {
         const { maxHit, maxMiss } = maxStats[key];
         const th = document.createElement('th');
         th.className = 'px-3 py-2 text-center border-r border-gray-200';
         
         if (showHistoryMax) {
-          // 显示历史最大连中
-          th.innerHTML = `
-            <div class="font-medium">${key}</div>
-            <div class="text-xs text-gray-500">连:${maxHit}</div>
-          `;
+          // 历史模式
+          if (sortByHit) {
+            // 历史连中：显示历史最大连中
+            th.innerHTML = `
+              <div class="font-medium">${key}</div>
+              <div class="text-xs text-gray-500">连:${maxHit}</div>
+            `;
+          } else {
+            // 历史遗漏：显示历史最大遗漏
+            th.innerHTML = `
+              <div class="font-medium">${key}</div>
+              <div class="text-xs text-gray-500">漏:${maxMiss}</div>
+            `;
+          }
         } else {
-          // 显示历史最大遗漏
-          th.innerHTML = `
-            <div class="font-medium">${key}</div>
-            <div class="text-xs text-gray-500">漏:${maxMiss}</div>
-          `;
+          // 当前模式
+          if (sortByHit) {
+            // 当前连中：显示当前最大遗漏
+            th.innerHTML = `
+              <div class="font-medium">${key}</div>
+              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
+            `;
+          } else {
+            // 当前遗漏：显示当前最大遗漏
+            th.innerHTML = `
+              <div class="font-medium">${key}</div>
+              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
+            `;
+          }
         }
         headerRow.appendChild(th);
       });

@@ -1,30 +1,3 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "backend-example.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend-example.js"
-    },
-    {
-      "src": "/health",
-      "dest": "/backend-example.js"
-    },
-    {
-      "src": "/",
-      "dest": "/TWPK.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
-  "env": {
-    "REDIS_URL": "redis://default:Aeq3AAIjcDFjZGM4ZGIwMDc2YzI0MjljOTdiNTEzYjAxZGQ3MDkyZXAxMA@generous-cardinal-60087.upstash.io:6379"
-  }
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

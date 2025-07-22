@@ -1719,13 +1719,13 @@ function manualCalc() {
         } else {
           // 当前模式
           if (sortByHit) {
-            // 当前连中：显示当前最大遗漏
+            // 当前连中：显示当前连中
             th.innerHTML = `
               <div class="font-medium">${key}</div>
-              <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>
+              <div class="text-xs text-gray-500">连:${currHit[key]}</div>
             `;
           } else {
-            // 当前遗漏：显示当前最大遗漏
+            // 当前遗漏：显示当前遗漏
             th.innerHTML = `
               <div class="font-medium">${key}</div>
               <div class="text-xs text-gray-500">漏:${currMiss[key]}</div>

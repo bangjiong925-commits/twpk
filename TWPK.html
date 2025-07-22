@@ -1067,6 +1067,18 @@ function updateKeyCountdown(expirationTimestamp) {
             countdownEl.classList.remove('bg-primary', 'bg-amber-500');
             countdownEl.classList.add('bg-red-500');
             clearInterval(countdownInterval);
+            
+            // 清除本地存储的密钥信息
+            const fileId = generateFileIdentifier();
+            localStorage.removeItem(`validKey_${fileId}`);
+            localStorage.removeItem(`keyExpiry_${fileId}`);
+            isKeyValid = false;
+            
+            // 3秒后自动刷新页面
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+            
             return;
         }
         

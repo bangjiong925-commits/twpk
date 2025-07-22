@@ -1113,22 +1113,11 @@ function updateKeyCountdown(expirationTimestamp) {
     countdownInterval = setInterval(updateDisplay, 1000);
 }
 
-// 添加设备指纹生成函数（从密钥生成器复制）
+// 添加设备指纹生成函数（使用通用指纹支持跨设备使用）
 function generateDeviceFingerprint() {
-    // 收集设备特征值（使用更宽松的指纹，允许跨浏览器使用）
-    const screenResolution = screen.width + 'x' + screen.height;
-    const timezoneOffset = new Date().getTimezoneOffset();
-    const language = navigator.language || 'zh-CN';
-    
-    // 使用更通用的特征组合，移除userAgent以支持跨浏览器
-    const fingerprintRaw = screenResolution + timezoneOffset + language;
-    let hash = 0;
-    for (let i = 0; i < fingerprintRaw.length; i++) {
-        const char = fingerprintRaw.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // 转换为32位整数
-    }
-    return Math.abs(hash).toString(36);
+    // 使用固定的通用指纹，允许密钥在任何设备上使用
+    // 这样可以确保密钥的跨设备兼容性
+    return 'universal_device_2024';
 }
 
 /*

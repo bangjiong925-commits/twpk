@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Fix 404 issue - Force redeploy with correct config
+Deploy trigger: 2024-12-19 Fix cross-device compatibility - Universal device fingerprint

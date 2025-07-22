@@ -17,7 +17,7 @@
     },
     {
       "src": "/",
-      "dest": "/TWPK.html"
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",

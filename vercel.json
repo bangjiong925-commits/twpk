@@ -4,10 +4,6 @@
     {
       "src": "backend-example.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "TWPK.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -18,10 +14,6 @@
     {
       "src": "/health",
       "dest": "/backend-example.js"
-    },
-    {
-      "src": "/",
-      "dest": "/TWPK.html"
     }
   ],
   "env": {

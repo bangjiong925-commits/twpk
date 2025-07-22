@@ -1255,10 +1255,10 @@ window.addEventListener('load', function() {
         const validKey = localStorage.getItem(`validKey_${fileId}`);
         const keyExpiry = localStorage.getItem(`keyExpiry_${fileId}`);
         
-        if (validKey && keyExpiry && Math.floor(new Date().getTime() / 1000) < keyExpiry) {
+        if (validKey && keyExpiry && Math.floor(new Date().getTime() / 1000) < parseInt(keyExpiry)) {
             // 密钥有效，直接更新倒计时
             isKeyValid = true;
-            updateKeyCountdown(keyExpiry);
+            updateKeyCountdown(parseInt(keyExpiry));
             KEY_MODAL.classList.add('hidden');
             KEY_MODAL.style.display = 'none';
         } else {

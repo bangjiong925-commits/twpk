@@ -217,9 +217,19 @@
         <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
           <div class="flex items-center gap-3">
             <h2 class="text-lg font-semibold">数据分析结果</h2>
-            <button id="historyToggleBtn" class="px-3 py-1 rounded-md bg-blue-600 text-white btn-hover text-sm">
-              <span id="historyToggleText">历史最大遗漏</span>
-            </button>
+            <!-- 统一的按钮组 -->
+            <div class="flex gap-1">
+              <!-- 当前/历史切换 -->
+              <div class="flex rounded-md overflow-hidden border border-gray-300">
+                <button id="currentBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm btn-active">当前</button>
+                <button id="historyBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm">历史</button>
+              </div>
+              <!-- 遗漏/连中切换 -->
+              <div class="flex rounded-md overflow-hidden border border-gray-300">
+                <button id="missBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm">遗漏</button>
+                <button id="hitBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm btn-active">连中</button>
+              </div>
+            </div>
           </div>
           <div class="flex flex-wrap gap-2">
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="30">30期</button>
@@ -1908,10 +1918,42 @@ function manualCalc() {
       renderTable();
     });
     
-    // 绑定历史切换按钮事件
-    document.getElementById('historyToggleBtn').addEventListener('click', () => {
-      showHistoryMax = !showHistoryMax;
-      document.getElementById('historyToggleText').textContent = showHistoryMax ? '历史最大连中' : '历史最大遗漏';
+    // 绑定新的按钮组事件
+    // 当前/历史切换
+    document.getElementById('currentBtn').addEventListener('click', () => {
+      showHistoryMax = true;
+      document.getElementById('currentBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('currentBtn').classList.remove('bg-blue-600', 'text-white');
+      document.getElementById('historyBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('historyBtn').classList.add('bg-blue-600', 'text-white');
+      renderTable();
+    });
+    
+    document.getElementById('historyBtn').addEventListener('click', () => {
+      showHistoryMax = false;
+      document.getElementById('historyBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('historyBtn').classList.remove('bg-blue-600', 'text-white');
+      document.getElementById('currentBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('currentBtn').classList.add('bg-blue-600', 'text-white');
+      renderTable();
+    });
+    
+    // 遗漏/连中切换
+    document.getElementById('missBtn').addEventListener('click', () => {
+      sortByHit = false;
+      document.getElementById('missBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('missBtn').classList.remove('bg-blue-600', 'text-white');
+      document.getElementById('hitBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('hitBtn').classList.add('bg-blue-600', 'text-white');
+      renderTable();
+    });
+    
+    document.getElementById('hitBtn').addEventListener('click', () => {
+      sortByHit = true;
+      document.getElementById('hitBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('hitBtn').classList.remove('bg-blue-600', 'text-white');
+      document.getElementById('missBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
+      document.getElementById('missBtn').classList.add('bg-blue-600', 'text-white');
       renderTable();
     });
     

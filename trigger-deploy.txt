@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Fix syntax errors in history toggle functionality
+Deploy trigger: 2024-12-19 Redesign history toggle buttons with unified UI

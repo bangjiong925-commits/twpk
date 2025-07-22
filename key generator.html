@@ -41,8 +41,8 @@
             <div class="mb-6">
                 <label class="block text-gray-700 font-medium mb-2">选择密钥有效期</label>
                 <div class="grid grid-cols-2 gap-3" id="durationButtons">
-                    <button data-minutes="1" class="px-4 py-3 border rounded-lg btn-hover">1分钟</button>
-                    <button data-days="3" class="px-4 py-3 border rounded-lg btn-hover btn-active">3天</button>
+                    <button data-minutes="1" class="px-4 py-3 border rounded-lg btn-hover btn-active">1分钟</button>
+                    <button data-days="3" class="px-4 py-3 border rounded-lg btn-hover">3天</button>
                     <button data-days="30" class="px-4 py-3 border rounded-lg btn-hover">30天</button>
                     <button data-days="90" class="px-4 py-3 border rounded-lg btn-hover">90天</button>
                     <button data-days="365" class="px-4 py-3 border rounded-lg btn-hover">365天</button>
@@ -73,7 +73,7 @@
 
     <script>
         // 全局变量
-        let selectedDays = 3;
+        let selectedDays = 1/(24*60); // 默认1分钟
         
         // DOM元素
         const durationButtons = document.querySelectorAll('#durationButtons button');

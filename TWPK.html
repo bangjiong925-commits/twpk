@@ -215,7 +215,12 @@
       <!-- 结果表格 -->
       <section class="bg-white rounded-lg shadow-md p-5 overflow-x-auto relative">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
-          <h2 class="text-lg font-semibold">数据分析结果</h2>
+          <div class="flex items-center gap-3">
+            <h2 class="text-lg font-semibold">数据分析结果</h2>
+            <button id="historyToggleBtn" class="px-3 py-1 rounded-md bg-blue-600 text-white btn-hover text-sm">
+              <span id="historyToggleText">历史最大遗漏</span>
+            </button>
+          </div>
           <div class="flex flex-wrap gap-2">
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="30">30期</button>
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="50">50期</button>
@@ -983,6 +988,7 @@ function removeModule(moduleId) {
     let fileReaderTimer = null;
     let sortByHit = true; // true=按连中次数排序, false=按遗漏次数排序
     let displayPeriods = 30; // 默认显示30期数据
+    let showHistoryMax = true; // true=显示历史最大遗漏, false=显示历史最大连中
 
 // 密钥验证相关变量
 let isKeyValid = false;
@@ -1631,16 +1637,31 @@ function manualCalc() {
       const currHit = getCurrentHitStreaks(rows, keys);
       const currMiss = getCurrentMissStreaks(rows, keys);
       
-      // 排序 - 严格按照最新一期开始的连中次数或遗漏次数排序
+      // 排序 - 根据历史切换状态和排序方式进行排序
       const sortedKeys = keys.slice().sort((a, b) => {
-        if (sortByHit) {
-          // 按连中次数排序：连中次数高的在前，如果相同则按遗漏次数高的在前
-          return currHit[b] - currHit[a] || currMiss[b] - currMiss[a];
+        if (showHistoryMax) {
+          // 显示历史最大遗漏时的排序
+          if (sortByHit) {
+            // 按连中次数排序：连中次数高的在前，如果相同则按遗漏次数高的在前
+            return currHit[b] - currHit[a] || currMiss[b] - currMiss[a];
+          } else {
+            // 按遗漏次数排序：遗漏次数高的在前，如果相同则按连中次数高的在前
+            return currMiss[b] - currMiss[a] || currHit[b] - currHit[a];
+          }
         } else {
-          // 按遗漏次数排序：遗漏次数高的在前，如果相同则按连中次数高的在前
-          return currMiss[b] - currMiss[a] || currHit[b] - currHit[a];
+          // 显示历史最大连中时的排序
+          const { maxHit: maxHitA, maxMiss: maxMissA } = maxStats[a];
+          const { maxHit: maxHitB, maxMiss: maxMissB } = maxStats[b];
+          
+          if (sortByHit) {
+            // 历史最大连中从左往右排序（连中高的在前）
+            return maxHitB - maxHitA || maxMissB - maxMissA;
+          } else {
+            // 历史最小连挂从左往右排序（连挂低的在前）
+            return maxMissA - maxMissB || maxHitB - maxHitA;
+          }
         }
-      });
+      });}]}}}
       
       // 更新按钮文字
       document.getElementById('sortText').textContent = sortByHit
@@ -1664,18 +1685,27 @@ function manualCalc() {
         <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>
       `;
       
-      // 添加组合列 - 完全移除了"现连"和"现漏"显示
+      // 添加组合列 - 根据切换状态显示历史最大遗漏或连中
       sortedKeys.forEach(key => {
         const { maxHit, maxMiss } = maxStats[key];
         const th = document.createElement('th');
         th.className = 'px-3 py-2 text-center border-r border-gray-200';
-        th.innerHTML = `
-          <div class="font-medium">${key}</div>
-          <div class="text-xs text-gray-500">连:${maxHit}</div>
-          <div class="text-xs text-gray-500">漏:${maxMiss}</div>
-        `;
+        
+        if (showHistoryMax) {
+          // 显示历史最大遗漏
+          th.innerHTML = `
+            <div class="font-medium">${key}</div>
+            <div class="text-xs text-gray-500">漏:${maxMiss}</div>
+          `;
+        } else {
+          // 显示历史最大连中
+          th.innerHTML = `
+            <div class="font-medium">${key}</div>
+            <div class="text-xs text-gray-500">连:${maxHit}</div>
+          `;
+        }
         headerRow.appendChild(th);
-      });
+      });}]}}}
       
       thead.appendChild(headerRow);
       
@@ -1875,6 +1905,13 @@ function manualCalc() {
     // 绑定排序按钮事件
     document.getElementById('sortToggle').addEventListener('click', () => {
       sortByHit = !sortByHit;
+      renderTable();
+    });
+    
+    // 绑定历史切换按钮事件
+    document.getElementById('historyToggleBtn').addEventListener('click', () => {
+      showHistoryMax = !showHistoryMax;
+      document.getElementById('historyToggleText').textContent = showHistoryMax ? '历史最大连中' : '历史最大遗漏';
       renderTable();
     });
     

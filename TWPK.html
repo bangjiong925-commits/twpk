@@ -1665,9 +1665,9 @@ function manualCalc() {
           
           if (sortByHit) {
             // 历史最大连中从左往右排序（连中高的在前）
-            return maxHitB - maxHitA || maxMissB - maxMissA;
+            return maxHitB - maxHitA || maxMissA - maxMissB;
           } else {
-            // 历史最小连挂从左往右排序（连挂低的在前）
+            // 历史最小遗漏从左往右排序（遗漏低的在前）
             return maxMissA - maxMissB || maxHitB - maxHitA;
           }
         }
@@ -1922,38 +1922,38 @@ function manualCalc() {
     // 当前/历史切换
     document.getElementById('currentBtn').addEventListener('click', () => {
       showHistoryMax = true;
-      document.getElementById('currentBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('currentBtn').classList.remove('bg-blue-600', 'text-white');
-      document.getElementById('historyBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('historyBtn').classList.add('bg-blue-600', 'text-white');
+      document.getElementById('currentBtn').classList.add('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('currentBtn').classList.remove('bg-gray-200', 'text-gray-700');
+      document.getElementById('historyBtn').classList.remove('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('historyBtn').classList.add('bg-gray-200', 'text-gray-700');
       renderTable();
     });
     
     document.getElementById('historyBtn').addEventListener('click', () => {
       showHistoryMax = false;
-      document.getElementById('historyBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('historyBtn').classList.remove('bg-blue-600', 'text-white');
-      document.getElementById('currentBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('currentBtn').classList.add('bg-blue-600', 'text-white');
+      document.getElementById('historyBtn').classList.add('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('historyBtn').classList.remove('bg-gray-200', 'text-gray-700');
+      document.getElementById('currentBtn').classList.remove('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('currentBtn').classList.add('bg-gray-200', 'text-gray-700');
       renderTable();
     });
     
     // 遗漏/连中切换
     document.getElementById('missBtn').addEventListener('click', () => {
       sortByHit = false;
-      document.getElementById('missBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('missBtn').classList.remove('bg-blue-600', 'text-white');
-      document.getElementById('hitBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('hitBtn').classList.add('bg-blue-600', 'text-white');
+      document.getElementById('missBtn').classList.add('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('missBtn').classList.remove('bg-gray-200', 'text-gray-700');
+      document.getElementById('hitBtn').classList.remove('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('hitBtn').classList.add('bg-gray-200', 'text-gray-700');
       renderTable();
     });
     
     document.getElementById('hitBtn').addEventListener('click', () => {
       sortByHit = true;
-      document.getElementById('hitBtn').classList.add('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('hitBtn').classList.remove('bg-blue-600', 'text-white');
-      document.getElementById('missBtn').classList.remove('btn-active', 'bg-gray-200', 'text-gray-700');
-      document.getElementById('missBtn').classList.add('bg-blue-600', 'text-white');
+      document.getElementById('hitBtn').classList.add('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('hitBtn').classList.remove('bg-gray-200', 'text-gray-700');
+      document.getElementById('missBtn').classList.remove('btn-active', 'bg-blue-600', 'text-white');
+      document.getElementById('missBtn').classList.add('bg-gray-200', 'text-gray-700');
       renderTable();
     });
     

@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Fix button styles and sorting logic for history toggle
+Deploy trigger: 2024-12-19 Fix button default states and display logic for history toggle

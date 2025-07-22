@@ -221,13 +221,13 @@
             <div class="flex gap-1">
               <!-- 当前/历史切换 -->
               <div class="flex rounded-md overflow-hidden border border-gray-300">
-                <button id="currentBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm btn-active">当前</button>
-                <button id="historyBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm">历史</button>
+                <button id="currentBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm">当前</button>
+                <button id="historyBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm btn-active">历史</button>
               </div>
               <!-- 遗漏/连中切换 -->
               <div class="flex rounded-md overflow-hidden border border-gray-300">
-                <button id="missBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm">遗漏</button>
-                <button id="hitBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm btn-active">连中</button>
+                <button id="missBtn" class="px-3 py-1 bg-blue-600 text-white btn-hover text-sm btn-active">遗漏</button>
+                <button id="hitBtn" class="px-3 py-1 bg-gray-200 text-gray-700 btn-hover text-sm">连中</button>
               </div>
             </div>
           </div>
@@ -996,9 +996,9 @@ function removeModule(moduleId) {
     let seenPeriods = new Set();
     let latestCheckedPeriod = null;
     let fileReaderTimer = null;
-    let sortByHit = true; // true=按连中次数排序, false=按遗漏次数排序
+    let sortByHit = false; // true=按连中次数排序, false=按遗漏次数排序
     let displayPeriods = 30; // 默认显示30期数据
-    let showHistoryMax = true; // true=显示历史最大遗漏, false=显示历史最大连中
+    let showHistoryMax = false; // true=显示历史最大遗漏, false=显示历史最大连中
 
 // 密钥验证相关变量
 let isKeyValid = false;
@@ -1702,16 +1702,16 @@ function manualCalc() {
         th.className = 'px-3 py-2 text-center border-r border-gray-200';
         
         if (showHistoryMax) {
-          // 显示历史最大遗漏
-          th.innerHTML = `
-            <div class="font-medium">${key}</div>
-            <div class="text-xs text-gray-500">漏:${maxMiss}</div>
-          `;
-        } else {
           // 显示历史最大连中
           th.innerHTML = `
             <div class="font-medium">${key}</div>
             <div class="text-xs text-gray-500">连:${maxHit}</div>
+          `;
+        } else {
+          // 显示历史最大遗漏
+          th.innerHTML = `
+            <div class="font-medium">${key}</div>
+            <div class="text-xs text-gray-500">漏:${maxMiss}</div>
           `;
         }
         headerRow.appendChild(th);

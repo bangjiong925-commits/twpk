@@ -389,7 +389,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="5">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="5">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="5">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="5">2胆</button>
@@ -398,25 +398,9 @@
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="1" data-group="5">5胆</button>
             </div>
           </div>
-          
-          <!-- 输入区域 -->
-          <div class="flex mb-2">
-            <input type="text" placeholder="输入结果" class="result-input flex-1 border border-gray-300 rounded-l px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" data-module="1">
-            <button class="clear-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm" data-module="1">清</button>
-            <button class="reverse-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm rounded-r" data-module="1">反</button>
-          </div>
-          <div class="text-red-500 text-sm mb-4 result-count" data-module="1">共0注</div>
-          
-          <!-- 操作按钮区域 -->
-          <div class="flex gap-2">
-            <button class="generate-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="1">做号</button>
-            <button class="copy-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="1">复制</button>
-            <button onclick="addModule(1)" class="add-btn w-10 bg-green-600 text-white py-2 rounded hover:bg-green-700" data-module="1">+</button>
-            <button onclick="removeModule(1)" class="remove-btn w-10 bg-red-600 text-white py-2 rounded hover:bg-red-700" data-module="1">-</button>
-          </div>
         </div>
-            
-            <!-- 右侧卡片 - 模块2 (结构与模块1相同，data-module="2") -->
+        
+        <!-- 右侧卡片 - 模块2 (5组筛选条件) -->
         <div id="module2" class="border border-gray-200 rounded-lg p-4 five-star-module">
           <!-- 模块级共享容错选择器 -->
           <div class="flex items-center mb-2 pb-4 border-b">
@@ -431,7 +415,7 @@
           </div>
           
           <!-- 第1组筛选条件 -->
-          <div class="filter-group mb-2 pb-2 border-b">
+          <div class="filter-group mb-2 pb-0 border-b">
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="1">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="1">02</button>
@@ -445,7 +429,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="1">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="1">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="1">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="1">2胆</button>
@@ -456,7 +440,7 @@
           </div>
           
           <!-- 第2组筛选条件 -->
-          <div class="filter-group mb-2 pb-2 border-b">
+          <div class="filter-group mb-2 pb-0 border-b">
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="2">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="2">02</button>
@@ -470,7 +454,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="2">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="2">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="2">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="2">2胆</button>
@@ -481,7 +465,7 @@
           </div>
           
           <!-- 第3组筛选条件 -->
-          <div class="filter-group mb-2 pb-2 border-b">
+          <div class="filter-group mb-2 pb-0 border-b">
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="3">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="3">02</button>
@@ -495,7 +479,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="3">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="3">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="3">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="3">2胆</button>
@@ -506,7 +490,7 @@
           </div>
           
           <!-- 第4组筛选条件 -->
-          <div class="filter-group mb-2 pb-2 border-b">
+          <div class="filter-group mb-2 pb-0 border-b">
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="4">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="4">02</button>
@@ -520,7 +504,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="4">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="4">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="4">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="4">2胆</button>
@@ -545,7 +529,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="2" data-group="5">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="2" data-group="5">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="2" data-group="5">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="2" data-group="5">2胆</button>
@@ -554,49 +538,39 @@
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="5" data-module="2" data-group="5">5胆</button>
             </div>
           </div>
-          
-          <!-- module2 输入区域和操作按钮区域与module1相同 -->
-          <div class="flex mb-2">
-            <input type="text" placeholder="输入结果" class="result-input flex-1 border border-gray-300 rounded-l px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" data-module="2">
-            <button class="clear-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm" data-module="2">清</button>
-            <button class="reverse-btn px-3 border border-gray-300 border-l-0 bg-gray-100 hover:bg-gray-200 text-sm rounded-r" data-module="2">反</button>
-          </div>
-          <div class="text-red-500 text-sm mb-4 result-count" data-module="2">共0注</div>
-          
-          <div class="flex gap-2">
-            <button class="generate-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="2">做号</button>
-            <button class="copy-btn flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700" data-module="2">复制</button>
-            <button onclick="addModule(2)" class="add-btn w-10 bg-green-600 text-white py-2 rounded hover:bg-green-700" data-module="2">+</button>
-            <button onclick="removeModule(2)" class="remove-btn w-10 bg-red-600 text-white py-2 rounded hover:bg-red-700" data-module="2">-</button>
-          </div>
         </div>
-          </div>
+        </div>
+        
+        <!-- 底部操作区域 -->
+        <div class="mt-6 flex flex-wrap gap-4 justify-center">
+          <button id="generateCombos" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/80 transition-colors">
+            <i class="fa fa-magic mr-2"></i>生成组合
+          </button>
+          <button id="clearAll" class="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+            <i class="fa fa-trash mr-2"></i>清空所有
+          </button>
+        </div>
+        
+        <!-- 结果显示区域 -->
+        <div id="fiveStarResults" class="mt-6 bg-gray-50 rounded-lg p-4 hidden">
+          <h3 class="text-lg font-semibold mb-3">生成的组合</h3>
+          <div id="combosList" class="space-y-2"></div>
+        </div>
         </div>
       </div>
     </div>
   </main>
-  
-  
-
-  <!-- 页脚 -->
-  <footer class="bg-white border-t border-gray-200 py-4">
-    <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
-      <p>台湾PK数据分析工具 © 2025</p>
-    </div>
-  </footer>
 
   <!-- 帮助模态框 -->
-  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
       <div class="p-5 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-xl font-semibold">使用帮助</h3>
-        <button id="closeHelpBtn" class="text-gray-400 hover:text-gray-600">
+        <h3 class="text-xl font-bold text-gray-800">使用帮助</h3>
+        <button id="closeHelpBtn" class="text-gray-400 hover:text-gray-600 transition-colors">
           <i class="fa fa-times text-xl"></i>
         </button>
       </div>
       <div class="p-5">
-        <h4 class="font-medium text-lg mb-2">功能介绍</h4>
-        <p class="mb-4">台湾PK数据分析工具可以帮助您分析和预测台湾PK的开奖结果，通过统计历史数据和组合的命中情况，为您提供参考依据。</p>
         
         <h4 class="font-medium text-lg mb-2">使用方法</h4>
         <ol class="list-decimal list-inside space-y-2 mb-4">
@@ -613,40 +587,1014 @@
         <h4 class="font-medium text-lg mb-2">数据格式</h4>
         <p class="mb-4">手动输入数据时，请按照"期数 数据"的格式，例如：202504181232 02,05,01,04,07,10,09,03,06,08 </p>
         
-        <h4 class="font-medium text-lg mb-2">快捷键</h4>
+        <h4 class="font-medium text-lg mb-2">五星做号</h4>
+        <p class="mb-4">五星做号功能允许您设置多个筛选条件，通过组合不同的胆码数来生成号码组合。</p>
+        
+        <h4 class="font-medium text-lg mb-2">注意事项</h4>
         <ul class="list-disc list-inside space-y-1">
-          <li>在输入框中按下Enter键可快速计算</li>
-          <li>使用Ctrl+S可保存当前数据</li>
+          <li>数据分析基于历史开奖结果，仅供参考</li>
+          <li>请理性投注，注意风险控制</li>
+          <li>建议结合多种分析方法进行综合判断</li>
         </ul>
       </div>
-      <div class="p-5 border-t border-gray-200 flex justify-end">
-        <button id="gotItBtn" class="px-4 py-2 bg-primary text-white rounded-md btn-hover">我知道了</button>
-      </div>
     </div>
   </div>
 
-  <!-- 密钥验证模态框 -->
-  <div id="keyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-      <div class="text-center mb-6">
-        <h3 class="text-2xl font-bold text-gray-800 mb-2">请输入访问密钥</h3>
-        <p class="text-gray-600">该功能需要有效的访问密钥才能使用</p>
-      </div>
+  <script>
+    // 全局变量
+    let allData = [];
+    let filteredData = [];
+    let currentSort = 'consecutive';
+    let currentPeriod = 30;
+    let currentView = 'miss';
+    let currentMode = 'current';
+    let horizontalScrollPosition = 0;
+    let verticalScrollPosition = 0;
+    let maxHorizontalScroll = 0;
+    let maxVerticalScroll = 0;
+    let isDarkMode = false;
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeButtons();
+      initializeEventListeners();
+      initializeSliders();
+      initializeFiveStarPage();
+      loadTheme();
       
-      <div class="mb-4">
-        <input type="text" id="keyInput" placeholder="请输入32位访问密钥" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200">
-      </div>
+      // 检查密钥有效期
+      checkKeyExpiry();
+    });
+    
+    // 检查密钥有效期
+    function checkKeyExpiry() {
+      const expiryDate = new Date('2025-12-31T23:59:59');
+      const now = new Date();
       
-      <div class="flex gap-3">
-        <button id="verifyKeyBtn" class="w-full px-4 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary/80 transition-colors">验证密钥</button>
-        <!-- 移除取消按钮 -->
-      </div>
-    </div>
-  </div>
-
-  
-<script>
-function t(t){const e={groups:[{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]}],results:[],allPermutations:[],originalResults:[],isReversed:!1},n=document.getElementById(`module${t}`),o=n.querySelectorAll(".number-btn"),r=n.querySelectorAll(".dama-btn"),i=n.querySelector(".generate-btn"),a=n.querySelector(".copy-btn"),s=n.querySelector(".clear-btn"),d=n.querySelector(".reverse-btn"),u=n.querySelector(".result-input"),l=n.querySelector(".result-count"),m=n.querySelector(".tolerance-min"),f=n.querySelector(".tolerance-max");function y(){const t=e.results.length,n=(t>500?e.results.slice(0,500):e.results).map(t=>t.map(t=>t.toString().padStart(2,"0")).join(",")).join(" ");u.value=t>500?n+"...":n,l.textContent=`共${t}注`}o.forEach(t=>{t.addEventListener("click",function(){const t=parseInt(this.dataset.number),n=parseInt(this.dataset.group),o=e.groups[n-1],c=o.selectedNumbers.indexOf(t);-1===c?(o.selectedNumbers.push(t),this.classList.add("bg-primary","text-white")):(o.selectedNumbers.splice(c,1),this.classList.remove("bg-primary","text-white"))})}),r.forEach(t=>{t.addEventListener("click",function(){const t=parseInt(this.dataset.dama),n=parseInt(this.dataset.group),o=e.groups[n-1],c=o.selectedDamas.indexOf(t);-1===c?(o.selectedDamas.push(t),this.classList.add("bg-primary","text-white")):(o.selectedDamas.splice(c,1),this.classList.remove("bg-primary","text-white"))})}),m.addEventListener("change",function(){e.toleranceMin=parseInt(this.value)}),f.addEventListener("change",function(){e.toleranceMax=parseInt(this.value)}),i.addEventListener("click",function(){const t=c([1,2,3,4,5,6,7,8,9,10],5);e.allPermutations=t;const n=t.filter(t=>e.groups.every(e=>{if(0===e.selectedNumbers.length&&0===e.selectedDamas.length)return!0;const n=t.filter(t=>e.selectedNumbers.includes(t)).length;return 0===e.selectedDamas.length?n>0:e.selectedDamas.some(t=>n===t)}));e.results=n,e.originalResults=[...n],y()}),a.addEventListener("click",function(){if(0===e.results.length)return l.innerHTML='<span style="color: red;">没有可复制的结果</span>',void setTimeout(()=>{l.textContent=`共${e.results.length}注`},2e3);const t=e.results.map(t=>t.join(",")).join(" ");navigator.clipboard.writeText(t).then(()=>{const t=l.textContent;l.innerHTML=`${t} <span style="color: red;">已复制 ${e.results.length} 组号码</span>`,setTimeout(()=>{l.textContent=t},2e3)}).catch(t=>{console.error("复制失败:",t),l.innerHTML='<span style="color: red;">复制失败，请手动复制</span>',setTimeout(()=>{l.textContent=`共${e.results.length}注`},2e3)})}),s.addEventListener("click",function(){e.groups.forEach(t=>{t.selectedNumbers=[],t.selectedDamas=[]}),e.results=[],e.originalResults=[],e.isReversed=!1,o.forEach(t=>t.classList.remove("bg-primary","text-white")),r.forEach(t=>t.classList.remove("bg-primary","text-white")),u.value="",l.textContent="共0注"}),d.addEventListener("click",function(){if(0!==e.allPermutations.length&&0!==e.originalResults.length){if(e.isReversed)e.results=e.originalResults,e.isReversed=!1;else{const t=new Set(e.originalResults.map(t=>t.join(","))),n=e.allPermutations.filter(e=>!t.has(e.join(",")));e.results=n,e.isReversed=!0}y()}else alert('请先点击"做号"生成结果')})}function e(e){const n=document.getElementById("modules-container"),c=n.querySelectorAll(".five-star-module");if(c.length>=14)return void alert("最多只能添加14个模块");const r=parseInt(c[c.length-1].id.replace("module",""))+1,i=document.getElementById(`module${e}`).cloneNode(!0);i.id=`module${r}`,i.querySelectorAll("[data-module]").forEach(t=>{t.dataset.module=r}),o(i),i.querySelector(".add-btn").setAttribute("onclick",`addModule(${r})`),i.querySelector(".remove-btn").setAttribute("onclick",`removeModule(${r})`),n.appendChild(i),t(r)}function n(t){const e=document.getElementById("modules-container").querySelectorAll(".five-star-module"),n=document.getElementById(`module${t}`);e.length<=2?alert("至少保留2个模块"):n.remove()}function o(t){t.querySelectorAll(".number-btn, .dama-btn").forEach(t=>{t.classList.remove("bg-primary","text-white")}),t.querySelector(".result-input").value="",t.querySelector(".result-count").textContent="共0注"}function c(t,e){const n=[];return 1===e?t.map(t=>[t]):(t.forEach((t,o,r)=>{const i=c([...r.slice(0,o),...r.slice(o+1)],e-1).map(e=>[t,...e]);n.push(...i)}),n)}tailwind.config={theme:{extend:{colors:{primary:"#d62828",secondary:"#f77f00",neutral:"#f5f5f5",dark:"#333333"},fontFamily:{sans:["Inter","system-ui","sans-serif"]}}}},document.addEventListener("DOMContentLoaded",function(){const t=document.getElementById("dataAnalysisBtn"),e=document.getElementById("fiveStarBtn"),n=document.getElementById("dataAnalysisPage"),o=document.getElementById("fiveStarPage");t&&e&&n&&o?(t.addEventListener("click",function(){n.classList.remove("hidden"),o.classList.add("hidden"),t.classList.add("bg-primary"),t.classList.remove("bg-gray-600"),e.classList.add("bg-gray-600"),e.classList.remove("bg-primary")}),e.addEventListener("click",function(){n.classList.add("hidden"),o.classList.remove("hidden"),e.classList.add("bg-primary"),e.classList.remove("bg-gray-600"),t.classList.add("bg-gray-600"),t.classList.remove("bg-primary")})):console.error("页面切换所需元素未找到")}),document.addEventListener("DOMContentLoaded",function(){t(1),t(2)});let r=[],i=1,a=null,s=null,d=new Set,u=null,l=null,m=!1,f=30,y=!1,b=!1;const h="pk4_access_key",g=document.getElementById("keyModal"),p=document.getElementById("keyInput"),v=document.getElementById("output"),x=document.getElementById("tableContainer"),w=document.getElementById("horizontalThumb"),k=document.getElementById("horizontalFill"),$=document.getElementById("verticalSlider"),B=document.getElementById("verticalThumb"),I=document.getElementById("verticalFill"),M=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,M.appendChild(e)}const S=document.getElementById("hitButtons");function N(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),L()}))}function C(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),L()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",S.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),N(Array.from(M.children)),C(Array.from(S.children));let T=null;function D(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(T);const t=Y();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,void setTimeout(()=>{window.location.reload()},3e3)}const r=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),a=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${r}天 ${i}小时 ${a}分钟 ${s}秒`;const d=24*r+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}T&&clearInterval(T),o(),e.classList.remove("hidden"),T=setInterval(o,1e3)}function _(){return"universal_device_2024"}async function O(t){try{const e=await fetch(`http://localhost:3000/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}return{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}catch(e){return console.warn("云端验证失败，使用本地验证:",e),{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}}async function K(t){try{const e=await fetch("http://localhost:3000/api/nonce/mark",{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}console.warn("云端记录失败，使用本地记录")}catch(t){console.warn("云端记录失败，使用本地记录:",t)}const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const P=document.getElementById("verifyKeyBtn");function E(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}async function A(t){try{const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};const c=(new Date).getTime();if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};const r=_();return o.deviceFingerprint!==r?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await O(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}}catch(t){return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}}}function F(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");const t=document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);if(!t.length)return void(v.textContent="请输入数据");let e=0;for(const n of t){const t=E(n);if(!t)return void(v.textContent="格式错误：请输入正确的数据格式");const{period:o,data:c}=t,i=c.join(",");d.has(o)||r.length&&r[r.length-1].input===i||(r.push({period:o,data:c,input:i}),d.add(o),e++)}document.getElementById("numbersInput").value="",v.textContent=e>0?`成功添加 ${e} 期数据`:"没有新数据添加",document.getElementById("periodCount").textContent=r.length,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}async function J(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");try{v.textContent="正在获取数据...";const t=await fetch("https://api.duoqu.online/data?id=406&limit=1&key=ibjweyjfzt"),e=await t.json();if("success"===e.info&&e.data.length){const t=e.data[0].openNumber.split(",").map(Number),n=e.data[0].period||n++,o=t.join(",");if(d.has(n)||r.length&&r[r.length-1].input===o)return void(v.textContent="已是最新数据");r.push({period:n,data:t,input:o}),d.add(n),document.getElementById("periodCount").textContent=r.length,v.textContent=`成功获取第 ${n} 期数据`,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}else v.textContent="获取数据失败："+(e.message||"未知错误")}catch(t){v.textContent=`获取数据错误：${t.message}`}}function R(t,e){if(!b)return g.classList.remove("hidden"),alert("请先验证有效的密钥"),[];const n=[];return function o(c,r){if(r.length!==e)for(let e=c;e<t.length;e++)r.push(t[e]),o(e+1,r),r.pop();else n.push(r.slice())}(0,[]),n}function H(t,e){const n={};return e.forEach(e=>{let o=0,c=0,r=0,i=0;t.forEach(t=>{t.cells[e].hit?(r++,i=0,r>o&&(o=r)):(i++,r=0,i>c&&(c=i))}),n[e]={maxHit:o,maxMiss:c}}),n}function U(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&t[n].cells[e].hit;n++)o++;n[e]=o}),n}function z(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&!t[n].cells[e].hit;n++)o++;n[e]=o}),n}function L(){const t=document.querySelector("#resultTable thead"),e=document.querySelector("#resultTable tbody");t.innerHTML="",e.innerHTML="";const n=r.slice(0,f);if(!n.length){const t=document.createElement("tr"),n=document.createElement("td");return n.colSpan=100,n.className="py-4 text-center text-gray-500",n.textContent="暂无数据，请先输入或获取数据",t.appendChild(n),e.appendChild(t),void j()}const o=+document.querySelector("#numButtons .btn-active")?.dataset.num||0,c=Array.from(document.querySelectorAll("#hitButtons .btn-active")).map(t=>+t.dataset.hit),i=[...Array(10)].map((t,e)=>e+1),a=[...o>0&&o<=10?R(i,o):[],...document.getElementById("customCombos").value.trim().split(/\s+/).filter(Boolean).map(t=>t.split(",").map(t=>+t).filter(t=>!isNaN(t)))].filter(t=>t.length>0).map(t=>t.join(",")),s=n.map(t=>({rec:t,cells:{}}));a.forEach(t=>{let e=0;for(let n=s.length-1;n>=0;n--){const o=s[n].rec,r=t.split(",").map(t=>+t).filter(t=>o.data.slice(0,5).includes(t)).length;c.length&&c.includes(r)?(s[n].cells[t]={txt:t,hit:!0},e=0):(e++,s[n].cells[t]={txt:e,hit:!1})}});const d=H(s,a),u=U(s,a),l=z(s,a),b=a.slice().sort((t,e)=>{if(y){const{maxHit:n,maxMiss:o}=d[t],{maxHit:c,maxMiss:r}=d[e];return m?c-n||o-r:o-r||c-n}return m?u[e]-u[t]||l[t]-l[e]:l[t]-l[e]||u[e]-u[t]});document.getElementById("sortText").textContent=m?"按遗漏次数排序":"按连中次数排序",document.getElementById("summary").innerHTML=`\n        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">\n          <div>共 ${b.length} 注分析组合</div>\n          <div>当前显示: ${n.length} 期 / 总计: ${r.length} 期</div>\n          <div>筛选条件: ${o}码组合，命中${c.length>0?c.join("/"):"全部"}胆`;const h=document.createElement("tr");h.className="bg-gray-50",h.innerHTML='\n        <th class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 fixed-width-period sticky-bg-white">期数</th>\n        <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>\n      ',b.forEach(t=>{const{maxHit:e,maxMiss:n}=d[t],o=document.createElement("th");o.className="px-3 py-2 text-center border-r border-gray-200",o.innerHTML=y?m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${e}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${n}</div>\n            `:m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${u[t]}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${l[t]}</div>\n            `,h.appendChild(o)}),t.appendChild(h),s.forEach((t,n)=>{const o=document.createElement("tr");o.className=0===n?"bg-gray-100":1===n?"bg-gray-50":"",o.innerHTML=`\n          <td class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 font-medium fixed-width-period ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">${t.rec.period}</td>\n          <td class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">\n            <div class="number-row">${t.rec.data.slice(0,5).join(",")}</div>\n            <div class="number-row">${t.rec.data.slice(5).join(",")}</div>\n          </td>\n        `,b.forEach(e=>{const n=t.cells[e],c=document.createElement("td");c.className="px-3 py-2 text-center border-r border-gray-200 "+(n.hit?"hit-cell":"miss-cell"),c.textContent=n.txt,o.appendChild(c)}),e.appendChild(o)}),j()}function j(){const t=document.getElementById("resultTable"),e=document.getElementById("tableContainer"),n=t.offsetWidth,o=e.offsetWidth;if(n>o){document.querySelector(".slider-container").style.display="block";const u=o/n,l=Math.max(20,u*o);k.style.width=e.scrollLeft/(n-o)*100+"%",w.style.left=e.scrollLeft/(n-o)*(o-l)+"px",w.style.width=`${l}px`,k.style.width=e.scrollLeft/(n-o)*100+"%";let m=!1;function c(t){if(!m)return;const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"}function r(){m=!1,document.removeEventListener("mousemove",c),document.removeEventListener("mouseup",r)}w.addEventListener("mousedown",t=>{m=!0,document.addEventListener("mousemove",c),document.addEventListener("mouseup",r),t.preventDefault()}),document.querySelector(".slider-track").addEventListener("click",t=>{const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"})}else document.querySelector(".slider-container").style.display="none";const i=t.offsetHeight,a=e.offsetHeight;if(i>a){$.style.display="flex";const f=a/i,y=Math.max(20,f*a);I.style.height=e.scrollTop/(i-a)*100+"%",B.style.top=e.scrollTop/(i-a)*(a-y)+"px",B.style.height=`${y}px`,I.style.height=e.scrollTop/(i-a)*100+"%";let b=!1;function s(t){if(!b)return;const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"}function d(){b=!1,document.removeEventListener("mousemove",s),document.removeEventListener("mouseup",d)}B.addEventListener("mousedown",t=>{b=!0,document.addEventListener("mousemove",s),document.addEventListener("mouseup",d),t.preventDefault()}),document.querySelector(".vertical-slider-track").addEventListener("click",t=>{const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"})}else $.style.display="none";e.addEventListener("scroll",()=>{if(n>o){const t=e.scrollLeft/(n-o);w.style.left=t*(o-parseInt(getComputedStyle(w).width))+"px",k.style.width=100*t+"%"}if(i>a){const t=e.scrollTop/(i-a);B.style.top=t*(a-parseInt(getComputedStyle(B).height))+"px",I.style.height=100*t+"%"}})}async function V(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n").filter(Boolean);for(const t of e)q(t);r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),document.getElementById("periodCount").textContent=r.length,L()}catch(t){v.textContent=`读取文件错误: ${t.message}`}}async function W(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n")[0],n=e.trim().split(/\t+/);if(2!==n.length)return;const o=n[0].trim();if(o===u)return;u=o,q(e),document.getElementById("periodCount").textContent=r.length,L()}catch(t){}}function q(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return;e=t.trim().split(/\s+/)}if(e.length<2)return;const n=e[0].trim();if(d.has(n))return;let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}10!==o.length||o.some(isNaN)||(d.add(n),r.unshift({period:n,data:o,input:o.join(",")}))}P.addEventListener("click",async function(){const t=p.value.trim();if(t){this.disabled=!0,this.textContent="验证中...";try{const e=await A(t);if(e.valid){await K(e.data.nonce);const n=Y();localStorage.setItem(`validKey_${n}`,t),localStorage.setItem(`keyExpiry_${n}`,e.data.expiry),g.classList.add("hidden"),g.style.display="none",b=!0,D(e.data.expiry)}else alert("密钥验证失败: "+e.reason)}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message)}finally{this.disabled=!1,this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",function(){try{const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const e=parseInt(n);o<e?(b=!0,D(e),g.classList.add("hidden"),g.style.display="none"):(localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex")}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("historyBtn").addEventListener("click",()=>{y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("missBtn").addEventListener("click",()=>{m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("hitBtn").addEventListener("click",()=>{m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("exportBtn").addEventListener("click",()=>{if(!r.length)return void(v.textContent="没有数据可导出");let t="期数,数据\n";r.forEach(e=>{t+=`${e.period},${e.input}\n`});const e=new Blob([t],{type:"text/csv;charset=utf-8;"}),n=URL.createObjectURL(e),o=document.createElement("a");o.setAttribute("href",n),o.setAttribute("download",`台湾PK数据_${(new Date).toISOString().slice(0,10)}.csv`),o.style.visibility="hidden",document.body.appendChild(o),o.click(),document.body.removeChild(o),v.textContent="数据已导出"}),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const G=document.getElementById("helpModal");document.getElementById("helpBtn").addEventListener("click",()=>{G.classList.remove("hidden")}),document.getElementById("closeHelpBtn").addEventListener("click",()=>{G.classList.add("hidden")}),document.getElementById("gotItBtn").addEventListener("click",()=>{G.classList.add("hidden")}),G.addEventListener("click",t=>{t.target===G&&G.classList.add("hidden")});let Q=!1;document.getElementById("themeToggle").addEventListener("click",()=>{Q=!Q,document.body.classList.toggle("bg-gray-900",Q),document.body.classList.toggle("text-white",Q),document.body.classList.toggle("bg-gray-50",!Q),document.body.classList.toggle("text-dark",!Q);const t=document.getElementById("themeToggle").querySelector("i");t.classList.toggle("fa-moon-o",!Q),t.classList.toggle("fa-sun-o",Q)});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
-</script>
+      if (now < expiryDate) {
+        const timeRemaining = expiryDate - now;
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        
+        document.getElementById('timeRemaining').textContent = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+        document.getElementById('keyCountdown').classList.remove('hidden');
+        
+        // 每秒更新倒计时
+        setInterval(() => {
+          const now = new Date();
+          if (now >= expiryDate) {
+            document.body.innerHTML = '<div class="flex items-center justify-center min-h-screen bg-gray-100"><div class="text-center"><h1 class="text-2xl font-bold text-red-600 mb-4">密钥已过期</h1><p class="text-gray-600">请联系管理员续费</p></div></div>';
+            return;
+          }
+          
+          const timeRemaining = expiryDate - now;
+          const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+          
+          document.getElementById('timeRemaining').textContent = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+        }, 1000);
+      } else {
+        document.body.innerHTML = '<div class="flex items-center justify-center min-h-screen bg-gray-100"><div class="text-center"><h1 class="text-2xl font-bold text-red-600 mb-4">密钥已过期</h1><p class="text-gray-600">请联系管理员续费</p></div></div>';
+      }
+    }
+    
+    // 主题切换
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        enableDarkMode();
+      }
+    }
+    
+    function enableDarkMode() {
+      isDarkMode = true;
+      document.documentElement.classList.add('dark');
+      document.getElementById('themeToggle').innerHTML = '<i class="fa fa-sun-o text-yellow-400"></i>';
+      localStorage.setItem('theme', 'dark');
+    }
+    
+    function disableDarkMode() {
+      isDarkMode = false;
+      document.documentElement.classList.remove('dark');
+      document.getElementById('themeToggle').innerHTML = '<i class="fa fa-moon-o text-gray-500"></i>';
+      localStorage.setItem('theme', 'light');
+    }
+    
+    // 初始化按钮
+    function initializeButtons() {
+      // 胆码数按钮
+      const numContainer = document.getElementById('numButtons');
+      for (let i = 0; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}胆`;
+        btn.className = 'px-3 py-1 rounded-md bg-gray-200 btn-hover';
+        btn.dataset.num = i;
+        btn.addEventListener('click', () => toggleButton(btn, 'num'));
+        numContainer.appendChild(btn);
+      }
+      
+      // 中出按钮
+      const hitContainer = document.getElementById('hitButtons');
+      for (let i = 0; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}中`;
+        btn.className = 'px-3 py-1 rounded-md bg-gray-200 btn-hover';
+        btn.dataset.hit = i;
+        btn.addEventListener('click', () => toggleButton(btn, 'hit'));
+        hitContainer.appendChild(btn);
+      }
+    }
+    
+    // 初始化事件监听器
+    function initializeEventListeners() {
+      // 页面切换
+      document.getElementById('dataAnalysisBtn').addEventListener('click', () => switchPage('dataAnalysis'));
+      document.getElementById('fiveStarBtn').addEventListener('click', () => switchPage('fiveStar'));
+      
+      // 主要功能按钮
+      document.getElementById('calcBtn').addEventListener('click', calculateAnalysis);
+      document.getElementById('autoFetchBtn').addEventListener('click', autoFetchData);
+      document.getElementById('uploadDataBtn').addEventListener('click', uploadData);
+      document.getElementById('sortToggle').addEventListener('click', toggleSort);
+      document.getElementById('statBtn').addEventListener('click', updateStatistics);
+      document.getElementById('exportBtn').addEventListener('click', exportData);
+      document.getElementById('clearBtn').addEventListener('click', clearData);
+      
+      // 视图切换按钮
+      document.getElementById('currentBtn').addEventListener('click', () => switchMode('current'));
+      document.getElementById('historyBtn').addEventListener('click', () => switchMode('history'));
+      document.getElementById('missBtn').addEventListener('click', () => switchView('miss'));
+      document.getElementById('hitBtn').addEventListener('click', () => switchView('hit'));
+      
+      // 期数按钮
+      document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const period = parseInt(btn.dataset.period);
+          setPeriod(period);
+        });
+      });
+      
+      // 自定义期数
+      document.getElementById('customPeriodBtn').addEventListener('click', () => {
+        const customPeriod = parseInt(document.getElementById('customPeriod').value);
+        if (customPeriod >= 1 && customPeriod <= 10000) {
+          setPeriod(customPeriod);
+        } else {
+          alert('请输入1-10000之间的期数');
+        }
+      });
+      
+      // 帮助和主题
+      document.getElementById('helpBtn').addEventListener('click', () => {
+        document.getElementById('helpModal').classList.remove('hidden');
+      });
+      
+      document.getElementById('closeHelpBtn').addEventListener('click', () => {
+        document.getElementById('helpModal').classList.add('hidden');
+      });
+      
+      document.getElementById('themeToggle').addEventListener('click', () => {
+        if (isDarkMode) {
+          disableDarkMode();
+        } else {
+          enableDarkMode();
+        }
+      });
+      
+      // 点击模态框外部关闭
+      document.getElementById('helpModal').addEventListener('click', (e) => {
+        if (e.target.id === 'helpModal') {
+          document.getElementById('helpModal').classList.add('hidden');
+        }
+      });
+    }
+    
+    // 页面切换
+    function switchPage(page) {
+      const dataAnalysisPage = document.getElementById('dataAnalysisPage');
+      const fiveStarPage = document.getElementById('fiveStarPage');
+      const dataAnalysisBtn = document.getElementById('dataAnalysisBtn');
+      const fiveStarBtn = document.getElementById('fiveStarBtn');
+      
+      if (page === 'dataAnalysis') {
+        dataAnalysisPage.classList.remove('hidden');
+        fiveStarPage.classList.add('hidden');
+        dataAnalysisBtn.classList.add('bg-primary', 'text-white');
+        dataAnalysisBtn.classList.remove('bg-gray-600');
+        fiveStarBtn.classList.remove('bg-primary', 'text-white');
+        fiveStarBtn.classList.add('bg-gray-600');
+      } else {
+        dataAnalysisPage.classList.add('hidden');
+        fiveStarPage.classList.remove('hidden');
+        fiveStarBtn.classList.add('bg-primary', 'text-white');
+        fiveStarBtn.classList.remove('bg-gray-600');
+        dataAnalysisBtn.classList.remove('bg-primary', 'text-white');
+        dataAnalysisBtn.classList.add('bg-gray-600');
+      }
+    }
+    
+    // 切换按钮状态
+    function toggleButton(button, type) {
+      button.classList.toggle('btn-active');
+      updateTable();
+    }
+    
+    // 设置期数
+    function setPeriod(period) {
+      currentPeriod = period;
+      
+      // 更新按钮状态
+      document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.classList.remove('btn-active');
+        if (parseInt(btn.dataset.period) === period) {
+          btn.classList.add('btn-active');
+        }
+      });
+      
+      // 更新自定义期数输入框
+      document.getElementById('customPeriod').value = period;
+      
+      updateTable();
+    }
+    
+    // 切换视图模式
+    function switchView(view) {
+      currentView = view;
+      
+      const missBtn = document.getElementById('missBtn');
+      const hitBtn = document.getElementById('hitBtn');
+      
+      if (view === 'miss') {
+        missBtn.classList.add('btn-active');
+        hitBtn.classList.remove('btn-active');
+      } else {
+        hitBtn.classList.add('btn-active');
+        missBtn.classList.remove('btn-active');
+      }
+      
+      updateTable();
+    }
+    
+    // 切换模式
+    function switchMode(mode) {
+      currentMode = mode;
+      
+      const currentBtn = document.getElementById('currentBtn');
+      const historyBtn = document.getElementById('historyBtn');
+      
+      if (mode === 'current') {
+        currentBtn.classList.add('btn-active');
+        historyBtn.classList.remove('btn-active');
+        currentBtn.textContent = '当前';
+        historyBtn.textContent = '历史';
+      } else {
+        historyBtn.classList.add('btn-active');
+        currentBtn.classList.remove('btn-active');
+        currentBtn.textContent = '历史';
+        historyBtn.textContent = '当前';
+      }
+      
+      updateTable();
+    }
+    
+    // 切换排序
+    function toggleSort() {
+      const sortText = document.getElementById('sortText');
+      if (currentSort === 'consecutive') {
+        currentSort = 'missing';
+        sortText.textContent = '按遗漏次数排序';
+      } else {
+        currentSort = 'consecutive';
+        sortText.textContent = '按连中次数排序';
+      }
+      updateTable();
+    }
+    
+    // 计算分析
+    function calculateAnalysis() {
+      const input = document.getElementById('numbersInput').value.trim();
+      if (!input) {
+        alert('请输入数据');
+        return;
+      }
+      
+      try {
+        const lines = input.split('\n').filter(line => line.trim());
+        const newData = [];
+        
+        for (const line of lines) {
+          const parts = line.trim().split(/\s+/);
+          if (parts.length >= 2) {
+            const period = parts[0];
+            const numbersStr = parts.slice(1).join(' ');
+            const numbers = numbersStr.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+            
+            if (numbers.length === 10) {
+              newData.push({ period, numbers });
+            }
+          }
+        }
+        
+        if (newData.length === 0) {
+          alert('未找到有效数据，请检查格式');
+          return;
+        }
+        
+        // 合并新数据到现有数据
+        for (const item of newData) {
+          const existingIndex = allData.findIndex(d => d.period === item.period);
+          if (existingIndex >= 0) {
+            allData[existingIndex] = item;
+          } else {
+            allData.push(item);
+          }
+        }
+        
+        // 按期数排序
+        allData.sort((a, b) => b.period.localeCompare(a.period));
+        
+        updateTable();
+        document.getElementById('output').textContent = `成功处理 ${newData.length} 期数据，总计 ${allData.length} 期`;
+        
+      } catch (error) {
+        console.error('数据处理错误:', error);
+        alert('数据处理失败，请检查格式');
+      }
+    }
+    
+    // 自动获取数据
+    async function autoFetchData() {
+      try {
+        document.getElementById('output').textContent = '正在获取数据...';
+        
+        // 这里应该是实际的API调用
+        // 暂时使用模拟数据
+        const mockData = generateMockData(50);
+        
+        allData = mockData;
+        updateTable();
+        document.getElementById('output').textContent = `自动获取成功，共 ${allData.length} 期数据`;
+        
+      } catch (error) {
+        console.error('自动获取数据失败:', error);
+        document.getElementById('output').textContent = '自动获取数据失败';
+      }
+    }
+    
+    // 生成模拟数据
+    function generateMockData(count) {
+      const data = [];
+      const baseDate = new Date();
+      
+      for (let i = 0; i < count; i++) {
+        const date = new Date(baseDate.getTime() - i * 24 * 60 * 60 * 1000);
+        const period = date.getFullYear().toString() + 
+                      (date.getMonth() + 1).toString().padStart(2, '0') + 
+                      date.getDate().toString().padStart(2, '0') + 
+                      '1232';
+        
+        const numbers = [];
+        while (numbers.length < 10) {
+          const num = Math.floor(Math.random() * 10) + 1;
+          if (!numbers.includes(num)) {
+            numbers.push(num);
+          }
+        }
+        
+        data.push({ period, numbers });
+      }
+      
+      return data;
+    }
+    
+    // 上传数据文件
+    function uploadData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.txt,.csv';
+      
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('numbersInput').value = e.target.result;
+          calculateAnalysis();
+        };
+        reader.readAsText(file);
+      };
+      
+      input.click();
+    }
+    
+    // 更新统计
+    function updateStatistics() {
+      if (filteredData.length === 0) {
+        document.getElementById('summary').textContent = '暂无数据';
+        return;
+      }
+      
+      const stats = calculateStatistics(filteredData);
+      const summary = `共 ${filteredData.length} 个组合，平均连中 ${stats.avgConsecutive.toFixed(1)} 次，平均遗漏 ${stats.avgMissing.toFixed(1)} 次`;
+      document.getElementById('summary').textContent = summary;
+    }
+    
+    // 计算统计信息
+    function calculateStatistics(data) {
+      const totalConsecutive = data.reduce((sum, item) => sum + (item.maxConsecutive || 0), 0);
+      const totalMissing = data.reduce((sum, item) => sum + (item.maxMissing || 0), 0);
+      
+      return {
+        avgConsecutive: data.length > 0 ? totalConsecutive / data.length : 0,
+        avgMissing: data.length > 0 ? totalMissing / data.length : 0
+      };
+    }
+    
+    // 导出数据
+    function exportData() {
+      if (filteredData.length === 0) {
+        alert('暂无数据可导出');
+        return;
+      }
+      
+      let csvContent = '组合,最大连中,最大遗漏,当前状态\n';
+      
+      filteredData.forEach(item => {
+        const combo = item.combination.join(',');
+        const maxConsecutive = item.maxConsecutive || 0;
+        const maxMissing = item.maxMissing || 0;
+        const currentStatus = item.currentMiss || 0;
+        csvContent += `"${combo}",${maxConsecutive},${maxMissing},${currentStatus}\n`;
+      });
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `台湾PK分析_${new Date().toISOString().slice(0, 10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    // 清空数据
+    function clearData() {
+      if (confirm('确定要清空所有数据吗？')) {
+        allData = [];
+        filteredData = [];
+        updateTable();
+        document.getElementById('numbersInput').value = '';
+        document.getElementById('output').textContent = '数据已清空';
+      }
+    }
+    
+    // 更新表格
+    function updateTable() {
+      if (allData.length === 0) {
+        document.getElementById('resultTable').innerHTML = '<tbody><tr><td colspan="100%" class="text-center py-8 text-gray-500">暂无数据</td></tr></tbody>';
+        document.getElementById('periodCount').textContent = '0';
+        return;
+      }
+      
+      // 获取筛选条件
+      const selectedNums = getSelectedValues('num');
+      const selectedHits = getSelectedValues('hit');
+      const customCombos = getCustomCombinations();
+      
+      // 生成所有可能的组合
+      let combinations = [];
+      
+      // 添加基于胆码数的组合
+      if (selectedNums.length > 0) {
+        for (const num of selectedNums) {
+          combinations = combinations.concat(generateCombinations(num));
+        }
+      }
+      
+      // 添加自定义组合
+      combinations = combinations.concat(customCombos);
+      
+      // 去重
+      combinations = [...new Set(combinations.map(c => c.join(',')))].
+        map(c => c.split(',').map(n => parseInt(n)));
+      
+      if (combinations.length === 0) {
+        combinations = generateCombinations(3); // 默认显示3胆组合
+      }
+      
+      // 分析每个组合
+      filteredData = combinations.map(combo => {
+        const analysis = analyzeCombination(combo, allData.slice(0, currentPeriod));
+        return {
+          combination: combo,
+          ...analysis
+        };
+      });
+      
+      // 根据中出筛选
+      if (selectedHits.length > 0) {
+        filteredData = filteredData.filter(item => {
+          const hitCount = item.hitHistory ? item.hitHistory.filter(h => h).length : 0;
+          return selectedHits.includes(hitCount);
+        });
+      }
+      
+      // 排序
+      if (currentSort === 'consecutive') {
+        filteredData.sort((a, b) => (b.maxConsecutive || 0) - (a.maxConsecutive || 0));
+      } else {
+        filteredData.sort((a, b) => (b.maxMissing || 0) - (a.maxMissing || 0));
+      }
+      
+      renderTable();
+      updateStatistics();
+      updateSliders();
+      
+      document.getElementById('periodCount').textContent = Math.min(currentPeriod, allData.length);
+    }
+    
+    // 获取选中的值
+    function getSelectedValues(type) {
+      const buttons = document.querySelectorAll(`[data-${type}]`);
+      const selected = [];
+      
+      buttons.forEach(btn => {
+        if (btn.classList.contains('btn-active')) {
+          selected.push(parseInt(btn.dataset[type]));
+        }
+      });
+      
+      return selected;
+    }
+    
+    // 获取自定义组合
+    function getCustomCombinations() {
+      const input = document.getElementById('customCombos').value.trim();
+      if (!input) return [];
+      
+      const combinations = [];
+      const lines = input.split(/\s+/);
+      
+      for (const line of lines) {
+        const numbers = line.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n) && n >= 1 && n <= 10);
+        if (numbers.length > 0) {
+          combinations.push(numbers);
+        }
+      }
+      
+      return combinations;
+    }
+    
+    // 生成组合
+    function generateCombinations(count) {
+      const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const combinations = [];
+      
+      function combine(arr, k, start = 0, current = []) {
+        if (current.length === k) {
+          combinations.push([...current]);
+          return;
+        }
+        
+        for (let i = start; i < arr.length; i++) {
+          current.push(arr[i]);
+          combine(arr, k, i + 1, current);
+          current.pop();
+        }
+      }
+      
+      combine(numbers, count);
+      return combinations;
+    }
+    
+    // 分析组合
+    function analyzeCombination(combination, data) {
+      const hitHistory = [];
+      let maxConsecutive = 0;
+      let maxMissing = 0;
+      let currentConsecutive = 0;
+      let currentMiss = 0;
+      let lastHit = false;
+      
+      for (let i = 0; i < data.length; i++) {
+        const period = data[i];
+        const hit = combination.every(num => period.numbers.includes(num));
+        hitHistory.push(hit);
+        
+        if (hit) {
+          currentConsecutive++;
+          if (currentMiss > maxMissing) {
+            maxMissing = currentMiss;
+          }
+          currentMiss = 0;
+          lastHit = true;
+        } else {
+          if (currentConsecutive > maxConsecutive) {
+            maxConsecutive = currentConsecutive;
+          }
+          currentConsecutive = 0;
+          currentMiss++;
+          lastHit = false;
+        }
+      }
+      
+      // 更新最终的最大值
+      if (currentConsecutive > maxConsecutive) {
+        maxConsecutive = currentConsecutive;
+      }
+      if (currentMiss > maxMissing) {
+        maxMissing = currentMiss;
+      }
+      
+      return {
+        hitHistory,
+        maxConsecutive,
+        maxMissing,
+        currentConsecutive: lastHit ? currentConsecutive : 0,
+        currentMiss: lastHit ? 0 : currentMiss
+      };
+    }
+    
+    // 渲染表格
+    function renderTable() {
+      const table = document.getElementById('resultTable');
+      const displayData = allData.slice(0, currentPeriod);
+      
+      if (filteredData.length === 0) {
+        table.innerHTML = '<tbody><tr><td colspan="100%" class="text-center py-8 text-gray-500">暂无符合条件的数据</td></tr></tbody>';
+        return;
+      }
+      
+      // 创建表头
+      let headerHtml = '<thead class="bg-gray-50 sticky-header sticky-bg-gray-50"><tr>';
+      headerHtml += '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky-col left-0 sticky-bg-gray-50 fixed-width-period">组合</th>';
+      headerHtml += '<th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky-col left-[120px] sticky-bg-gray-50 fixed-width-data">统计</th>';
+      
+      // 期数列
+      for (let i = 0; i < displayData.length; i++) {
+        const period = displayData[i].period;
+        const shortPeriod = period.slice(-4); // 只显示最后4位
+        headerHtml += `<th class="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[40px]">${shortPeriod}</th>`;
+      }
+      
+      headerHtml += '</tr></thead>';
+      
+      // 创建表体
+      let bodyHtml = '<tbody class="bg-white divide-y divide-gray-200">';
+      
+      filteredData.forEach((item, index) => {
+        const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+        bodyHtml += `<tr class="${rowClass}">`;
+        
+        // 组合列
+        const comboText = item.combination.map(n => n.toString().padStart(2, '0')).join(',');
+        bodyHtml += `<td class="px-3 py-2 text-sm font-medium text-gray-900 sticky-col left-0 ${rowClass} fixed-width-period">${comboText}</td>`;
+        
+        // 统计列
+        let statText = '';
+        if (currentView === 'miss') {
+          statText = currentMode === 'current' ? 
+            `漏${item.currentMiss}` : 
+            `连${item.maxConsecutive} 漏${item.maxMissing}`;
+        } else {
+          statText = currentMode === 'current' ? 
+            `连${item.currentConsecutive}` : 
+            `连${item.maxConsecutive} 漏${item.maxMissing}`;
+        }
+        
+        bodyHtml += `<td class="px-3 py-2 text-sm text-gray-900 sticky-col left-[120px] ${rowClass} fixed-width-data">${statText}</td>`;
+        
+        // 期数数据列
+        for (let i = 0; i < displayData.length; i++) {
+          const hit = item.hitHistory && item.hitHistory[i];
+          const cellClass = hit ? 'hit-cell' : 'miss-cell';
+          const cellText = hit ? '●' : '○';
+          bodyHtml += `<td class="px-2 py-2 text-center text-sm ${cellClass} min-w-[40px]">${cellText}</td>`;
+        }
+        
+        bodyHtml += '</tr>';
+      });
+      
+      bodyHtml += '</tbody>';
+      
+      table.innerHTML = headerHtml + bodyHtml;
+    }
+    
+    // 初始化滑块
+    function initializeSliders() {
+      const horizontalThumb = document.getElementById('horizontalThumb');
+      const verticalThumb = document.getElementById('verticalThumb');
+      
+      // 水平滑块
+      let isDraggingHorizontal = false;
+      
+      horizontalThumb.addEventListener('mousedown', (e) => {
+        isDraggingHorizontal = true;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDraggingHorizontal) {
+          updateHorizontalSlider(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDraggingHorizontal = false;
+      });
+      
+      // 垂直滑块
+      let isDraggingVertical = false;
+      
+      verticalThumb.addEventListener('mousedown', (e) => {
+        isDraggingVertical = true;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDraggingVertical) {
+          updateVerticalSlider(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDraggingVertical = false;
+      });
+    }
+    
+    // 更新滑块
+    function updateSliders() {
+      const tableContainer = document.getElementById('tableContainer');
+      const table = document.getElementById('resultTable');
+      
+      if (!table || !tableContainer) return;
+      
+      // 计算最大滚动距离
+      maxHorizontalScroll = Math.max(0, table.scrollWidth - tableContainer.clientWidth);
+      maxVerticalScroll = Math.max(0, table.scrollHeight - tableContainer.clientHeight);
+      
+      // 更新滑块位置
+      updateHorizontalSliderPosition();
+      updateVerticalSliderPosition();
+    }
+    
+    // 更新水平滑块
+    function updateHorizontalSlider(e) {
+      const sliderContainer = document.querySelector('.slider-container');
+      const rect = sliderContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(1, x / rect.width));
+      
+      horizontalScrollPosition = percentage * maxHorizontalScroll;
+      
+      const tableContainer = document.getElementById('tableContainer');
+      tableContainer.scrollLeft = horizontalScrollPosition;
+      
+      updateHorizontalSliderPosition();
+    }
+    
+    // 更新垂直滑块
+    function updateVerticalSlider(e) {
+      const sliderContainer = document.getElementById('verticalSlider');
+      const rect = sliderContainer.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const percentage = Math.max(0, Math.min(1, y / rect.height));
+      
+      verticalScrollPosition = percentage * maxVerticalScroll;
+      
+      const tableContainer = document.getElementById('tableContainer');
+      tableContainer.scrollTop = verticalScrollPosition;
+      
+      updateVerticalSliderPosition();
+    }
+    
+    // 更新水平滑块位置
+    function updateHorizontalSliderPosition() {
+      const percentage = maxHorizontalScroll > 0 ? horizontalScrollPosition / maxHorizontalScroll : 0;
+      const thumb = document.getElementById('horizontalThumb');
+      const fill = document.getElementById('horizontalFill');
+      
+      if (thumb && fill) {
+        const sliderContainer = document.querySelector('.slider-container');
+        const maxLeft = sliderContainer.clientWidth - thumb.clientWidth;
+        const left = percentage * maxLeft;
+        
+        thumb.style.left = `${left}px`;
+        fill.style.width = `${percentage * 100}%`;
+      }
+    }
+    
+    // 更新垂直滑块位置
+    function updateVerticalSliderPosition() {
+      const percentage = maxVerticalScroll > 0 ? verticalScrollPosition / maxVerticalScroll : 0;
+      const thumb = document.getElementById('verticalThumb');
+      const fill = document.getElementById('verticalFill');
+      
+      if (thumb && fill) {
+        const sliderContainer = document.getElementById('verticalSlider');
+        const maxTop = sliderContainer.clientHeight - thumb.clientHeight;
+        const top = percentage * maxTop;
+        
+        thumb.style.top = `${top}px`;
+        fill.style.height = `${percentage * 100}%`;
+        fill.style.bottom = `${(1 - percentage) * 100}%`;
+      }
+    }
+    
+    // 五星做号页面初始化
+    function initializeFiveStarPage() {
+      // 初始化容错选择器
+      initializeToleranceSelectors();
+      
+      // 初始化按钮事件
+      initializeFiveStarButtons();
+      
+      // 生成组合按钮
+      document.getElementById('generateCombos').addEventListener('click', generateFiveStarCombos);
+      
+      // 清空所有按钮
+      document.getElementById('clearAll').addEventListener('click', clearAllFiveStarSelections);
+    }
+    
+    // 初始化容错选择器
+    function initializeToleranceSelectors() {
+      const toleranceSelectors = document.querySelectorAll('.tolerance-min, .tolerance-max');
+      
+      toleranceSelectors.forEach(selector => {
+        // 清空现有选项
+        selector.innerHTML = '';
+        
+        // 添加0-5的选项
+        for (let i = 0; i <= 5; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = i;
+          selector.appendChild(option);
+        }
+      });
+    }
+    
+    // 初始化五星做号按钮
+    function initializeFiveStarButtons() {
+      // 数字按钮点击事件
+      document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('bg-primary');
+          btn.classList.toggle('text-white');
+        });
+      });
+      
+      // 胆码按钮点击事件
+      document.querySelectorAll('.dama-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          // 清除同组其他胆码按钮的选中状态
+          const module = btn.dataset.module;
+          const group = btn.dataset.group;
+          const sameGroupBtns = document.querySelectorAll(`[data-module="${module}"][data-group="${group}"].dama-btn`);
+          
+          sameGroupBtns.forEach(b => {
+            b.classList.remove('bg-primary', 'text-white');
+          });
+          
+          // 选中当前按钮
+          btn.classList.add('bg-primary', 'text-white');
+        });
+      });
+    }
+    
+    // 生成五星组合
+    function generateFiveStarCombos() {
+      const modules = [1, 2];
+      const allCombos = [];
+      
+      for (const moduleId of modules) {
+        const moduleData = getFiveStarModuleData(moduleId);
+        if (moduleData.groups.length === 0) continue;
+        
+        const moduleCombos = generateModuleCombinations(moduleData);
+        allCombos.push(...moduleCombos);
+      }
+      
+      if (allCombos.length === 0) {
+        alert('请至少选择一个模块的筛选条件');
+        return;
+      }
+      
+      displayFiveStarResults(allCombos);
+    }
+    
+    // 获取五星模块数据
+    function getFiveStarModuleData(moduleId) {
+      const groups = [];
+      const toleranceMin = parseInt(document.querySelector(`.tolerance-min[data-module="${moduleId}"]`).value);
+      const toleranceMax = parseInt(document.querySelector(`.tolerance-max[data-module="${moduleId}"]`).value);
+      
+      for (let groupId = 1; groupId <= 5; groupId++) {
+        const selectedNumbers = [];
+        const selectedDama = getDamaSelection(moduleId, groupId);
+        
+        // 获取选中的数字
+        const numberBtns = document.querySelectorAll(`[data-module="${moduleId}"][data-group="${groupId}"].number-btn`);
+        numberBtns.forEach(btn => {
+          if (btn.classList.contains('bg-primary')) {
+            selectedNumbers.push(parseInt(btn.dataset.number));
+          }
+        });
+        
+        if (selectedNumbers.length > 0 || selectedDama !== null) {
+          groups.push({
+            id: groupId,
+            numbers: selectedNumbers,
+            dama: selectedDama
+          });
+        }
+      }
+      
+      return {
+        id: moduleId,
+        groups,
+        toleranceMin,
+        toleranceMax
+      };
+    }
+    
+    // 获取胆码选择
+    function getDamaSelection(moduleId, groupId) {
+      const damaBtns = document.querySelectorAll(`[data-module="${moduleId}"][data-group="${groupId}"].dama-btn`);
+      
+      for (const btn of damaBtns) {
+        if (btn.classList.contains('bg-primary')) {
+          return parseInt(btn.dataset.dama);
+        }
+      }
+      
+      return null;
+    }
+    
+    // 生成模块组合
+    function generateModuleCombinations(moduleData) {
+      // 这里应该实现复杂的组合生成逻辑
+      // 暂时返回示例数据
+      const combinations = [];
+      
+      // 简化的组合生成逻辑
+      for (let i = 0; i < 10; i++) {
+        const combo = [];
+        for (let j = 0; j < 5; j++) {
+          combo.push(Math.floor(Math.random() * 10) + 1);
+        }
+        combinations.push(combo);
+      }
+      
+      return combinations;
+    }
+    
+    // 显示五星结果
+    function displayFiveStarResults(combinations) {
+      const resultsDiv = document.getElementById('fiveStarResults');
+      const combosList = document.getElementById('combosList');
+      
+      if (combinations.length === 0) {
+        resultsDiv.classList.add('hidden');
+        return;
+      }
+      
+      let html = '';
+      combinations.forEach((combo, index) => {
+        const comboText = combo.map(n => n.toString().padStart(2, '0')).join(' ');
+        html += `<div class="p-2 bg-white rounded border">${index + 1}. ${comboText}</div>`;
+      });
+      
+      combosList.innerHTML = html;
+      resultsDiv.classList.remove('hidden');
+    }
+    
+    // 清空所有五星选择
+    function clearAllFiveStarSelections() {
+      // 清空数字按钮
+      document.querySelectorAll('.number-btn').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+      });
+      
+      // 清空胆码按钮
+      document.querySelectorAll('.dama-btn').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+      });
+      
+      // 重置容错选择器
+      document.querySelectorAll('.tolerance-min, .tolerance-max').forEach(selector => {
+        selector.value = '0';
+      });
+      
+      // 隐藏结果
+      document.getElementById('fiveStarResults').classList.add('hidden');
+    }
+  </script>
 </body>
 </html>

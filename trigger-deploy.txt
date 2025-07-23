@@ -1,1 +1,1 @@
-Deploy trigger: 2024-12-19 Increase custom period limit from 1000 to 10000
+Deploy trigger: 2025-07-23 Deploy obfuscated version for algorithm protection

@@ -1,1 +1,1 @@
-Deploy trigger: 2025-07-23 Restore original version
+Deploy obfuscated version to protect algorithm logic

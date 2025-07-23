@@ -1,1 +1,7 @@
 .vercel
+
+# 本地工具和敏感文件
+../local-tools/
+key generator.html
+*.key
+*.secret

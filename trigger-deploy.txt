@@ -1,1 +1,1 @@
-Deploy obfuscated version to protect algorithm logic
+Deploy trigger: 2025-07-23 Deploy obfuscated version for algorithm protection

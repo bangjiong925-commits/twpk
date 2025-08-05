@@ -1148,51 +1148,69 @@ async function O(t){const apiUrls = ['http://localhost:3000','http://192.168.31.
 
 // 在线检查密钥是否已被使用
 async function checkKeyOnlineUsage(nonce) {
-    try {
-        const response = await fetch(`http://localhost:3000/api/key-records/check/${encodeURIComponent(nonce)}`, {
-            method: 'GET',
-            headers: {
-                'User-Agent': 'TWPK-KeyValidator/1.0'
+    const apiUrls = [
+        'http://localhost:3000',           // 本地开发环境
+        'http://192.168.31.161:3000',      // 局域网环境
+        'https://myyz.vercel.app',         // 生产环境（Vercel部署）
+        'https://myyz-api.vercel.app'      // 备用生产环境
+    ];
+    
+    for (const apiUrl of apiUrls) {
+        try {
+            const response = await fetch(`${apiUrl}/api/key-records/check/${encodeURIComponent(nonce)}`, {
+                method: 'GET',
+                headers: {
+                    'User-Agent': 'TWPK-KeyValidator/1.0'
+                }
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('在线密钥验证响应:', result);
+                return { used: result.used };
             }
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            console.log('在线密钥验证响应:', result);
-            return { used: result.used };
-        } else {
-            console.warn('在线验证失败，使用本地验证');
-            return { used: JSON.parse(localStorage.getItem('usedNonces') || '[]').includes(nonce) };
+        } catch (error) {
+            console.warn(`API ${apiUrl} 连接失败:`, error);
+            continue;
         }
-    } catch (error) {
-        console.warn('在线验证失败，使用本地验证:', error);
-        return { used: JSON.parse(localStorage.getItem('usedNonces') || '[]').includes(nonce) };
     }
+    
+    console.warn('所有API连接失败，使用本地验证');
+    return { used: JSON.parse(localStorage.getItem('usedNonces') || '[]').includes(nonce) };
 }
 
 // 标记密钥为已使用（在线）
 async function markKeyAsUsedOnline(nonce) {
-    try {
-        const response = await fetch('http://localhost:3000/api/key-records/mark-used', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'User-Agent': 'TWPK-KeyValidator/1.0'
-            },
-            body: JSON.stringify({ nonce: nonce })
-        });
-        
-        if (response.ok) {
-            const result = await response.json();
-            console.log('密钥已标记为已使用:', result);
-            return { success: true };
-        } else {
-            console.warn('在线标记失败，使用本地标记');
+    const apiUrls = [
+        'http://localhost:3000',           // 本地开发环境
+        'http://192.168.31.161:3000',      // 局域网环境
+        'https://myyz.vercel.app',         // 生产环境（Vercel部署）
+        'https://myyz-api.vercel.app'      // 备用生产环境
+    ];
+    
+    for (const apiUrl of apiUrls) {
+        try {
+            const response = await fetch(`${apiUrl}/api/key-records/mark-used`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'TWPK-KeyValidator/1.0'
+                },
+                body: JSON.stringify({ nonce: nonce })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('密钥已标记为已使用:', result);
+                return { success: true };
+            }
+        } catch (error) {
+            console.warn(`API ${apiUrl} 连接失败:`, error);
+            continue;
         }
-    } catch (error) {
-        console.warn('在线标记失败，使用本地标记:', error);
     }
     
+    console.warn('所有API连接失败，使用本地标记');
     // 本地备用标记
     const usedNonces = JSON.parse(localStorage.getItem('usedNonces') || '[]');
     if (!usedNonces.includes(nonce)) {
@@ -1201,7 +1219,7 @@ async function markKeyAsUsedOnline(nonce) {
         console.log('本地标记nonce:', nonce);
     }
     return { success: true };
-    }
+}
 
     // 记录密钥使用信息到后台
     async function recordKeyUsage(keyData) {

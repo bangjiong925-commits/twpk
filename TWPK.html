@@ -1097,27 +1097,54 @@ async function recordKeyUsage(keyData) {
             userAgent: navigator.userAgent
         };
         
-        const response = await fetch('http://localhost:3000/api/key-records', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'User-Agent': 'TWPK-KeyValidator/1.0'
-            },
-            body: JSON.stringify(keyRecord)
-        });
+        // 智能API地址检测 - 支持多环境
+        const apiUrls = [
+            'http://localhost:3000',           // 本地开发环境
+            'http://192.168.31.161:3000',      // 局域网环境
+            'https://myyz.vercel.app',         // 生产环境（Vercel部署）
+            'https://myyz-api.vercel.app'      // 备用生产环境
+        ];
         
-        if (response.ok) {
-            const result = await response.json();
-            console.log('密钥使用记录已保存到服务器:', result);
-        } else {
-            console.warn('保存密钥使用记录失败:', response.statusText);
+        let response;
+        for (const apiUrl of apiUrls) {
+            try {
+                response = await fetch(`${apiUrl}/api/key-records`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'TWPK-KeyValidator/1.0'
+                    },
+                    body: JSON.stringify(keyRecord)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('密钥使用记录已保存到服务器:', result);
+                    return { success: true, data: result };
+                }
+            } catch (error) {
+                console.warn(`API ${apiUrl} 连接失败:`, error);
+                continue;
+            }
         }
+        
+        // 所有API都失败，使用本地备份
+        console.warn('所有API连接失败，使用本地备份');
+        const localRecord = {
+            keyId: keyData.nonce,
+            deviceInfo: navigator.userAgent,
+            usedAt: new Date().toISOString(),
+            savedLocally: true
+        };
+        localStorage.setItem(`keyRecord_${keyData.nonce}`, JSON.stringify(localRecord));
+        return { success: false, error: '网络连接失败', localBackup: true };
     } catch (error) {
-        console.warn('记录密钥使用失败:', error);
+        console.error('记录密钥使用信息失败:', error);
+        return { success: false, error: error.message };
     }
 }
 
-async function O(t){try{const e=await fetch(`http://localhost:3000/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}return{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}catch(e){return console.warn("云端验证失败，使用本地验证:",e),{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}}async function K(t){try{const e=await fetch("http://localhost:3000/api/nonce/mark",{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}console.warn("云端记录失败，使用本地记录")}catch(t){console.warn("云端记录失败，使用本地记录:",t)}const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const P=document.getElementById("verifyKeyBtn");function E(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}async function A(t){try{const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};const c=(new Date).getTime();if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};const r=generateDeviceFingerprint();return o.deviceFingerprint!==r?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await checkKeyOnlineUsage(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}}catch(t){return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}}}
+async function O(t){const apiUrls = ['http://localhost:3000','http://192.168.31.161:3000','https://myyz.vercel.app','https://myyz-api.vercel.app'];for(const apiUrl of apiUrls){try{const e=await fetch(`${apiUrl}/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}}catch(e){console.warn(`API ${apiUrl} 连接失败:`,e);continue;}}console.warn("所有API连接失败，使用本地验证");return{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}async function K(t){const apiUrls = ['http://localhost:3000','http://192.168.31.161:3000','https://myyz.vercel.app','https://myyz-api.vercel.app'];for(const apiUrl of apiUrls){try{const e=await fetch(`${apiUrl}/api/nonce/mark`,{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}}catch(e){console.warn(`API ${apiUrl} 连接失败:`,e);continue;}}console.warn("所有API连接失败，使用本地记录");const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const P=document.getElementById("verifyKeyBtn");function E(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}async function A(t){try{const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};const c=(new Date).getTime();if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};const r=generateDeviceFingerprint();return o.deviceFingerprint!==r?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await checkKeyOnlineUsage(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}}catch(t){return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}}}
 
 // 在线检查密钥是否已被使用
 async function checkKeyOnlineUsage(nonce) {

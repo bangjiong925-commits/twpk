@@ -387,13 +387,16 @@ app.get('/api/key-stats', async (req, res) => {
 
 // 启动服务器（本地开发）或导出应用（Vercel部署）
 if (process.env.NODE_ENV !== 'production') {
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {
         console.log(`跨平台密钥验证服务运行在端口 ${port}`);
-        console.log(`健康检查: http://localhost:${port}/health`);
+        console.log(`本地访问: http://localhost:${port}/health`);
+        console.log(`局域网访问: http://192.168.31.161:${port}/health`);
         console.log(`API文档:`);
         console.log(`  GET  /api/nonce/check/:nonce - 检查nonce是否已使用`);
         console.log(`  POST /api/nonce/mark - 标记nonce为已使用`);
         console.log(`  GET  /api/stats - 获取使用统计`);
+        console.log(`  GET  /api/key-records - 获取密钥记录`);
+        console.log(`  POST /api/key-records - 创建密钥记录`);
     });
 }
 

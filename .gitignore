@@ -5,3 +5,7 @@
 key generator.html
 *.key
 *.secret
+
+# 密钥管理系统
+key-management.html
+backend-example.js

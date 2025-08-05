@@ -10,7 +10,15 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/((?!api).*)",
+      "source": "/key-management.html",
+      "destination": "/key-management.html"
+    },
+    {
+      "source": "/TWPK.html",
+      "destination": "/TWPK.html"
+    },
+    {
+      "source": "/((?!api|key-management\\.html|TWPK\\.html).*)",
       "destination": "/index.html"
     }
   ],

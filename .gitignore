@@ -7,4 +7,5 @@ key generator.html
 *.secret
 
 # 密钥管理系统
+key-management.html
 backend-example.js

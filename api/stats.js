@@ -37,9 +37,14 @@ module.exports = async (req, res) => {
     const keyRecordKeys = await kv.keys('keyRecord:*');
     const usedNonceKeys = await kv.keys('usedNonce:*');
     
-    let activeKeys = 0;
-    let expiredKeys = 0;
+    let verifiedKeys = 0;
+    let usedKeys = 0;
+    let todayKeys = 0;
     const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
     
     // 统计密钥状态
     for (const key of keyRecordKeys) {
@@ -47,27 +52,28 @@ module.exports = async (req, res) => {
       if (record) {
         const recordData = JSON.parse(record);
         const expiresAt = new Date(recordData.expiresAt);
+        const usedAt = new Date(recordData.usedAt);
         
+        // 统计已验证的密钥（未过期的）
         if (expiresAt > now) {
-          activeKeys++;
-        } else {
-          expiredKeys++;
+          verifiedKeys++;
+        }
+        
+        // 统计今日验证的密钥
+        if (usedAt >= today && usedAt < tomorrow) {
+          todayKeys++;
         }
       }
     }
     
-    const totalKeyRecords = keyRecordKeys.length;
-    const totalUsedNonces = usedNonceKeys.length;
+    const totalKeys = keyRecordKeys.length;
+    usedKeys = usedNonceKeys.length;
     
     return res.status(200).json({
-      success: true,
-      stats: {
-        totalKeyRecords,
-        totalUsedNonces,
-        activeKeys,
-        expiredKeys,
-        lastUpdated: new Date().toISOString()
-      }
+      totalKeys,
+      verifiedKeys,
+      usedKeys,
+      todayKeys
     });
     
   } catch (error) {

@@ -28,24 +28,43 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'GET') {
       // 获取所有密钥记录
-      const keys = await kv.keys('keyRecord:*');
+      const keyRecordKeys = await kv.keys('keyRecord:*');
+      const usedNonceKeys = await kv.keys('usedNonce:*');
       const records = [];
       
-      for (const key of keys) {
+      for (const key of keyRecordKeys) {
         const record = await kv.get(key);
         if (record) {
-          records.push(JSON.parse(record));
+          const recordData = JSON.parse(record);
+          const keyId = key.replace('keyRecord:', '');
+          
+          // 检查是否已使用（通过nonce检查）
+          const isUsed = usedNonceKeys.some(nonceKey => {
+            const nonce = nonceKey.replace('usedNonce:', '');
+            return recordData.nonce === nonce;
+          });
+          
+          // 格式化记录以匹配管理界面需求
+          records.push({
+            keyId: keyId,
+            nonce: recordData.nonce,
+            usedAt: recordData.usedAt,
+            expiryTime: recordData.expiresAt,
+            deviceInfo: {
+              platform: recordData.deviceId || 'Unknown',
+              userAgent: recordData.deviceInfo || recordData.userAgent || 'Unknown'
+            },
+            ipAddress: recordData.ipAddress || 'N/A',
+            used: isUsed,
+            verified: true // 所有记录都是已验证的
+          });
         }
       }
       
-      // 按使用时间排序
+      // 按使用时间排序（最新的在前）
       records.sort((a, b) => new Date(b.usedAt) - new Date(a.usedAt));
       
-      return res.status(200).json({
-        success: true,
-        records: records,
-        total: records.length
-      });
+      return res.status(200).json(records);
       
     } else if (req.method === 'POST') {
       // 创建新的密钥记录

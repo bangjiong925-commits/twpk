@@ -1633,6 +1633,25 @@ document.addEventListener('DOMContentLoaded', function() {
     if (goldenPasteBtn) {
         goldenPasteBtn.addEventListener('click', async function() {
             try {
+                // 检查剪贴板API是否可用
+                if (!navigator.clipboard || !navigator.clipboard.readText) {
+                    // 降级到传统方法
+                    const textarea = document.createElement('textarea');
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    document.execCommand('paste');
+                    const text = textarea.value;
+                    document.body.removeChild(textarea);
+                    
+                    if (text.trim()) {
+                        document.getElementById('goldenInputData').value = text.trim();
+                        // 触发输入事件以更新计数
+                        const inputEvent = new Event('input', { bubbles: true });
+                        document.getElementById('goldenInputData').dispatchEvent(inputEvent);
+                    }
+                    return;
+                }
+                
                 // 尝试从剪贴板读取数据
                 const text = await navigator.clipboard.readText();
                 if (text.trim()) {
@@ -1641,14 +1660,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 触发输入事件以更新计数
                     const inputEvent = new Event('input', { bubbles: true });
                     document.getElementById('goldenInputData').dispatchEvent(inputEvent);
-                    
-                    alert('数据已粘贴');
                 } else {
                     alert('剪贴板为空');
                 }
             } catch (err) {
                 console.error('无法访问剪贴板:', err);
-                alert('无法访问剪贴板，请手动粘贴数据');
+                // 提示用户使用快捷键粘贴
+                alert('请使用 Ctrl+V (Windows) 或 Cmd+V (Mac) 手动粘贴数据到输入框');
             }
         });
     }

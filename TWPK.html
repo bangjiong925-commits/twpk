@@ -1298,26 +1298,43 @@ async function markKeyAsUsedOnline(nonce) {
 function F(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");const t=document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);if(!t.length)return void(v.textContent="请输入数据");let e=0;for(const n of t){const t=E(n);if(!t)return void(v.textContent="格式错误：请输入正确的数据格式");const{period:o,data:c}=t,i=c.join(",");d.has(o)||r.length&&r[r.length-1].input===i||(r.push({period:o,data:c,input:i}),d.add(o),e++)}document.getElementById("numbersInput").value="",v.textContent=e>0?`成功添加 ${e} 期数据`:"没有新数据添加",document.getElementById("periodCount").textContent=r.length,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}async function J(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");try{v.textContent="正在获取数据...";const t=await fetch("https://api.duoqu.online/data?id=406&limit=1&key=ibjweyjfzt"),e=await t.json();if("success"===e.info&&e.data.length){const t=e.data[0].openNumber.split(",").map(Number),n=e.data[0].period||n++,o=t.join(",");if(d.has(n)||r.length&&r[r.length-1].input===o)return void(v.textContent="已是最新数据");r.push({period:n,data:t,input:o}),d.add(n),document.getElementById("periodCount").textContent=r.length,v.textContent=`成功获取第 ${n} 期数据`,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}else v.textContent="获取数据失败："+(e.message||"未知错误")}catch(t){v.textContent=`获取数据错误：${t.message}`}}function R(t,e){if(!b)return g.classList.remove("hidden"),alert("请先验证有效的密钥"),[];const n=[];return function o(c,r){if(r.length!==e)for(let e=c;e<t.length;e++)r.push(t[e]),o(e+1,r),r.pop();else n.push(r.slice())}(0,[]),n}
 
 /** 
- * 将任意注数组切割为 5 组，构建 5中4 容错结构 
- * 每注会被分配到 5组中的 4组 
+ * 将任意注数切割为5组，每组固定 M 注，每注出现4次 
+ * 满足5中4容错结构 
  * @param {string[]} data 原始注单数组 
- * @returns {string[][]} 返回5组，每组约 0.8*N 注 
+ * @returns {string[][]} 返回5组，每组注数固定 
  */ 
-function splitTo5in4General(data) { 
+function splitTo5in4_AnyLength(data) { 
   const groupCount = 5; 
+  const repeatEach = 4; 
+
+  // 补齐数据长度为 5 的倍数 
+  const remainder = data.length % groupCount; 
+  const paddedData = [...data]; 
+  if (remainder !== 0) { 
+    const needPad = groupCount - remainder; 
+    for (let i = 0; i < needPad; i++) { 
+      paddedData.push(data[i % data.length]); // 循环补齐 
+    } 
+  } 
+
+  const total = paddedData.length; 
+  const eachGroupSize = (total * repeatEach) / groupCount; 
+
+  // 初始化5个组 
   const groups = Array.from({ length: groupCount }, () => []); 
 
-  data.forEach(item => { 
-    // 随机选择4个不同的组索引 
-    const selectedGroups = shuffle([0, 1, 2, 3, 4]).slice(0, 4); 
-    selectedGroups.forEach(g => groups[g].push(item)); 
+  // 为每注分配4个不同的组 
+  paddedData.forEach(item => { 
+    const shuffledGroups = shuffle([0, 1, 2, 3, 4]); 
+    const selected = shuffledGroups.slice(0, repeatEach); 
+    selected.forEach(g => groups[g].push(item)); 
   }); 
 
   return groups; 
 
-  // 洗牌函数 
+  // 工具函数：打乱数组 
   function shuffle(arr) { 
-    const result = arr.slice(); 
+    const result = [...arr]; 
     for (let i = result.length - 1; i > 0; i--) { 
       const j = Math.floor(Math.random() * (i + 1)); 
       [result[i], result[j]] = [result[j], result[i]]; 
@@ -1606,7 +1623,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // 执行黄金切割
-            const groups = splitTo5in4General(items);
+            const groups = splitTo5in4_AnyLength(items);
             
             // 渲染结果
             renderGoldenResults(groups);

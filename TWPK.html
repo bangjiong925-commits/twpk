@@ -655,6 +655,8 @@
             ></textarea>
           </div>
           
+
+          
           <!-- 操作按钮 -->
           <div class="flex justify-center gap-3 mb-6">
             <button 
@@ -664,7 +666,7 @@
             <button 
               id="goldenPasteBtn" 
               class="px-6 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 transition-colors"
-            >粘贴剪切板</button>
+            >粘贴数据</button>
             <button 
               id="goldenClearBtn" 
               class="px-6 py-2 bg-gray-500 text-white font-medium rounded-md hover:bg-gray-600 transition-colors"
@@ -678,9 +680,11 @@
               <div class="text-sm text-gray-500" id="resultSummary"></div>
             </div>
             
-            <!-- 5排紧凑布局 -->
-            <div id="goldenResults" class="space-y-2">
-              <!-- 分组结果将在这里动态生成 -->
+            <!-- 5个紧凑排列的框 -->
+            <div class="grid grid-cols-5 gap-2">
+              <div id="goldenResults" class="col-span-5 grid grid-cols-5 gap-2">
+                <!-- 5个分组结果将在这里动态生成 -->
+              </div>
             </div>
           </div>
           
@@ -1392,14 +1396,14 @@ function validate_5in4(groups) {
     };
 }
 
-// 渲染黄金切割结果
+// 渲染黄金切割结果 - 5个紧凑框布局
 function renderGoldenResults(groups) {
     const resultsContainer = document.getElementById('goldenResults');
     const resultSummary = document.getElementById('resultSummary');
     resultsContainer.innerHTML = '';
     
     if (!groups || groups.length === 0) {
-        resultsContainer.innerHTML = '<div class="text-center text-gray-500 py-8">暂无分割结果</div>';
+        resultsContainer.innerHTML = '<div class="col-span-5 text-center text-gray-500 py-8">暂无分割结果</div>';
         resultSummary.textContent = '';
         return;
     }
@@ -1408,27 +1412,121 @@ function renderGoldenResults(groups) {
     const totalItems = groups.reduce((sum, group) => sum + group.length, 0);
     resultSummary.textContent = `共${groups.length}组，总计${totalItems}项`;
     
-    // 限制显示最多5组
-    const displayGroups = groups.slice(0, 5);
+    // 确保显示5个框，不足的用空框填充
+    const displayGroups = [...groups];
+    while (displayGroups.length < 5) {
+        displayGroups.push([]);
+    }
     
-    displayGroups.forEach((group, index) => {
+    // 生成5个紧凑的分组框
+    displayGroups.slice(0, 5).forEach((group, index) => {
         const groupDiv = document.createElement('div');
-        groupDiv.className = 'bg-gray-50 border border-gray-200 rounded-lg p-3';
+        groupDiv.className = 'bg-white border border-gray-200 rounded-lg p-3';
         
-        groupDiv.innerHTML = `
-            <div class="flex items-center justify-between mb-2">
-                <h4 class="font-medium text-sm text-gray-700">第${index + 1}组 (${group.length}项)</h4>
-            </div>
-            <div class="text-sm text-gray-600 leading-relaxed">
-                ${group.join(', ')}
-            </div>
-        `;
+        if (group.length === 0) {
+            // 空框
+            groupDiv.innerHTML = `
+                <div class="text-center text-gray-400 py-4">
+                    <div class="text-sm font-medium mb-1">组 ${index + 1}</div>
+                    <div class="text-xs">暂无数据</div>
+                </div>
+            `;
+        } else {
+            // 有数据的框
+            groupDiv.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-semibold text-gray-800 text-sm">组 ${index + 1}</h4>
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-500">${group.length}项</span>
+                        <button 
+                            onclick="copyGroupData(${index})" 
+                            class="px-1 py-0.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                            title="复制本组数据"
+                        >
+                            复制
+                        </button>
+                    </div>
+                </div>
+                <div class="max-h-32 overflow-y-auto">
+                    <div class="text-xs space-y-1" id="group-${index}-data">
+                        ${group.map(item => `<div class="p-1 bg-gray-50 rounded text-center hover:bg-gray-100 transition-colors">${item}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
         
         resultsContainer.appendChild(groupDiv);
     });
 }
 
+// 复制组数据功能
+function copyGroupData(groupIndex) {
+    const groupDataDiv = document.getElementById(`group-${groupIndex}-data`);
+    if (!groupDataDiv) {
+        alert('未找到数据');
+        return;
+    }
+    
+    // 提取所有数据项
+    const dataItems = Array.from(groupDataDiv.querySelectorAll('div')).map(div => div.textContent.trim());
+    const dataText = dataItems.join(',');
+    
+    // 复制到剪贴板
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(dataText).then(() => {
+            // 显示复制成功提示
+            showCopySuccess(groupIndex);
+        }).catch(err => {
+            console.error('复制失败:', err);
+            fallbackCopyTextToClipboard(dataText, groupIndex);
+        });
+    } else {
+        fallbackCopyTextToClipboard(dataText, groupIndex);
+    }
+}
 
+// 备用复制方法
+function fallbackCopyTextToClipboard(text, groupIndex) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showCopySuccess(groupIndex);
+        } else {
+            alert('复制失败，请手动选择复制');
+        }
+    } catch (err) {
+        console.error('复制失败:', err);
+        alert('复制失败，请手动选择复制');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// 显示复制成功提示
+function showCopySuccess(groupIndex) {
+    const button = document.querySelector(`button[onclick="copyGroupData(${groupIndex})"]`);
+    if (button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fa fa-check"></i> 已复制';
+        button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+        button.classList.add('bg-green-500');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('bg-green-500');
+            button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+        }, 1500);
+    }
+}
 
 // 渲染验证结果
 function renderValidationResults(validation) {
@@ -1530,41 +1628,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 粘贴剪切板按钮
+    // 粘贴数据按钮
     const goldenPasteBtn = document.getElementById('goldenPasteBtn');
     if (goldenPasteBtn) {
         goldenPasteBtn.addEventListener('click', async function() {
             try {
-                // 尝试从剪切板读取数据
-                const clipboardText = await navigator.clipboard.readText();
-                
-                if (!clipboardText.trim()) {
-                    alert('剪切板为空');
-                    return;
+                // 尝试从剪贴板读取数据
+                const text = await navigator.clipboard.readText();
+                if (text.trim()) {
+                    document.getElementById('goldenInputData').value = text.trim();
+                    
+                    // 触发输入事件以更新计数
+                    const inputEvent = new Event('input', { bubbles: true });
+                    document.getElementById('goldenInputData').dispatchEvent(inputEvent);
+                    
+                    alert('数据已粘贴');
+                } else {
+                    alert('剪贴板为空');
                 }
-                
-                // 将剪切板内容填入输入框
-                const goldenInputData = document.getElementById('goldenInputData');
-                goldenInputData.value = clipboardText.trim();
-                
-                // 触发输入事件以更新计数
-                goldenInputData.dispatchEvent(new Event('input'));
-                
-                // 显示成功提示
-                const originalText = this.textContent;
-                this.textContent = '已粘贴';
-                this.classList.remove('bg-green-500', 'hover:bg-green-600');
-                this.classList.add('bg-blue-500');
-                
-                setTimeout(() => {
-                    this.textContent = originalText;
-                    this.classList.remove('bg-blue-500');
-                    this.classList.add('bg-green-500', 'hover:bg-green-600');
-                }, 1500);
-                
-            } catch (error) {
-                console.error('粘贴失败:', error);
-                alert('无法访问剪切板，请手动粘贴数据');
+            } catch (err) {
+                console.error('无法访问剪贴板:', err);
+                alert('无法访问剪贴板，请手动粘贴数据');
             }
         });
     }

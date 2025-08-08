@@ -655,18 +655,6 @@
             ></textarea>
           </div>
           
-          <!-- 分组设置 -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">分组数量</label>
-            <select id="groupCountSelect" class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-              <option value="3">3组</option>
-              <option value="4">4组</option>
-              <option value="5" selected>5组</option>
-              <option value="6">6组</option>
-              <option value="7">7组</option>
-            </select>
-          </div>
-          
           <!-- 操作按钮 -->
           <div class="flex justify-center gap-3 mb-6">
             <button 
@@ -674,9 +662,9 @@
               class="px-6 py-2 bg-primary text-white font-medium rounded-md hover:bg-primary/80 transition-colors"
             >开始分割</button>
             <button 
-              id="goldenValidateBtn" 
+              id="goldenPasteBtn" 
               class="px-6 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 transition-colors"
-            >验证5in4</button>
+            >粘贴剪切板</button>
             <button 
               id="goldenClearBtn" 
               class="px-6 py-2 bg-gray-500 text-white font-medium rounded-md hover:bg-gray-600 transition-colors"
@@ -690,11 +678,9 @@
               <div class="text-sm text-gray-500" id="resultSummary"></div>
             </div>
             
-            <!-- 滑动容器 -->
-            <div class="relative">
-              <div id="goldenResults" class="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                <!-- 分组结果将在这里动态生成 -->
-              </div>
+            <!-- 5排紧凑布局 -->
+            <div id="goldenResults" class="space-y-2">
+              <!-- 分组结果将在这里动态生成 -->
             </div>
           </div>
           
@@ -1413,7 +1399,7 @@ function renderGoldenResults(groups) {
     resultsContainer.innerHTML = '';
     
     if (!groups || groups.length === 0) {
-        resultsContainer.innerHTML = '<div class="flex-shrink-0 w-80 text-center text-gray-500 py-8">暂无分割结果</div>';
+        resultsContainer.innerHTML = '<div class="text-center text-gray-500 py-8">暂无分割结果</div>';
         resultSummary.textContent = '';
         return;
     }
@@ -1422,30 +1408,19 @@ function renderGoldenResults(groups) {
     const totalItems = groups.reduce((sum, group) => sum + group.length, 0);
     resultSummary.textContent = `共${groups.length}组，总计${totalItems}项`;
     
-    groups.forEach((group, index) => {
+    // 限制显示最多5组
+    const displayGroups = groups.slice(0, 5);
+    
+    displayGroups.forEach((group, index) => {
         const groupDiv = document.createElement('div');
-        groupDiv.className = 'flex-shrink-0 w-80 bg-white border border-gray-200 rounded-lg shadow-sm';
+        groupDiv.className = 'bg-gray-50 border border-gray-200 rounded-lg p-3';
         
         groupDiv.innerHTML = `
-            <div class="p-4">
-                <div class="flex items-center justify-between mb-3">
-                    <h4 class="font-semibold text-lg text-primary">第${index + 1}组</h4>
-                    <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-500">${group.length}项</span>
-                        <button 
-                            onclick="copyGroupData(${index})" 
-                            class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                            title="复制数据"
-                        >
-                            <i class="fa fa-copy"></i> 复制
-                        </button>
-                    </div>
-                </div>
-                <div class="max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                    <div class="text-sm space-y-1" id="group-${index}-data">
-                        ${group.map(item => `<div class="p-2 bg-gray-50 rounded text-center hover:bg-gray-100 transition-colors">${item}</div>`).join('')}
-                    </div>
-                </div>
+            <div class="flex items-center justify-between mb-2">
+                <h4 class="font-medium text-sm text-gray-700">第${index + 1}组 (${group.length}项)</h4>
+            </div>
+            <div class="text-sm text-gray-600 leading-relaxed">
+                ${group.join(', ')}
             </div>
         `;
         
@@ -1453,74 +1428,7 @@ function renderGoldenResults(groups) {
     });
 }
 
-// 复制组数据功能
-function copyGroupData(groupIndex) {
-    const groupDataDiv = document.getElementById(`group-${groupIndex}-data`);
-    if (!groupDataDiv) {
-        alert('未找到数据');
-        return;
-    }
-    
-    // 提取所有数据项
-    const dataItems = Array.from(groupDataDiv.querySelectorAll('div')).map(div => div.textContent.trim());
-    const dataText = dataItems.join(',');
-    
-    // 复制到剪贴板
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(dataText).then(() => {
-            // 显示复制成功提示
-            showCopySuccess(groupIndex);
-        }).catch(err => {
-            console.error('复制失败:', err);
-            fallbackCopyTextToClipboard(dataText, groupIndex);
-        });
-    } else {
-        fallbackCopyTextToClipboard(dataText, groupIndex);
-    }
-}
 
-// 备用复制方法
-function fallbackCopyTextToClipboard(text, groupIndex) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showCopySuccess(groupIndex);
-        } else {
-            alert('复制失败，请手动选择复制');
-        }
-    } catch (err) {
-        console.error('复制失败:', err);
-        alert('复制失败，请手动选择复制');
-    }
-    
-    document.body.removeChild(textArea);
-}
-
-// 显示复制成功提示
-function showCopySuccess(groupIndex) {
-    const button = document.querySelector(`button[onclick="copyGroupData(${groupIndex})"]`);
-    if (button) {
-        const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fa fa-check"></i> 已复制';
-        button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-        button.classList.add('bg-green-500');
-        
-        setTimeout(() => {
-            button.innerHTML = originalText;
-            button.classList.remove('bg-green-500');
-            button.classList.add('bg-blue-500', 'hover:bg-blue-600');
-        }, 1500);
-    }
-}
 
 // 渲染验证结果
 function renderValidationResults(validation) {
@@ -1595,7 +1503,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (goldenSplitBtn) {
         goldenSplitBtn.addEventListener('click', function() {
             const inputData = document.getElementById('goldenInputData').value.trim();
-            const groupCount = parseInt(document.getElementById('groupCountSelect').value);
             
             if (!inputData) {
                 alert('请输入要分割的数据');
@@ -1623,46 +1530,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 验证按钮
-    const goldenValidateBtn = document.getElementById('goldenValidateBtn');
-    if (goldenValidateBtn) {
-        goldenValidateBtn.addEventListener('click', function() {
-            const resultsContainer = document.getElementById('goldenResults');
-            const groupDivs = resultsContainer.querySelectorAll('div.bg-white');
-            
-            if (groupDivs.length === 0) {
-                alert('请先执行分割操作');
-                return;
-            }
-            
-            // 从DOM中提取分组数据
-            const groups = [];
-            groupDivs.forEach(groupDiv => {
-                const items = [];
-                const itemDivs = groupDiv.querySelectorAll('div.p-1');
-                itemDivs.forEach(itemDiv => {
-                    const text = itemDiv.textContent.trim();
-                    if (text) {
-                        items.push(text);
-                    }
-                });
-                if (items.length > 0) {
-                    groups.push(items);
+    // 粘贴剪切板按钮
+    const goldenPasteBtn = document.getElementById('goldenPasteBtn');
+    if (goldenPasteBtn) {
+        goldenPasteBtn.addEventListener('click', async function() {
+            try {
+                // 尝试从剪切板读取数据
+                const clipboardText = await navigator.clipboard.readText();
+                
+                if (!clipboardText.trim()) {
+                    alert('剪切板为空');
+                    return;
                 }
-            });
-            
-            if (groups.length < 4) {
-                alert('至少需要4组数据才能进行5in4验证');
-                return;
+                
+                // 将剪切板内容填入输入框
+                const goldenInputData = document.getElementById('goldenInputData');
+                goldenInputData.value = clipboardText.trim();
+                
+                // 触发输入事件以更新计数
+                goldenInputData.dispatchEvent(new Event('input'));
+                
+                // 显示成功提示
+                const originalText = this.textContent;
+                this.textContent = '已粘贴';
+                this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                this.classList.add('bg-blue-500');
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.classList.remove('bg-blue-500');
+                    this.classList.add('bg-green-500', 'hover:bg-green-600');
+                }, 1500);
+                
+            } catch (error) {
+                console.error('粘贴失败:', error);
+                alert('无法访问剪切板，请手动粘贴数据');
             }
-            
-            // 执行验证
-            const validation = validate_5in4(groups);
-            
-            // 渲染验证结果
-            renderValidationResults(validation);
-            
-            console.log('验证完成:', validation);
         });
     }
     

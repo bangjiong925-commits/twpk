@@ -336,6 +336,32 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="modules-container">
             <!-- 左侧卡片 - 模块1 (5组筛选条件) -->
         <div id="module1" class="border border-gray-200 rounded-lg p-4 five-star-module">
+          <!-- 模块总容错设置 -->
+          <div class="module-tolerance mb-4 p-3 bg-gray-50 rounded border">
+            <div class="flex items-center text-sm">
+              <span class="text-gray-700 font-medium mr-3">模块总容错：</span>
+              <span class="text-gray-600 mr-2">允许</span>
+              <select class="module-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+              </select>
+              <span class="ml-2 text-gray-600">个条件不成立</span>
+            </div>
+          </div>
+          
           <!-- 第1组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
             <!-- 条件1容错选择器 -->
@@ -585,6 +611,32 @@
             
             <!-- 右侧卡片 - 模块2 (结构与模块1相同，data-module="2") -->
         <div id="module2" class="border border-gray-200 rounded-lg p-4 five-star-module">
+          <!-- 模块总容错设置 -->
+          <div class="module-tolerance mb-4 p-3 bg-gray-50 rounded border">
+            <div class="flex items-center text-sm">
+              <span class="text-gray-700 font-medium mr-3">模块总容错：</span>
+              <span class="text-gray-600 mr-2">允许</span>
+              <select class="module-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+              </select>
+              <span class="ml-2 text-gray-600">个条件不成立</span>
+            </div>
+          </div>
+          
           <!-- 第1组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
             <!-- 条件1容错选择器 -->
@@ -1087,6 +1139,9 @@ function initFiveStarModule(moduleId) {
         { selectedNumbers: [], selectedDamas: [], toleranceMin: 0, toleranceMax: 0 }, // 组4
         { selectedNumbers: [], selectedDamas: [], toleranceMin: 0, toleranceMax: 0 }  // 组5
     ],
+    // 模块总容错设置
+    moduleToleranceMin: 0,  // 允许最少多少个条件不成立
+    moduleToleranceMax: 5,  // 允许最多多少个条件不成立
     results: [],         // 当前显示结果
     allPermutations: [], // 所有排列组合
     originalResults: [], // 原始筛选结果
@@ -1105,6 +1160,8 @@ function initFiveStarModule(moduleId) {
   const resultCount = module.querySelector('.result-count');
   const conditionToleranceMinSelects = module.querySelectorAll('.condition-tolerance-min');
   const conditionToleranceMaxSelects = module.querySelectorAll('.condition-tolerance-max');
+  const moduleToleranceMinSelect = module.querySelector('.module-tolerance-min');
+  const moduleToleranceMaxSelect = module.querySelector('.module-tolerance-max');
 
   // 数字按钮点击事件
   numberButtons.forEach(button => {
@@ -1156,6 +1213,19 @@ function initFiveStarModule(moduleId) {
       moduleState.groups[groupIndex].toleranceMax = parseInt(this.value);
     });
   });
+
+  // 模块总容错选择事件
+  if (moduleToleranceMinSelect) {
+    moduleToleranceMinSelect.addEventListener('change', function() {
+      moduleState.moduleToleranceMin = parseInt(this.value);
+    });
+  }
+
+  if (moduleToleranceMaxSelect) {
+    moduleToleranceMaxSelect.addEventListener('change', function() {
+      moduleState.moduleToleranceMax = parseInt(this.value);
+    });
+  }
 
   /***** 核心：按"命中个数"判定（不看位置） *****/
   
@@ -1266,8 +1336,21 @@ function initFiveStarModule(moduleId) {
     }
     
     const details = activeConditions.map(c => evaluateCondition(c, resultNums));
-    const ok = details.every(d => d.ok);
-    return { ok, details };
+    
+    // 应用模块总容错逻辑
+    // 统计不成立的条件数量
+    const failedConditionsCount = details.filter(d => !d.ok).length;
+    
+    // 检查失败的条件数是否在允许的容错范围内
+    const moduleToleranceOk = failedConditionsCount >= moduleState.moduleToleranceMin && 
+                             failedConditionsCount <= moduleState.moduleToleranceMax;
+    
+    return { 
+      ok: moduleToleranceOk, 
+      details,
+      failedCount: failedConditionsCount,
+      moduleToleranceRange: [moduleState.moduleToleranceMin, moduleState.moduleToleranceMax]
+    };
   }
 
   // 做号按钮点击事件

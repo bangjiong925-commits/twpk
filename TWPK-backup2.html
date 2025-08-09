@@ -336,32 +336,6 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="modules-container">
             <!-- 左侧卡片 - 模块1 (5组筛选条件) -->
         <div id="module1" class="border border-gray-200 rounded-lg p-4 five-star-module">
-          <!-- 模块总容错设置 -->
-          <div class="module-tolerance mb-4 p-3 bg-gray-50 rounded border">
-            <div class="flex items-center text-sm">
-              <span class="text-gray-700 font-medium mr-3">模块总容错：</span>
-              <span class="text-gray-600 mr-2">允许</span>
-              <select class="module-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-              <span class="mx-1">至</span>
-              <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
-                <option value="0" selected>0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-              <span class="ml-2 text-gray-600">个条件不成立</span>
-            </div>
-          </div>
-          
           <!-- 第1组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
             <!-- 条件1容错选择器 -->
@@ -611,32 +585,6 @@
             
             <!-- 右侧卡片 - 模块2 (结构与模块1相同，data-module="2") -->
         <div id="module2" class="border border-gray-200 rounded-lg p-4 five-star-module">
-          <!-- 模块总容错设置 -->
-          <div class="module-tolerance mb-4 p-3 bg-gray-50 rounded border">
-            <div class="flex items-center text-sm">
-              <span class="text-gray-700 font-medium mr-3">模块总容错：</span>
-              <span class="text-gray-600 mr-2">允许</span>
-              <select class="module-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-              <span class="mx-1">至</span>
-              <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
-                <option value="0" selected>0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-              </select>
-              <span class="ml-2 text-gray-600">个条件不成立</span>
-            </div>
-          </div>
-          
           <!-- 第1组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
             <!-- 条件1容错选择器 -->
@@ -1130,17 +1078,6 @@ function permute(arr, k) {
 
 // 初始化五星模块
 function initFiveStarModule(moduleId) {
-  // 防止重复初始化
-  if (window.moduleStates && window.moduleStates[moduleId]) {
-    console.log(`模块${moduleId}已经初始化过，跳过重复初始化`);
-    return;
-  }
-  
-  // 确保全局状态对象存在
-  if (!window.moduleStates) {
-    window.moduleStates = {};
-  }
-  
   // 模块状态存储 - 修改为按组存储条件，每个条件组有独立的容错设置
   const moduleState = window.moduleStates[moduleId] = {
     groups: [
@@ -1150,9 +1087,6 @@ function initFiveStarModule(moduleId) {
         { selectedNumbers: [], selectedDamas: [], toleranceMin: 0, toleranceMax: 0 }, // 组4
         { selectedNumbers: [], selectedDamas: [], toleranceMin: 0, toleranceMax: 0 }  // 组5
     ],
-    // 模块总容错设置
-    moduleToleranceMin: 0,  // 允许最少多少个条件不成立
-    moduleToleranceMax: 0,  // 允许最多多少个条件不成立
     results: [],         // 当前显示结果
     allPermutations: [], // 所有排列组合
     originalResults: [], // 原始筛选结果
@@ -1171,8 +1105,6 @@ function initFiveStarModule(moduleId) {
   const resultCount = module.querySelector('.result-count');
   const conditionToleranceMinSelects = module.querySelectorAll('.condition-tolerance-min');
   const conditionToleranceMaxSelects = module.querySelectorAll('.condition-tolerance-max');
-  const moduleToleranceMinSelect = module.querySelector('.module-tolerance-min');
-  const moduleToleranceMaxSelect = module.querySelector('.module-tolerance-max');
 
   // 数字按钮点击事件
   numberButtons.forEach(button => {
@@ -1225,19 +1157,6 @@ function initFiveStarModule(moduleId) {
     });
   });
 
-  // 模块总容错选择事件
-  if (moduleToleranceMinSelect) {
-    moduleToleranceMinSelect.addEventListener('change', function() {
-      moduleState.moduleToleranceMin = parseInt(this.value);
-    });
-  }
-
-  if (moduleToleranceMaxSelect) {
-    moduleToleranceMaxSelect.addEventListener('change', function() {
-      moduleState.moduleToleranceMax = parseInt(this.value);
-    });
-  }
-
   /***** 核心：按"命中个数"判定（不看位置） *****/
   
   /** 求与开奖号码（前五）相交的命中个数 */
@@ -1287,120 +1206,6 @@ function initFiveStarModule(moduleId) {
     return { minHits, maxHits };
   }
   
-  // 基于条件数据生成组合的函数
-  function generateFromConditions(activeConditions) {
-    const results = [];
-    const conditionCount = activeConditions.length;
-    const minFailures = moduleState.moduleToleranceMin;
-    const maxFailures = moduleState.moduleToleranceMax;
-    
-    // 计算需要满足的条件数量范围
-    const minSatisfied = Math.max(0, conditionCount - maxFailures);
-    const maxSatisfied = Math.max(0, conditionCount - minFailures);
-    
-    console.log(`条件总数: ${conditionCount}, 容错范围: ${minFailures}-${maxFailures}`);
-    console.log(`需要满足的条件数: ${minSatisfied}-${maxSatisfied}`);
-    
-    // 生成所有可能的条件组合
-    for (let satisfiedCount = minSatisfied; satisfiedCount <= maxSatisfied; satisfiedCount++) {
-      if (satisfiedCount === 0 && conditionCount > 0) continue; // 当有条件时，至少要满足一个条件
-      
-      // 获取所有可能的条件组合
-      const conditionCombinations = getCombinations(activeConditions, satisfiedCount);
-      
-      for (const conditionCombo of conditionCombinations) {
-        // 从选中的条件中生成数字组合
-        const numberCombinations = generateNumberCombinations(conditionCombo);
-        results.push(...numberCombinations);
-      }
-    }
-    
-    // 去重并限制结果数量
-    const uniqueResults = [...new Set(results.map(r => r.join(',')))];
-    console.log(`生成组合数: ${uniqueResults.length}`);
-    
-    return uniqueResults.slice(0, 10000).map(r => r.split(',').map(Number)); // 限制最多10000个结果
-  }
-  
-  // 获取数组的所有组合
-  function getCombinations(arr, count) {
-    if (count === 0) return [[]];
-    if (count > arr.length) return [];
-    if (count === arr.length) return [arr];
-    
-    const result = [];
-    for (let i = 0; i <= arr.length - count; i++) {
-      const head = arr[i];
-      const tailCombos = getCombinations(arr.slice(i + 1), count - 1);
-      for (const tail of tailCombos) {
-        result.push([head, ...tail]);
-      }
-    }
-    return result;
-  }
-  
-  // 从条件组合中生成数字组合
-  function generateNumberCombinations(conditions) {
-    const results = [];
-    
-    // 收集所有条件的数字
-    const allConditionNumbers = conditions.map(condition => {
-      return condition.selectedNumbers.length > 0 ? condition.selectedNumbers : [1,2,3,4,5,6,7,8,9,10];
-    });
-    
-    // 生成笛卡尔积
-    function cartesianProduct(arrays) {
-      if (arrays.length === 0) return [[]];
-      if (arrays.length === 1) return arrays[0].map(x => [x]);
-      
-      const result = [];
-      const firstArray = arrays[0];
-      const restProduct = cartesianProduct(arrays.slice(1));
-      
-      for (const first of firstArray) {
-        for (const rest of restProduct) {
-          const combination = [first, ...rest];
-          if (combination.length === 5 && new Set(combination).size === 5) {
-            // 确保是5个不重复的数字
-            result.push(combination.sort((a, b) => a - b));
-          }
-        }
-      }
-      return result;
-    }
-    
-    // 如果条件数少于5个，需要补充其他数字
-    if (conditions.length < 5) {
-      const usedNumbers = new Set();
-      conditions.forEach(condition => {
-        condition.selectedNumbers.forEach(num => usedNumbers.add(num));
-      });
-      
-      const remainingNumbers = [1,2,3,4,5,6,7,8,9,10].filter(num => !usedNumbers.has(num));
-      const needMore = 5 - conditions.length;
-      
-      // 从剩余数字中选择需要的数量
-      const additionalCombos = getCombinations(remainingNumbers, needMore);
-      
-      for (const condition of conditions) {
-        for (const num of condition.selectedNumbers) {
-          for (const additional of additionalCombos) {
-            const combination = [num, ...additional].sort((a, b) => a - b);
-            if (combination.length === 5 && new Set(combination).size === 5) {
-              results.push(combination);
-            }
-          }
-        }
-      }
-    } else {
-      // 如果条件数>=5，直接从每个条件中选一个数字
-      const cartesianResults = cartesianProduct(allConditionNumbers);
-      results.push(...cartesianResults);
-    }
-    
-    return results;
-  }
-  
   // 条件评估函数（适配现有接口）
   function evaluateCondition(condition, resultNums) {
     // 如果条件为空，应该不参与评估
@@ -1411,53 +1216,31 @@ function initFiveStarModule(moduleId) {
     const picks = condition.selectedNumbers;
     const picksLen = picks.length;
     
-    // 计算实际命中个数
-    const actualHitCount = countHits(picks, resultNums);
-    
+    // 根据胆码选择情况确定命中区间
+    let minHits, maxHits;
     if (condition.selectedDamas.length === 0) {
-      // 未选择命中胆码数：如果选择了胆码数字但没有选择命中胆码数，则不通过筛选
-      // 这种情况下用户需要明确指定命中几个胆码才能进行筛选
-      return {
-        ok: false,
-        errors: picksLen - actualHitCount,
-        hitCount: actualHitCount
-      };
+      // 未选择命中“胆”个数：表示只要包含所选号码中的任意一个即可（顺序和命中数量不限）
+      // 因此命中范围为 [1, picksLen]，忽略容错下拉
+      minHits = Math.min(1, picksLen);
+      maxHits = picksLen;
+    } else {
+      // 已选择命中胆码数：直接使用胆码数值作为命中个数范围
+      // 例如：选择1胆表示只筛选命中1个号，选择1胆2胆表示只筛选命中1个或2个号
+      minHits = Math.min(...condition.selectedDamas);
+      maxHits = Math.max(...condition.selectedDamas);
+      
+      // 胆码选择时忽略容错下拉框，直接按胆码数值筛选
     }
     
-    // 已选择命中胆码数：检查实际命中数是否在选中的胆码数范围内
-    // 胆码逻辑：选择1234作为胆码，命中胆码数选3-4时，筛选包含1234中任意3个或4个的号码
+    // 使用新的命中判定逻辑
+    const result = evalHitCondition(picks, resultNums, minHits, maxHits);
     
-    // 检查实际命中数是否在选中的胆码数列表中
-    const isValidHitCount = condition.selectedDamas.includes(actualHitCount);
+    // 计算错误数以保持接口兼容
+    const errors = picksLen - result.hits;
     
-    if (!isValidHitCount) {
-      // 如果命中数不在选中的胆码数中，检查容错
-      // 容错X-Y表示：允许X到Y个胆码数条件不成立
-      const toleranceMin = condition.toleranceMin;
-      const toleranceMax = condition.toleranceMax;
-      
-      // 计算不成立的条件数（这里是1，因为实际命中数不在选中范围内）
-      const unsatisfiedCount = 1;
-      
-      // 判断是否在容错范围内
-      const isValid = unsatisfiedCount >= toleranceMin && unsatisfiedCount <= toleranceMax;
-      
-      return {
-        ok: isValid,
-        errors: picksLen - actualHitCount,
-        hitCount: actualHitCount
-      };
-    }
-    
-    // 命中数在选中的胆码数中，条件成立
-    const isValid = true;
-    
-    return {
-      ok: isValid,
-      errors: picksLen - actualHitCount,
-      hitCount: actualHitCount
-    };
-  }  
+    return { ok: result.ok, errors, hitCount: result.hits };
+  }
+  
   // 评估所有条件（适配现有接口）
   function evaluateAll(conditions, resultNums) {
     // 只评估有设置的条件（选择了数字或胆码的条件）
@@ -1465,90 +1248,36 @@ function initFiveStarModule(moduleId) {
       c.selectedNumbers.length > 0 || c.selectedDamas.length > 0
     );
     
-    // 如果没有任何活跃条件，返回true（通过筛选，生成所有组合）
+    // 如果没有任何活跃条件，返回false（不通过筛选）
     if (activeConditions.length === 0) {
-      return { ok: true, details: [], failedCount: 0, moduleToleranceRange: [moduleState.moduleToleranceMin, moduleState.moduleToleranceMax] };
+      return { ok: false, details: [] };
     }
     
     const details = activeConditions.map(c => evaluateCondition(c, resultNums));
-    
-    // 应用模块总容错逻辑
-    // 统计不成立的条件数量
-    const failedConditionsCount = details.filter(d => !d.ok).length;
-    
-    // 检查失败的条件数是否在允许的容错范围内
-    const moduleToleranceOk = failedConditionsCount >= moduleState.moduleToleranceMin && 
-                             failedConditionsCount <= moduleState.moduleToleranceMax;
-    
-    return { 
-      ok: moduleToleranceOk, 
-      details,
-      failedCount: failedConditionsCount,
-      moduleToleranceRange: [moduleState.moduleToleranceMin, moduleState.moduleToleranceMax]
-    };
+    const ok = details.every(d => d.ok);
+    return { ok, details };
   }
 
   // 做号按钮点击事件
   generateBtn.addEventListener('click', function() {
-    // 获取有数据的条件
-    const activeConditions = moduleState.groups.filter(g => 
-      g.selectedNumbers.length > 0 || g.selectedDamas.length > 0
-    );
+    // 生成所有可能的5个数字的排列 (从1-10中选择)
+    const allNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const permutations = permute(allNumbers, 5);
     
-    let filteredResults = [];
+    // 存储所有排列组合
+    moduleState.allPermutations = permutations;
     
-    // 如果没有活跃条件，生成所有可能的排列
-    if (activeConditions.length === 0) {
-      console.log('没有活跃条件，生成所有排列');
-      const allNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const permutations = permute(allNumbers, 5);
-      console.log(`生成排列数: ${permutations.length}`);
-      filteredResults = permutations;
-    }
-    // 有活跃条件时，使用筛选逻辑
-    else {
-      console.log('有活跃条件，使用筛选逻辑');
-      console.log('活跃条件:', activeConditions);
-      
-      const allNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const permutations = permute(allNumbers, 5);
-      
-      // 存储所有排列组合
-      moduleState.allPermutations = permutations;
-      
-      // 根据选中的数字、胆码和容错筛选结果
-      filteredResults = permutations.filter(comb => {
-          // 使用容错评估逻辑
-          const evaluation = evaluateAll(moduleState.groups, comb);
-          
-          // 调试信息：输出前几个组合的评估结果
-          if (permutations.indexOf(comb) < 5) {
-            console.log(`组合 ${comb.join(',')} 评估结果:`, {
-              ok: evaluation.ok,
-              failedCount: evaluation.failedCount,
-              moduleToleranceRange: evaluation.moduleToleranceRange,
-              details: evaluation.details.map(d => ({ ok: d.ok, hitCount: d.hitCount }))
-            });
-          }
-          
-          return evaluation.ok;
-      });
-    }
-    
-    // 调试信息：输出筛选统计
-    console.log(`模块总容错设置: ${moduleState.moduleToleranceMin}-${moduleState.moduleToleranceMax}`);
-    console.log(`活跃条件数: ${moduleState.groups.filter(g => g.selectedNumbers.length > 0 || g.selectedDamas.length > 0).length}`);
-    console.log(`筛选结果: ${filteredResults.length}`);
-    
-    // 调试信息：输出最终结果
-    console.log(`最终筛选结果数量: ${filteredResults.length}`);
+    // 根据选中的数字、胆码和容错筛选结果
+    const filteredResults = permutations.filter(comb => {
+        // 使用新的容错评估逻辑
+        const evaluation = evaluateAll(moduleState.groups, comb);
+        return evaluation.ok;
+    });
     
     // 首次生成时就按照格式化逻辑处理并存储为字符串
     const formattedResults = filteredResults.map(comb => 
         comb.map(num => num.toString().padStart(2, '0')).join(' ')
     );
-    
-    console.log(`格式化后结果数量: ${formattedResults.length}`);
     
 
     
@@ -1677,12 +1406,8 @@ function initFiveStarModule(moduleId) {
 // 页面加载时初始化现有模块
 document.addEventListener('DOMContentLoaded', function() {
   // 初始化模块1和模块2
-  if (!window.moduleStates || !window.moduleStates[1]) {
-    initFiveStarModule(1);
-  }
-  if (!window.moduleStates || !window.moduleStates[2]) {
-    initFiveStarModule(2);
-  }
+  initFiveStarModule(1);
+  initFiveStarModule(2);
 });
 
 
@@ -1750,15 +1475,24 @@ function resetModuleState(module) {
   // 重置输入和显示
   module.querySelector('.result-input').value = '';
   module.querySelector('.result-count').textContent = '共0注';
-  
-  // 重置模块总容错为默认值0-0
-  const toleranceMinSelect = module.querySelector('.module-tolerance-min');
-  const toleranceMaxSelect = module.querySelector('.module-tolerance-max');
-  if (toleranceMinSelect) toleranceMinSelect.value = '0';
-  if (toleranceMaxSelect) toleranceMaxSelect.value = '0';
 }
 
-// 重复的permute函数已删除，使用上面的迭代版本
+// 排列组合函数
+function permute(arr, length) {
+  const result = [];
+  
+  if (length === 1) {
+    return arr.map(item => [item]);
+  }
+  
+  arr.forEach((item, index, array) => {
+    const remaining = [...array.slice(0, index), ...array.slice(index + 1)];
+    const perms = permute(remaining, length - 1).map(perm => [item, ...perm]);
+    result.push(...perms);
+  });
+  
+  return result;
+}
 
 // Tailwind配置
 tailwind.config = {
@@ -1827,8 +1561,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// 重复的初始化代码已移除
-let r=[],i=1,a=null,s=null,d=new Set,u=null,l=null,m=!1,f=30,y=!1,b=!1,currentPage=1,pageSize=50,totalPages=1;const h="pk4_access_key",g=document.getElementById("keyModal"),p=document.getElementById("keyInput"),v=document.getElementById("output"),x=document.getElementById("tableContainer"),w=document.getElementById("horizontalThumb"),k=document.getElementById("horizontalFill"),$=document.getElementById("verticalSlider"),B=document.getElementById("verticalThumb"),I=document.getElementById("verticalFill"),M=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,M.appendChild(e)}const S=document.getElementById("hitButtons");function N(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),L()}))}function C(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),L()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",S.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),N(Array.from(M.children)),C(Array.from(S.children));let T=null;function D(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(T);const t=Y();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,void setTimeout(()=>{window.location.reload()},3e3)}const r=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),a=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${r}天 ${i}小时 ${a}分钟 ${s}秒`;const d=24*r+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}T&&clearInterval(T),o(),e.classList.remove("hidden"),T=setInterval(o,1e3)}function generateDeviceFingerprint(){
+// 初始化五星做号模块
+document.addEventListener('DOMContentLoaded', function() {
+  initFiveStarModule(1);
+  initFiveStarModule(2);
+});let r=[],i=1,a=null,s=null,d=new Set,u=null,l=null,m=!1,f=30,y=!1,b=!1,currentPage=1,pageSize=50,totalPages=1;const h="pk4_access_key",g=document.getElementById("keyModal"),p=document.getElementById("keyInput"),v=document.getElementById("output"),x=document.getElementById("tableContainer"),w=document.getElementById("horizontalThumb"),k=document.getElementById("horizontalFill"),$=document.getElementById("verticalSlider"),B=document.getElementById("verticalThumb"),I=document.getElementById("verticalFill"),M=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,M.appendChild(e)}const S=document.getElementById("hitButtons");function N(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),L()}))}function C(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),L()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",S.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),N(Array.from(M.children)),C(Array.from(S.children));let T=null;function D(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(T);const t=Y();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,void setTimeout(()=>{window.location.reload()},3e3)}const r=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),a=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${r}天 ${i}小时 ${a}分钟 ${s}秒`;const d=24*r+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}T&&clearInterval(T),o(),e.classList.remove("hidden"),T=setInterval(o,1e3)}function generateDeviceFingerprint(){
   // 使用固定的通用指纹，允许密钥在任何设备上使用
   // 这样可以确保密钥的跨设备兼容性
     return 'universal_device_2024';

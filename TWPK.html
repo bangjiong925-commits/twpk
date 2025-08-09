@@ -351,12 +351,12 @@
               </select>
               <span class="mx-1">至</span>
               <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
-                <option value="0">0</option>
+                <option value="0" selected>0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
-                <option value="5" selected>5</option>
+                <option value="5">5</option>
               </select>
               <span class="ml-2 text-gray-600">个条件不成立</span>
             </div>
@@ -626,12 +626,12 @@
               </select>
               <span class="mx-1">至</span>
               <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
-                <option value="0">0</option>
+                <option value="0" selected>0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
-                <option value="5" selected>5</option>
+                <option value="5">5</option>
               </select>
               <span class="ml-2 text-gray-600">个条件不成立</span>
             </div>
@@ -1141,7 +1141,7 @@ function initFiveStarModule(moduleId) {
     ],
     // 模块总容错设置
     moduleToleranceMin: 0,  // 允许最少多少个条件不成立
-    moduleToleranceMax: 5,  // 允许最多多少个条件不成立
+    moduleToleranceMax: 0,  // 允许最多多少个条件不成立
     results: [],         // 当前显示结果
     allPermutations: [], // 所有排列组合
     originalResults: [], // 原始筛选结果
@@ -1299,23 +1299,33 @@ function initFiveStarModule(moduleId) {
       };
     }
     
-    // 已选择命中胆码数：需要考虑容错逻辑
-    // 容错X-Y表示：在所有选中的胆码数条件中，必须有X到Y个条件不成立
+    // 已选择命中胆码数：检查实际命中数是否在选中的胆码数范围内
+    // 胆码逻辑：选择1234作为胆码，命中胆码数选3-4时，筛选包含1234中任意3个或4个的号码
     
-    // 检查每个胆码数条件是否成立
-    const damaConditions = condition.selectedDamas.map(dama => actualHitCount === dama);
-    const satisfiedCount = damaConditions.filter(Boolean).length;
-    const totalConditions = condition.selectedDamas.length;
+    // 检查实际命中数是否在选中的胆码数列表中
+    const isValidHitCount = condition.selectedDamas.includes(actualHitCount);
     
-    // 计算不成立的条件数
-    const unsatisfiedCount = totalConditions - satisfiedCount;
+    if (!isValidHitCount) {
+      // 如果命中数不在选中的胆码数中，检查容错
+      // 容错X-Y表示：允许X到Y个胆码数条件不成立
+      const toleranceMin = condition.toleranceMin;
+      const toleranceMax = condition.toleranceMax;
+      
+      // 计算不成立的条件数（这里是1，因为实际命中数不在选中范围内）
+      const unsatisfiedCount = 1;
+      
+      // 判断是否在容错范围内
+      const isValid = unsatisfiedCount >= toleranceMin && unsatisfiedCount <= toleranceMax;
+      
+      return {
+        ok: isValid,
+        errors: picksLen - actualHitCount,
+        hitCount: actualHitCount
+      };
+    }
     
-    // 容错范围：必须有toleranceMin到toleranceMax个条件不成立
-    const toleranceMin = condition.toleranceMin;
-    const toleranceMax = condition.toleranceMax;
-    
-    // 判断是否满足容错要求
-    const isValid = unsatisfiedCount >= toleranceMin && unsatisfiedCount <= toleranceMax;
+    // 命中数在选中的胆码数中，条件成立
+    const isValid = true;
     
     return {
       ok: isValid,
@@ -1330,9 +1340,9 @@ function initFiveStarModule(moduleId) {
       c.selectedNumbers.length > 0 || c.selectedDamas.length > 0
     );
     
-    // 如果没有任何活跃条件，返回false（不通过筛选）
+    // 如果没有任何活跃条件，返回true（通过筛选，生成所有组合）
     if (activeConditions.length === 0) {
-      return { ok: false, details: [] };
+      return { ok: true, details: [], failedCount: 0, moduleToleranceRange: [moduleState.moduleToleranceMin, moduleState.moduleToleranceMax] };
     }
     
     const details = activeConditions.map(c => evaluateCondition(c, resultNums));
@@ -1366,8 +1376,24 @@ function initFiveStarModule(moduleId) {
     const filteredResults = permutations.filter(comb => {
         // 使用新的容错评估逻辑
         const evaluation = evaluateAll(moduleState.groups, comb);
+        
+        // 调试信息：输出前几个组合的评估结果
+        if (permutations.indexOf(comb) < 5) {
+          console.log(`组合 ${comb.join(',')} 评估结果:`, {
+            ok: evaluation.ok,
+            failedCount: evaluation.failedCount,
+            moduleToleranceRange: evaluation.moduleToleranceRange,
+            details: evaluation.details.map(d => ({ ok: d.ok, hitCount: d.hitCount }))
+          });
+        }
+        
         return evaluation.ok;
     });
+    
+    // 调试信息：输出筛选统计
+    console.log(`模块总容错设置: ${moduleState.moduleToleranceMin}-${moduleState.moduleToleranceMax}`);
+    console.log(`活跃条件数: ${moduleState.groups.filter(g => g.selectedNumbers.length > 0 || g.selectedDamas.length > 0).length}`);
+    console.log(`筛选结果: ${filteredResults.length}/${permutations.length}`);
     
     // 首次生成时就按照格式化逻辑处理并存储为字符串
     const formattedResults = filteredResults.map(comb => 
@@ -1570,6 +1596,12 @@ function resetModuleState(module) {
   // 重置输入和显示
   module.querySelector('.result-input').value = '';
   module.querySelector('.result-count').textContent = '共0注';
+  
+  // 重置模块总容错为默认值0-0
+  const toleranceMinSelect = module.querySelector('.module-tolerance-min');
+  const toleranceMaxSelect = module.querySelector('.module-tolerance-max');
+  if (toleranceMinSelect) toleranceMinSelect.value = '0';
+  if (toleranceMaxSelect) toleranceMaxSelect.value = '0';
 }
 
 // 排列组合函数

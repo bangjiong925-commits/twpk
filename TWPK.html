@@ -120,6 +120,17 @@
       #goldenResults::-webkit-scrollbar-thumb:hover {
         background: #94a3b8;
       }
+      
+      /* 模式切换按钮样式 */
+      .active-mode {
+        background-color: #3b82f6 !important;
+        color: white !important;
+      }
+      
+      .inactive-mode {
+        background-color: #d1d5db !important;
+        color: #374151 !important;
+      }
       .sticky-bg-gray-50 {
         background-color: #f9fafb !important;
       }
@@ -642,7 +653,24 @@
     <div id="goldenRatioPage" class="hidden">
       <div class="container mx-auto px-4 py-6">
         <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">黄金切割分析</h2>
+          <!-- 切割模式选择 -->
+          <div class="mb-6">
+            <div class="flex justify-center gap-3 mb-4">
+              <button 
+                id="modeUniformBtn" 
+                class="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 transition-colors active-mode"
+                data-mode="uniform"
+              >均匀</button>
+              <button 
+                id="modeStableBtn" 
+                class="px-6 py-2 bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400 transition-colors"
+                data-mode="stable"
+              >稳定</button>
+            </div>
+            <div class="text-center text-sm text-gray-600 mb-4">
+              <span id="modeDescription">均匀模式：一次性分完就用，不保持历史分组</span>
+            </div>
+          </div>
           
           <!-- 输入区域 -->
           <div class="mb-6">
@@ -654,8 +682,6 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none overflow-auto whitespace-pre-wrap"
             ></textarea>
           </div>
-          
-
           
           <!-- 操作按钮 -->
           <div class="flex justify-center gap-3 mb-6">
@@ -1297,50 +1323,81 @@ async function markKeyAsUsedOnline(nonce) {
 
 function F(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");const t=document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);if(!t.length)return void(v.textContent="请输入数据");let e=0;for(const n of t){const t=E(n);if(!t)return void(v.textContent="格式错误：请输入正确的数据格式");const{period:o,data:c}=t,i=c.join(",");d.has(o)||r.length&&r[r.length-1].input===i||(r.push({period:o,data:c,input:i}),d.add(o),e++)}document.getElementById("numbersInput").value="",v.textContent=e>0?`成功添加 ${e} 期数据`:"没有新数据添加",document.getElementById("periodCount").textContent=r.length,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}async function J(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");try{v.textContent="正在获取数据...";const t=await fetch("https://api.duoqu.online/data?id=406&limit=1&key=ibjweyjfzt"),e=await t.json();if("success"===e.info&&e.data.length){const t=e.data[0].openNumber.split(",").map(Number),n=e.data[0].period||n++,o=t.join(",");if(d.has(n)||r.length&&r[r.length-1].input===o)return void(v.textContent="已是最新数据");r.push({period:n,data:t,input:o}),d.add(n),document.getElementById("periodCount").textContent=r.length,v.textContent=`成功获取第 ${n} 期数据`,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}else v.textContent="获取数据失败："+(e.message||"未知错误")}catch(t){v.textContent=`获取数据错误：${t.message}`}}function R(t,e){if(!b)return g.classList.remove("hidden"),alert("请先验证有效的密钥"),[];const n=[];return function o(c,r){if(r.length!==e)for(let e=c;e<t.length;e++)r.push(t[e]),o(e+1,r),r.pop();else n.push(r.slice())}(0,[]),n}
 
-/** 
- * 将任意注数切割为5组，每组固定 M 注，每注出现4次 
- * 满足5中4容错结构 
- * @param {string[]} data 原始注单数组 
- * @returns {string[][]} 返回5组，每组注数固定 
- */ 
-function splitTo5in4_AnyLength(data) { 
-  const groupCount = 5; 
-  const repeatEach = 4; 
+/**
+ * 黄金切割（必须 5 中 4）：任意注数 → 5 组
+ * 思路：为每条注单指定唯一"缺席组"omitted = 0..4
+ * 第 g 组收集所有 omitted !== g 的注单
+ * 结论：任意 4 组合并 = 全集（严格保证）
+ * 
+ * assign: 'roundrobin' 更均匀；'hash' 更稳定（同一注单长期落同一缺席组）
+ */
+function goldenSplit5in4(data, assign = 'roundrobin') {
+  const G = 5;
+  const groups = Array.from({ length: G }, () => []);
 
-  // 补齐数据长度为 5 的倍数 
-  const remainder = data.length % groupCount; 
-  const paddedData = [...data]; 
-  if (remainder !== 0) { 
-    const needPad = groupCount - remainder; 
-    for (let i = 0; i < needPad; i++) { 
-      paddedData.push(data[i % data.length]); // 循环补齐 
-    } 
-  } 
+  // 缺席组索引（每注唯一）
+  const omittedIdx = new Array(data.length);
 
-  const total = paddedData.length; 
-  const eachGroupSize = (total * repeatEach) / groupCount; 
+  if (assign === 'hash') {
+    for (let i = 0; i < data.length; i++) {
+      omittedIdx[i] = hash5(data[i]); // 0..4
+    }
+  } else {
+    for (let i = 0; i < data.length; i++) {
+      omittedIdx[i] = i % G; // 轮转
+    }
+  }
 
-  // 初始化5个组 
-  const groups = Array.from({ length: groupCount }, () => []); 
+  // 构建 5 组：每注出现在 4 个组
+  for (let i = 0; i < data.length; i++) {
+    const omit = omittedIdx[i];
+    for (let g = 0; g < G; g++) {
+      if (g !== omit) groups[g].push(data[i]);
+    }
+  }
+  return groups;
 
-  // 为每注分配4个不同的组 
-  paddedData.forEach(item => { 
-    const shuffledGroups = shuffle([0, 1, 2, 3, 4]); 
-    const selected = shuffledGroups.slice(0, repeatEach); 
-    selected.forEach(g => groups[g].push(item)); 
-  }); 
+  function hash5(str) {
+    let h = 2166136261 >>> 0;
+    for (let j = 0; j < str.length; j++) {
+      h ^= str.charCodeAt(j);
+      h = Math.imul(h, 16777619);
+    }
+    return h % 5;
+  }
+}
 
-  return groups; 
+/** 校验：任意四组合并是否等于全集（严格 5 中 4） */
+function validate5in4(groups, original) {
+  const uniq = (arr) => Array.from(new Set(arr));
+  const origSet = new Set(uniq(original));
+  const G = groups.length;
 
-  // 工具函数：打乱数组 
-  function shuffle(arr) { 
-    const result = [...arr]; 
-    for (let i = result.length - 1; i > 0; i--) { 
-      const j = Math.floor(Math.random() * (i + 1)); 
-      [result[i], result[j]] = [result[j], result[i]]; 
-    } 
-    return result; 
-  } 
+  for (let miss = 0; miss < G; miss++) {
+    const merged = new Set();
+    for (let g = 0; g < G; g++) {
+      if (g === miss) continue;
+      for (const x of groups[g]) merged.add(x);
+    }
+    if (merged.size !== origSet.size) return false;
+    // 也可逐条核对
+    for (const x of origSet) if (!merged.has(x)) return false;
+  }
+  return true;
+}
+
+/** 解析输入：支持换行/逗号分隔；自动去重；保持原顺序的唯一化 */
+function parseInput(raw) {
+  const parts = raw
+    .split(/[\n,]+/g)
+    .map(s => s.trim())
+    .filter(Boolean);
+  const seen = new Set();
+  const out = [];
+  for (const p of parts) {
+    if (!seen.has(p)) { seen.add(p); out.push(p); }
+  }
+  return out;
 }
 
 // 验证任意4组组合后是否为全集
@@ -1404,20 +1461,39 @@ function validate_5in4(groups) {
 }
 
 // 渲染黄金切割结果 - 5个紧凑框布局
-function renderGoldenResults(groups) {
+function renderGoldenResults(groups, originalItems = [], isValid = false) {
     const resultsContainer = document.getElementById('goldenResults');
     const resultSummary = document.getElementById('resultSummary');
+    const validationResults = document.getElementById('validationResults');
+    const validationContent = document.getElementById('validationContent');
+    
     resultsContainer.innerHTML = '';
     
     if (!groups || groups.length === 0) {
         resultsContainer.innerHTML = '<div class="col-span-5 text-center text-gray-500 py-8">暂无分割结果</div>';
         resultSummary.textContent = '';
+        validationResults.classList.add('hidden');
         return;
     }
     
     // 更新摘要信息
     const totalItems = groups.reduce((sum, group) => sum + group.length, 0);
-    resultSummary.textContent = `共${groups.length}组，总计${totalItems}项`;
+    const avgGroupSize = Math.round(totalItems / groups.length);
+    resultSummary.innerHTML = `共${groups.length}组，总计${totalItems}项，平均每组${avgGroupSize}项 | 验证结果：${isValid ? '<span class="text-green-600 font-semibold">✅ 通过</span>' : '<span class="text-red-600 font-semibold">❌ 失败</span>'}`;
+    
+    // 显示验证结果
+    if (originalItems.length > 0) {
+        validationContent.innerHTML = `
+            <div class="text-sm text-gray-600">
+                <p class="mb-2">原始数据：${originalItems.length} 注</p>
+                <p class="mb-2">分组结果：${groups.length} 组</p>
+                <p class="mb-2">5中4验证：${isValid ? '<span class="text-green-600 font-semibold">通过 - 任意4组合并等于全集</span>' : '<span class="text-red-600 font-semibold">失败 - 不满足5中4条件</span>'}</p>
+            </div>
+        `;
+        validationResults.classList.remove('hidden');
+    } else {
+        validationResults.classList.add('hidden');
+    }
     
     // 确保显示5个框，不足的用空框填充
     const displayGroups = [...groups];
@@ -1603,6 +1679,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // 模式切换按钮
+    const modeUniformBtn = document.getElementById('modeUniformBtn');
+    const modeStableBtn = document.getElementById('modeStableBtn');
+    const modeDescription = document.getElementById('modeDescription');
+    
+    let currentMode = 'uniform'; // 默认均匀模式
+    
+    if (modeUniformBtn && modeStableBtn) {
+        modeUniformBtn.addEventListener('click', function() {
+            currentMode = 'uniform';
+            modeUniformBtn.classList.add('active-mode');
+            modeUniformBtn.classList.remove('inactive-mode');
+            modeStableBtn.classList.add('inactive-mode');
+            modeStableBtn.classList.remove('active-mode');
+            modeDescription.textContent = '均匀模式：一次性分完就用，不保持历史分组';
+        });
+        
+        modeStableBtn.addEventListener('click', function() {
+            currentMode = 'stable';
+            modeStableBtn.classList.add('active-mode');
+            modeStableBtn.classList.remove('inactive-mode');
+            modeUniformBtn.classList.add('inactive-mode');
+            modeUniformBtn.classList.remove('active-mode');
+            modeDescription.textContent = '稳定模式：维护长期分组，不想每次重新切割';
+        });
+    }
+    
     // 分割按钮
     const goldenSplitBtn = document.getElementById('goldenSplitBtn');
     if (goldenSplitBtn) {
@@ -1615,23 +1718,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // 解析输入数据
-            const items = inputData.split(/[\n,;，]+/).map(s => s.trim()).filter(s => s);
+            const items = parseInput(inputData);
             
             if (items.length === 0) {
                 alert('没有有效的数据');
                 return;
             }
             
-            // 执行黄金切割
-            const groups = splitTo5in4_AnyLength(items);
+            // 根据当前模式执行黄金切割
+            const assignMode = currentMode === 'uniform' ? 'roundrobin' : 'hash';
+            const groups = goldenSplit5in4(items, assignMode);
+            
+            // 验证结果
+            const isValid = validate5in4(groups, items);
             
             // 渲染结果
-            renderGoldenResults(groups);
+            renderGoldenResults(groups, items, isValid);
             
-            // 隐藏验证结果
-            document.getElementById('validationResults').classList.add('hidden');
-            
-            console.log('分割完成:', groups);
+            console.log('分割完成:', groups, '验证结果:', isValid);
         });
     }
     

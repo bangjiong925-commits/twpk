@@ -2359,16 +2359,18 @@ function fallbackCopyTextToClipboard(text, groupIndex) {
     document.body.removeChild(textArea);
 }
 
-// 显示复制成功提示
-function showCopySuccess(groupIndex) {
-    // 先重置所有复制按钮的状态
+// 重置所有复制按钮状态（仅在重新切割时调用）
+function resetAllCopyButtons() {
     const allCopyButtons = document.querySelectorAll('button[onclick^="copyGroupData("]');
     allCopyButtons.forEach(btn => {
         btn.innerHTML = '复制';
         btn.classList.remove('bg-green-500');
         btn.classList.add('bg-blue-500', 'hover:bg-blue-600');
     });
-    
+}
+
+// 显示复制成功提示
+function showCopySuccess(groupIndex) {
     // 设置当前按钮为已复制状态（持久显示）
     const button = document.querySelector(`button[onclick="copyGroupData(${groupIndex})"]`);
     if (button) {
@@ -2502,6 +2504,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 验证结果
             const isValid = validate5in4(groups, items);
+            
+            // 重置所有复制按钮状态（新的切割开始）
+            resetAllCopyButtons();
             
             // 渲染结果
             renderGoldenResults(groups, items, isValid);

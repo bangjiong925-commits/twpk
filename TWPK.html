@@ -1653,7 +1653,7 @@ function initFiveStarModule(moduleId) {
   // 更新结果显示 - 版本2024.12.19
   function updateResultDisplay() {
     const totalCount = moduleState.results.length;
-    const displayResults = totalCount > 40000 ? moduleState.results.slice(0, 40000) : moduleState.results;
+    const displayResults = totalCount > 200 ? moduleState.results.slice(0, 200) : moduleState.results;
     // 结果已经是格式化的字符串，直接用逗号连接（逗号后不加空格）
     let displayText = '';
     for (let i = 0; i < displayResults.length; i++) {
@@ -1662,12 +1662,12 @@ function initFiveStarModule(moduleId) {
     }
     
     // 立即设置结果
-    resultInput.value = totalCount > 40000 ? displayText + '...' : displayText;
+    resultInput.value = totalCount > 200 ? displayText + '...' : displayText;
     resultCount.textContent = `共${totalCount}注`;
     
     // 延迟再次确保格式正确（防止被其他代码覆盖）
     setTimeout(() => {
-      resultInput.value = totalCount > 40000 ? displayText + '...' : displayText;
+      resultInput.value = totalCount > 200 ? displayText + '...' : displayText;
     }, 10);
     
 
@@ -2187,8 +2187,9 @@ function renderGoldenResults(groups, originalItems = [], isValid = false) {
                     </div>
                 </div>
                 <div class="max-h-32 overflow-y-auto">
-                    <div class="text-xs space-y-1" id="group-${index}-data">
-                        ${group.map(item => `<div class="p-1 bg-gray-50 rounded text-center hover:bg-gray-100 transition-colors">${item}</div>`).join('')}
+                    <div class="text-xs space-y-1" id="group-${index}-data" data-full-data="${group.join(',')}">
+                        ${group.slice(0, 200).map(item => `<div class="p-1 bg-gray-50 rounded text-center hover:bg-gray-100 transition-colors">${item}</div>`).join('')}
+                        ${group.length > 200 ? '<div class="p-1 text-center text-gray-400 text-xs">...还有' + (group.length - 200) + '项</div>' : ''}
                     </div>
                 </div>
             `;
@@ -2206,9 +2207,13 @@ function copyGroupData(groupIndex) {
         return;
     }
     
-    // 提取所有数据项
-    const dataItems = Array.from(groupDataDiv.querySelectorAll('div')).map(div => div.textContent.trim());
-    const dataText = dataItems.join(',');
+    // 从data-full-data属性获取完整数据，确保复制全部数据而不受显示限制影响
+    const dataText = groupDataDiv.getAttribute('data-full-data') || '';
+    
+    if (!dataText) {
+        alert('没有可复制的数据');
+        return;
+    }
     
     // 复制到剪贴板
     if (navigator.clipboard && navigator.clipboard.writeText) {

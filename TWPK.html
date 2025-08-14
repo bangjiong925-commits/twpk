@@ -2361,18 +2361,20 @@ function fallbackCopyTextToClipboard(text, groupIndex) {
 
 // 显示复制成功提示
 function showCopySuccess(groupIndex) {
+    // 先重置所有复制按钮的状态
+    const allCopyButtons = document.querySelectorAll('button[onclick^="copyGroupData("]');
+    allCopyButtons.forEach(btn => {
+        btn.innerHTML = '复制';
+        btn.classList.remove('bg-green-500');
+        btn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+    });
+    
+    // 设置当前按钮为已复制状态（持久显示）
     const button = document.querySelector(`button[onclick="copyGroupData(${groupIndex})"]`);
     if (button) {
-        const originalText = button.innerHTML;
         button.innerHTML = '<i class="fa fa-check"></i> 已复制';
         button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
         button.classList.add('bg-green-500');
-        
-        setTimeout(() => {
-            button.innerHTML = originalText;
-            button.classList.remove('bg-green-500');
-            button.classList.add('bg-blue-500', 'hover:bg-blue-600');
-        }, 1500);
     }
 }
 

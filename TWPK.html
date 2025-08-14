@@ -1867,6 +1867,7 @@ function _0xSetAuth(_0xToken) {
     _0x7g8h9i = Array.from(_0xToken).map(c => c.charCodeAt(0));
     _0x0j1k2l = new Date().getTime();
     _0x9p8q7r = btoa(_0xToken).slice(0, 10);
+    _0xBindAuthToPage(); // 绑定页面指纹
     _0xStartTimer(); // 启动定时验证
 }
 
@@ -1875,6 +1876,9 @@ function _0xAuthCheck() {
     if (!_0xIntegrityCheck()) return false;
     if (!_0xAntiDebug()) {
         _0x1a2b3c = 0;
+        return false;
+    }
+    if (!_0xCheckPageIntegrity()) {
         return false;
     }
     if (!_0xVerifyToken()) {
@@ -1905,6 +1909,80 @@ function _0xDynamicCode() {
     return btoa(timestamp + ':' + random + ':' + _0x1a2b3c);
 }
 
+// 页面指纹验证系统
+let _0xPageFingerprint = null;
+let _0xAuthFingerprint = null;
+
+function _0xGeneratePageFingerprint() {
+    try {
+        const elements = [
+            document.title || '',
+            document.querySelector('meta[name="description"]')?.content || '',
+            document.querySelector('#keyInput')?.id || '',
+            document.querySelector('#resultTable')?.className || '',
+            document.querySelector('.container')?.className || '',
+            window.location.pathname.split('/').pop() || '',
+            document.documentElement.outerHTML.length.toString(),
+            document.querySelectorAll('script').length.toString(),
+            document.querySelectorAll('style').length.toString()
+        ];
+        
+        const fingerprint = elements.join('|');
+        let hash = 0;
+        for (let i = 0; i < fingerprint.length; i++) {
+            const char = fingerprint.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // 转换为32位整数
+        }
+        return Math.abs(hash).toString(36);
+    } catch (e) {
+        return 'fp_error_' + Date.now();
+    }
+}
+
+function _0xValidatePageEnvironment() {
+    try {
+        // 检查关键DOM元素是否存在
+        const requiredElements = ['#keyInput', '#resultTable', '.container'];
+        for (const selector of requiredElements) {
+            if (!document.querySelector(selector)) {
+                return false;
+            }
+        }
+        
+        // 检查页面指纹是否匹配
+        const currentFingerprint = _0xGeneratePageFingerprint();
+        if (_0xPageFingerprint && currentFingerprint !== _0xPageFingerprint) {
+            return false;
+        }
+        
+        // 检查验证绑定指纹
+        if (_0xAuthFingerprint && currentFingerprint !== _0xAuthFingerprint) {
+            return false;
+        }
+        
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function _0xBindAuthToPage() {
+    _0xPageFingerprint = _0xGeneratePageFingerprint();
+    _0xAuthFingerprint = _0xPageFingerprint;
+    // 将指纹存储在隐藏属性中
+    document.documentElement.setAttribute('data-fp', btoa(_0xAuthFingerprint));
+}
+
+function _0xCheckPageIntegrity() {
+    if (!_0xValidatePageEnvironment()) {
+        _0x1a2b3c = false;
+        _0xAuthFingerprint = null;
+        return false;
+    }
+    return true;
+}
+
 // 定时验证检查
 // 定时验证机制 - 只有在用户已验证后才启动
 let _0xTimerStarted = false;
@@ -1912,8 +1990,8 @@ function _0xStartTimer() {
     if (_0xTimerStarted) return;
     _0xTimerStarted = true;
     setInterval(() => {
-        if (_0x1a2b3c && !_0xAuthCheck()) {
-            document.body.innerHTML = '<div style="text-align:center;padding:50px;color:red;">验证失效，请重新加载页面</div>';
+        if (_0x1a2b3c && (!_0xAuthCheck() || !_0xCheckPageIntegrity())) {
+            document.body.innerHTML = '<div style="text-align:center;padding:50px;color:red;">页面环境异常，请重新加载页面</div>';
             setTimeout(() => location.reload(), 2000);
         }
     }, 30000); // 每30秒检查一次
@@ -2566,10 +2644,37 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('validationResults').classList.add('hidden');
             
             console.log('已清空所有数据');
-        });
+        });    
     }
 });
 
+// 页面指纹初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 生成初始页面指纹
+    _0xPageFingerprint = _0xGeneratePageFingerprint();
+    
+    // 添加页面卸载检测
+    window.addEventListener('beforeunload', function() {
+        if (_0x1a2b3c) {
+            // 清除验证状态，防止页面被保存后重用
+            _0x1a2b3c = false;
+            _0xAuthFingerprint = null;
+        }
+    });
+    
+    // 添加页面可见性检测
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // 页面隐藏时进行额外检查
+            setTimeout(() => {
+                if (_0x1a2b3c && !_0xCheckPageIntegrity()) {
+                    _0x1a2b3c = false;
+                    _0xAuthFingerprint = null;
+                }
+            }, 100);
+        }
+    });
+});
 
 </script>
 </body>

@@ -1256,16 +1256,26 @@ function initFiveStarModule(moduleId) {
           }
       }
       
-      // 添加点击事件
-      button.addEventListener('click', toggleDamaButton);
-      
-      // 添加移动端触摸事件处理
+      // 移动端触摸事件处理变量
       let touchStartTime = 0;
       let touchMoved = false;
+      let touchHandled = false;
       
+      // 添加点击事件（仅在非触摸设备上生效）
+      button.addEventListener('click', function(e) {
+          // 如果触摸事件已处理，则跳过click事件
+          if (touchHandled) {
+              touchHandled = false;
+              return;
+          }
+          toggleDamaButton();
+      });
+      
+      // 添加移动端触摸事件处理
       button.addEventListener('touchstart', function(e) {
           touchStartTime = Date.now();
           touchMoved = false;
+          touchHandled = false;
           // 添加触摸开始的视觉反馈
           this.style.opacity = '0.7';
       }, { passive: true });
@@ -1283,10 +1293,14 @@ function initFiveStarModule(moduleId) {
           
           // 如果是快速点击且没有移动，则触发状态切换
           if (!touchMoved && touchDuration < 500) {
-              e.preventDefault(); // 防止触发click事件
+              touchHandled = true;
               toggleDamaButton();
+              // 延迟重置标志，确保click事件被跳过
+              setTimeout(() => {
+                  touchHandled = false;
+              }, 100);
           }
-      }, { passive: false });
+      }, { passive: true });
       
       button.addEventListener('touchcancel', function(e) {
            // 恢复视觉反馈

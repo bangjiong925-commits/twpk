@@ -202,6 +202,142 @@
           padding: 8px !important;
         }
       }
+      
+      /* 手机端黄金切割页面优化 */
+      @media (max-width: 768px) {
+        /* 移除黄金切割页面主容器的左右边距 */
+        #goldenRatioPage .container {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          max-width: 100% !important;
+        }
+        
+        /* 移除主模块的边距和圆角 */
+        #goldenRatioPage .bg-white {
+          border-radius: 0 !important;
+          padding: 12px !important;
+          margin: 0 !important;
+          box-shadow: none !important;
+        }
+        
+        /* 优化模式选择按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3 {
+          gap: 8px !important;
+        }
+        
+        #goldenRatioPage button[data-mode] {
+          padding: 8px 16px !important;
+          font-size: 14px !important;
+        }
+        
+        /* 优化输入区域 */
+        #goldenInputData {
+          padding: 8px !important;
+          font-size: 14px !important;
+        }
+        
+        /* 优化操作按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3.mb-6 {
+          gap: 6px !important;
+          flex-wrap: wrap !important;
+        }
+        
+        #goldenRatioPage .flex.justify-center.gap-3.mb-6 button {
+          padding: 8px 12px !important;
+          font-size: 13px !important;
+          flex: 1 !important;
+          min-width: 80px !important;
+        }
+        
+        /* 优化结果显示区域 */
+        #goldenRatioPage .grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-5 {
+          grid-template-columns: 1fr 1fr !important;
+          gap: 4px !important;
+        }
+        
+        /* 优化验证结果区域 */
+        #validationResults {
+          padding: 8px !important;
+          margin-top: 12px !important;
+        }
+        
+        /* 优化标题和摘要 */
+        #goldenRatioPage h3 {
+          font-size: 16px !important;
+        }
+        
+        #goldenRatioPage .text-sm {
+          font-size: 12px !important;
+        }
+      }
+      
+      /* 手机端黄金切割页面优化 */
+      @media (max-width: 768px) {
+        /* 移除黄金切割页面主容器的左右边距 */
+        #goldenRatioPage .container {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          max-width: 100% !important;
+        }
+        
+        /* 移除主模块的边框、圆角和阴影 */
+        #goldenRatioPage .bg-white {
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          padding: 8px !important;
+          margin: 0 !important;
+        }
+        
+        /* 优化模式选择按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3 button {
+          padding: 8px 16px !important;
+          font-size: 14px !important;
+          margin: 2px !important;
+        }
+        
+        /* 优化输入区域 */
+        #goldenRatioPage textarea {
+          padding: 8px !important;
+          font-size: 14px !important;
+          border-radius: 4px !important;
+        }
+        
+        /* 优化操作按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3.mb-6 button {
+          padding: 8px 12px !important;
+          font-size: 13px !important;
+          margin: 2px !important;
+        }
+        
+        /* 优化结果显示区域 */
+        #goldenRatioPage .grid.gap-2 {
+          gap: 4px !important;
+        }
+        
+        /* 优化验证结果区域 */
+        #goldenRatioPage #validationResults {
+          padding: 8px !important;
+          margin-top: 8px !important;
+          border-radius: 4px !important;
+        }
+        
+        /* 减少各区域的边距 */
+        #goldenRatioPage .mb-6 {
+          margin-bottom: 12px !important;
+        }
+        
+        #goldenRatioPage .mb-4 {
+          margin-bottom: 8px !important;
+        }
+        
+        #goldenRatioPage .mb-2 {
+          margin-bottom: 4px !important;
+        }
+      }
       .fixed-width-period {
         width: 120px;
       }

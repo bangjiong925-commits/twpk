@@ -129,64 +129,6 @@
         @apply flex justify-center space-x-1 mb-1;
       }
       
-      /* 手机端数据分析页面优化 */
-      @media (max-width: 768px) {
-        /* 移除数据分析页面主容器的左右边距 */
-        #dataAnalysisPage .container {
-          padding-left: 0 !important;
-          padding-right: 0 !important;
-          margin-left: 0 !important;
-          margin-right: 0 !important;
-          max-width: 100% !important;
-        }
-        
-        /* 移除数据分析页面模块的边框、圆角和阴影 */
-        #dataAnalysisPage .bg-white {
-          border-radius: 0 !important;
-          box-shadow: none !important;
-          padding: 8px !important;
-          margin: 0 !important;
-        }
-        
-        /* 优化数据分析页面的按钮 */
-        #dataAnalysisPage button {
-          padding: 6px 12px !important;
-          font-size: 13px !important;
-          margin: 2px !important;
-        }
-        
-        /* 优化数据分析页面的输入框 */
-        #dataAnalysisPage textarea,
-        #dataAnalysisPage input {
-          padding: 6px !important;
-          font-size: 14px !important;
-          border-radius: 4px !important;
-        }
-        
-        /* 优化数据分析页面的表格容器 */
-        #dataAnalysisPage .overflow-x-auto {
-          padding: 4px !important;
-        }
-        
-        /* 减少数据分析页面各区域的边距 */
-        #dataAnalysisPage .mb-6 {
-          margin-bottom: 8px !important;
-        }
-        
-        #dataAnalysisPage .mb-4 {
-          margin-bottom: 6px !important;
-        }
-        
-        #dataAnalysisPage .mb-2 {
-          margin-bottom: 4px !important;
-        }
-        
-        /* 优化数据分析页面的网格布局 */
-        #dataAnalysisPage .grid {
-          gap: 8px !important;
-        }
-      }
-      
       /* 手机端五星做号页面优化 */
       @media (max-width: 768px) {
         /* 移除主容器的左右边距 */
@@ -219,20 +161,23 @@
           margin: 0 !important;
         }
         
-        /* 优化数字按钮尺寸 - 确保一行放10个，增大字体与黄金切割页面一致 */
+        /* 优化数字按钮尺寸 - 确保一行放10个 */
         .number-btn {
           width: calc(10% - 2px) !important;
-          height: 36px !important;
-          min-width: 32px !important;
-          font-size: 14px !important;
+          height: 32px !important;
+          min-width: 28px !important;
+          font-size: 11px !important;
           padding: 0 !important;
           margin: 1px !important;
+          flex-shrink: 0 !important; /* 防止按钮收缩 */
         }
         
-        /* 优化数字按钮容器 */
+        /* 优化数字按钮容器 - 确保不换行 */
         .number-buttons {
           gap: 0 !important;
           margin-bottom: 8px !important;
+          flex-wrap: nowrap !important; /* 强制不换行 */
+          overflow-x: auto !important; /* 如果内容过宽则允许横向滚动 */
         }
         
         /* 优化胆码按钮 */

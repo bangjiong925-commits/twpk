@@ -99,6 +99,27 @@
         -webkit-tap-highlight-color: transparent;
       }
       
+      /* 胆码按钮未选中状态 - 覆盖全局hover样式 */
+      @media (hover: hover) {
+        .dama-btn:not(.bg-primary):hover {
+          background-color: #e5e7eb !important; /* gray-200 */
+          color: #374151 !important; /* gray-700 */
+        }
+      }
+      
+      /* 胆码按钮选中状态保持红色 */
+      .dama-btn.bg-primary {
+        background-color: #d62828 !important;
+        color: white !important;
+      }
+      
+      @media (hover: hover) {
+        .dama-btn.bg-primary:hover {
+          background-color: #b91c1c !important; /* 稍深的红色 */
+          color: white !important;
+        }
+      }
+      
       /* 防止页面缩放 */
       html {
         -ms-touch-action: manipulation;

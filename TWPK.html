@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -73,6 +73,36 @@
           background-color: #FF7373 !important;
           transition: background-color 0.1s ease;
         }
+      }
+      
+      /* 防止移动端双击放大和意外缩放 */
+      * {
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      
+      /* 允许输入框和文本区域选择文本 */
+      input, textarea, [contenteditable] {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+      
+      /* 胆码按钮特殊处理 - 确保触摸反馈正常 */
+      .dama-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      /* 防止页面缩放 */
+      html {
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
       }
       .number-row {
         @apply flex justify-center space-x-1 mb-1;
@@ -1210,21 +1240,59 @@ function initFiveStarModule(moduleId) {
 
   // 胆码按钮点击事件
   damaButtons.forEach(button => {
-      button.addEventListener('click', function() {
-          const dama = parseInt(this.dataset.dama);
-          const groupIndex = parseInt(this.dataset.group) - 1;
+      // 处理胆码按钮状态切换的函数
+      function toggleDamaButton() {
+          const dama = parseInt(button.dataset.dama);
+          const groupIndex = parseInt(button.dataset.group) - 1;
           const groupState = moduleState.groups[groupIndex];
           const index = groupState.selectedDamas.indexOf(dama);
           
           if (index === -1) {
               groupState.selectedDamas.push(dama);
-              this.classList.add('bg-primary', 'text-white');
+              button.classList.add('bg-primary', 'text-white');
           } else {
               groupState.selectedDamas.splice(index, 1);
-              this.classList.remove('bg-primary', 'text-white');
+              button.classList.remove('bg-primary', 'text-white');
           }
-      });
-  });
+      }
+      
+      // 添加点击事件
+      button.addEventListener('click', toggleDamaButton);
+      
+      // 添加移动端触摸事件处理
+      let touchStartTime = 0;
+      let touchMoved = false;
+      
+      button.addEventListener('touchstart', function(e) {
+          touchStartTime = Date.now();
+          touchMoved = false;
+          // 添加触摸开始的视觉反馈
+          this.style.opacity = '0.7';
+      }, { passive: true });
+      
+      button.addEventListener('touchmove', function(e) {
+          touchMoved = true;
+          // 移除视觉反馈
+          this.style.opacity = '';
+      }, { passive: true });
+      
+      button.addEventListener('touchend', function(e) {
+          const touchDuration = Date.now() - touchStartTime;
+          // 恢复视觉反馈
+          this.style.opacity = '';
+          
+          // 如果是快速点击且没有移动，则触发状态切换
+          if (!touchMoved && touchDuration < 500) {
+              e.preventDefault(); // 防止触发click事件
+              toggleDamaButton();
+          }
+      }, { passive: false });
+      
+      button.addEventListener('touchcancel', function(e) {
+           // 恢复视觉反馈
+           this.style.opacity = '';
+       }, { passive: true });
+   });
 
   // 条件容错选择事件
   conditionToleranceMinSelects.forEach(select => {

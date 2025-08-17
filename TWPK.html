@@ -444,6 +444,65 @@
         overflow-y: auto;
         position: relative;
       }
+      
+      /* 手机端全屏模式样式 */
+      @media (max-width: 768px) {
+        /* 全屏模式下的工具栏样式 */
+        .fullscreen-toolbar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          z-index: 1000 !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        /* 全屏模式下隐藏的元素 */
+        .fullscreen-hidden {
+          transform: translateY(-100%) !important;
+          transition: transform 0.3s ease-in-out !important;
+        }
+        
+        /* 全屏模式下主内容区域的调整 */
+        .fullscreen-main {
+          padding-top: 50px !important;
+          transition: padding-top 0.3s ease-in-out !important;
+        }
+        
+        /* 优化手机端滚动性能 */
+        body {
+          -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 全屏模式下的工具栏按钮优化 */
+        .fullscreen-toolbar .container {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+        
+        .fullscreen-toolbar button {
+          font-size: 14px !important;
+          padding: 0.5rem 1rem !important;
+        }
+        
+        /* 防止全屏切换时的闪烁 */
+        header * {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        
+        /* 全屏模式下的阴影效果 */
+        .fullscreen-toolbar::after {
+          content: '';
+          position: absolute;
+          bottom: -8px;
+          left: 0;
+          right: 0;
+          height: 8px;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+          pointer-events: none;
+        }
+      }
     }
   </style>
 </head>
@@ -2212,6 +2271,126 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     console.error('页面切换所需元素未找到');
   }
+  
+  // 手机端上滑全屏功能
+  let lastScrollY = 0;
+  let isFullscreen = false;
+  let scrollTimeout = null;
+  
+  // 检测是否为手机端
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+  
+  // 切换全屏模式
+  function toggleFullscreen(enable) {
+    if (!isMobile()) return;
+    
+    const header = document.querySelector('header');
+    const titleArea = header.querySelector('.container');
+    const toolbarArea = header.querySelector('.bg-gray-800');
+    const keyCountdown = document.getElementById('keyCountdown');
+    
+    if (enable && !isFullscreen) {
+      // 进入全屏模式
+      isFullscreen = true;
+      
+      // 隐藏标题区域
+      if (titleArea) {
+        titleArea.style.transform = 'translateY(-100%)';
+        titleArea.style.transition = 'transform 0.3s ease-in-out';
+      }
+      
+      // 隐藏密钥倒计时
+      if (keyCountdown && !keyCountdown.classList.contains('hidden')) {
+        keyCountdown.style.transform = 'translateY(-100%)';
+        keyCountdown.style.transition = 'transform 0.3s ease-in-out';
+      }
+      
+      // 调整工具栏位置到顶部
+      if (toolbarArea) {
+        toolbarArea.style.position = 'fixed';
+        toolbarArea.style.top = '0';
+        toolbarArea.style.left = '0';
+        toolbarArea.style.right = '0';
+        toolbarArea.style.zIndex = '1000';
+        toolbarArea.style.transition = 'all 0.3s ease-in-out';
+      }
+      
+      // 调整主内容区域的上边距
+      const main = document.querySelector('main');
+      if (main) {
+        main.style.paddingTop = '50px'; // 工具栏高度
+        main.style.transition = 'padding-top 0.3s ease-in-out';
+      }
+      
+    } else if (!enable && isFullscreen) {
+      // 退出全屏模式
+      isFullscreen = false;
+      
+      // 显示标题区域
+      if (titleArea) {
+        titleArea.style.transform = 'translateY(0)';
+      }
+      
+      // 显示密钥倒计时
+      if (keyCountdown && !keyCountdown.classList.contains('hidden')) {
+        keyCountdown.style.transform = 'translateY(0)';
+      }
+      
+      // 恢复工具栏位置
+      if (toolbarArea) {
+        toolbarArea.style.position = '';
+        toolbarArea.style.top = '';
+        toolbarArea.style.left = '';
+        toolbarArea.style.right = '';
+        toolbarArea.style.zIndex = '';
+      }
+      
+      // 恢复主内容区域的上边距
+      const main = document.querySelector('main');
+      if (main) {
+        main.style.paddingTop = '';
+      }
+    }
+  }
+  
+  // 滚动事件监听
+  function handleScroll() {
+    if (!isMobile()) return;
+    
+    const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollDelta = currentScrollY - lastScrollY;
+    
+    // 清除之前的定时器
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    
+    // 设置新的定时器，延迟执行以避免频繁切换
+    scrollTimeout = setTimeout(() => {
+      // 向上滑动且滑动距离超过50px时进入全屏
+      if (scrollDelta < -50 && currentScrollY > 100) {
+        toggleFullscreen(true);
+      }
+      // 向下滑动且滑动距离超过30px时退出全屏
+      else if (scrollDelta > 30) {
+        toggleFullscreen(false);
+      }
+    }, 100);
+    
+    lastScrollY = currentScrollY;
+  }
+  
+  // 添加滚动事件监听器
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // 窗口大小改变时重置全屏状态
+  window.addEventListener('resize', () => {
+    if (!isMobile() && isFullscreen) {
+      toggleFullscreen(false);
+    }
+  });
 });
 
 // 重复的初始化代码已移除

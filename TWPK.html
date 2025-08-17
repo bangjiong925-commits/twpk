@@ -445,37 +445,75 @@
         position: relative;
       }
       
-      /* 顶部区域滚动隐藏样式 */
-      .header-container {
-        transition: transform 0.3s ease-in-out;
-        transform: translateY(0);
-      }
-      
-      .header-container.hidden {
-        transform: translateY(-100%);
-      }
-      
-      /* 确保主内容在顶部隐藏时能够正确显示 */
-      .main-content {
-        transition: padding-top 0.3s ease-in-out;
-      }
-      
-      .main-content.header-hidden {
-        padding-top: 0;
+      /* 手机端全屏模式样式 */
+      @media (max-width: 768px) {
+        /* 全屏模式下的工具栏样式 */
+        .fullscreen-toolbar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          z-index: 1000 !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        /* 全屏模式下隐藏的元素 */
+        .fullscreen-hidden {
+          transform: translateY(-100%) !important;
+          transition: transform 0.3s ease-in-out !important;
+        }
+        
+        /* 全屏模式下主内容区域的调整 */
+        .fullscreen-main {
+          padding-top: 50px !important;
+          transition: padding-top 0.3s ease-in-out !important;
+        }
+        
+        /* 优化手机端滚动性能 */
+        body {
+          -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 全屏模式下的工具栏按钮优化 */
+        .fullscreen-toolbar .container {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+        
+        .fullscreen-toolbar button {
+          font-size: 14px !important;
+          padding: 0.5rem 1rem !important;
+        }
+        
+        /* 防止全屏切换时的闪烁 */
+        header * {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        
+        /* 全屏模式下的阴影效果 */
+        .fullscreen-toolbar::after {
+          content: '';
+          position: absolute;
+          bottom: -8px;
+          left: 0;
+          right: 0;
+          height: 8px;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+          pointer-events: none;
+        }
       }
     }
   </style>
 </head>
 <body class="bg-gray-50 font-sans text-dark min-h-screen flex flex-col">
-  <!-- 顶部区域容器 -->
-  <div class="header-container fixed top-0 left-0 right-0 z-50">
-    <!-- 密钥倒计时通知栏 -->
-    <div id="keyCountdown" class="bg-primary text-white py-2 px-4 text-center hidden">
-      <span>密钥有效期剩余: <strong id="timeRemaining">0天 0小时 0分钟 0秒</strong></span>
-    </div>
-    
-    <!-- 顶部导航 -->
-    <header class="bg-white shadow-sm">
+  <!-- 密钥倒计时通知栏 -->
+  <div id="keyCountdown" class="bg-primary text-white py-2 px-4 text-center hidden">
+    <span>密钥有效期剩余: <strong id="timeRemaining">0天 0小时 0分钟 0秒</strong></span>
+  </div>
+  
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm sticky-header">
   <!-- 标题区域 - 移至最顶部 -->
   <div class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
       <h1 class="text-xl md:text-2xl font-bold text-primary flex items-center">
@@ -491,21 +529,20 @@
       </div>
     </div>
     
-    <!-- 工具栏区域 - 移至标题下方 -->
-    <div class="bg-gray-800 text-white py-2">
-      <div class="container mx-auto px-4">
-        <div class="flex space-x-4">
-          <button id="dataAnalysisBtn" class="px-4 py-1 rounded bg-primary text-white font-medium">数据分析</button>
-          <button id="fiveStarBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">五星做号</button>
-          <button id="goldenRatioBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">黄金切割</button>
-        </div>
+  <!-- 工具栏区域 - 移至标题下方 -->
+  <div class="bg-gray-800 text-white py-2 sticky-header" style="top: 60px;">
+    <div class="container mx-auto px-4">
+      <div class="flex space-x-4">
+        <button id="dataAnalysisBtn" class="px-4 py-1 rounded bg-primary text-white font-medium">数据分析</button>
+        <button id="fiveStarBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">五星做号</button>
+        <button id="goldenRatioBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">黄金切割</button>
       </div>
     </div>
-    </header>
   </div>
+  </header>
 
   <!-- 主要内容 -->
-  <main class="main-content flex-1 container mx-auto px-4 py-6" style="padding-top: 140px;">
+  <main class="flex-1 container mx-auto px-4 py-6">
     <!-- 数据分析页面 -->
     <div id="dataAnalysisPage">
       <!-- 数据输入区域 -->
@@ -554,11 +591,11 @@
         
         <!-- 操作按钮 -->
         <div class="flex flex-wrap gap-3 mt-5">
-          <button id="sortToggle" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
+          <button id="sortToggle" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover hidden">
             <i class="fa fa-sort mr-2"></i><span id="sortText">按连中次数排序</span>
           </button>
           <button id="statBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
-            <i class="fa fa-bar-chart mr-2"></i>更新统计
+            <i class="fa fa-bar-chart mr-2"></i>加入统计
           </button>
           <button id="exportBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
             <i class="fa fa-download mr-2"></i>导出数据
@@ -592,11 +629,12 @@
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="30">30期</button>
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="15">15期</button>
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="30">30期</button>
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="50">50期</button>
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="100">100期</button>
             <div class="flex items-center gap-1">
-              <input type="number" id="customPeriod" min="1" max="10000" value="30" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <input type="number" id="customPeriod" min="1" max="10000" value="15" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
               <button id="customPeriodBtn" class="px-3 py-1 rounded-md bg-gray-200 btn-hover">自定义</button>
             </div>
           </div>
@@ -2234,10 +2272,146 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     console.error('页面切换所需元素未找到');
   }
+  
+  // 手机端上滑全屏功能
+  let lastScrollY = 0;
+  let isFullscreen = false;
+  let scrollTimeout = null;
+  
+  // 检测是否为手机端
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+  
+  // 切换全屏模式
+  function toggleFullscreen(enable) {
+    if (!isMobile()) return;
+    
+    const header = document.querySelector('header');
+    const titleArea = header.querySelector('.container');
+    const toolbarArea = header.querySelector('.bg-gray-800');
+    const keyCountdown = document.getElementById('keyCountdown');
+    
+    if (enable && !isFullscreen) {
+      // 进入全屏模式
+      isFullscreen = true;
+      
+      // 隐藏标题区域
+      if (titleArea) {
+        titleArea.style.transform = 'translateY(-100%)';
+        titleArea.style.transition = 'transform 0.3s ease-in-out';
+      }
+      
+      // 隐藏密钥倒计时
+      if (keyCountdown && !keyCountdown.classList.contains('hidden')) {
+        keyCountdown.style.transform = 'translateY(-100%)';
+        keyCountdown.style.transition = 'transform 0.3s ease-in-out';
+      }
+      
+      // 调整工具栏位置到顶部
+      if (toolbarArea) {
+        toolbarArea.style.position = 'fixed';
+        toolbarArea.style.top = '0';
+        toolbarArea.style.left = '0';
+        toolbarArea.style.right = '0';
+        toolbarArea.style.zIndex = '1000';
+        toolbarArea.style.transition = 'all 0.3s ease-in-out';
+      }
+      
+      // 调整主内容区域的上边距
+      const main = document.querySelector('main');
+      if (main) {
+        main.style.paddingTop = '50px'; // 工具栏高度
+        main.style.transition = 'padding-top 0.3s ease-in-out';
+      }
+      
+    } else if (!enable && isFullscreen) {
+      // 退出全屏模式
+      isFullscreen = false;
+      
+      // 显示标题区域
+      if (titleArea) {
+        titleArea.style.transform = 'translateY(0)';
+      }
+      
+      // 显示密钥倒计时
+      if (keyCountdown && !keyCountdown.classList.contains('hidden')) {
+        keyCountdown.style.transform = 'translateY(0)';
+      }
+      
+      // 恢复工具栏位置
+      if (toolbarArea) {
+        toolbarArea.style.position = '';
+        toolbarArea.style.top = '';
+        toolbarArea.style.left = '';
+        toolbarArea.style.right = '';
+        toolbarArea.style.zIndex = '';
+      }
+      
+      // 恢复主内容区域的上边距
+      const main = document.querySelector('main');
+      if (main) {
+        main.style.paddingTop = '';
+      }
+    }
+  }
+  
+  // 滚动事件监听
+  function handleScroll() {
+    if (!isMobile()) return;
+    
+    const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollDelta = currentScrollY - lastScrollY;
+    
+    // 清除之前的定时器
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    
+    // 设置新的定时器，延迟执行以避免频繁切换
+    scrollTimeout = setTimeout(() => {
+      // 向上滑动且滑动距离超过50px时进入全屏
+      if (scrollDelta < -50 && currentScrollY > 100) {
+        toggleFullscreen(true);
+      }
+      // 向下滑动且滑动距离超过30px时退出全屏
+      // 或者滚动到页面顶部附近时也退出全屏
+      else if (scrollDelta > 30 || currentScrollY < 50) {
+        toggleFullscreen(false);
+      }
+    }, 150); // 增加延迟时间，减少误触发
+    
+    lastScrollY = currentScrollY;
+  }
+  
+  // 添加滚动事件监听器
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // 为工具栏按钮添加点击事件监听，防止误触发全屏
+  const toolbarButtons = document.querySelectorAll('.bg-gray-800 button');
+  toolbarButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // 点击按钮时暂时禁用滚动检测
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      // 短暂延迟后重新启用滚动检测
+      setTimeout(() => {
+        lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      }, 300);
+    });
+  });
+  
+  // 窗口大小改变时重置全屏状态
+  window.addEventListener('resize', () => {
+    if (!isMobile() && isFullscreen) {
+      toggleFullscreen(false);
+    }
+  });
 });
 
 // 重复的初始化代码已移除
-let r=[],i=1,a=null,s=null,d=new Set,u=null,l=null,m=!1,f=30,y=!1,currentPage=1,pageSize=50,totalPages=1;
+let r=[],i=1,a=null,s=null,d=new Set,u=null,l=null,m=!1,f=15,y=!1,currentPage=1,pageSize=50,totalPages=1;
 
 // 多重加密验证状态系统
 let _0x1a2b3c = false;
@@ -2832,56 +3006,7 @@ const n=Y();localStorage.setItem(`validKey_${n}`,t),localStorage.setItem(`keyExp
 _0xSetAuth(t);
 b=!0;
 D(e.data.expiry)}else alert("密钥验证失败: "+e.reason)}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message)}finally{this.disabled=!1,this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",async function(){try{const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const r=parseInt(n);if(o<r){// 密钥未过期，但需要在线验证是否已被使用
-try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyOnlineUsage(keyData.nonce);if(isUsed){localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("密钥已被使用，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}else{_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}catch(err){console.error("在线验证失败，使用本地验证:",err);_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}else{localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}
-
-// 手机端滚动隐藏顶部区域功能
-let lastScrollTop = 0;
-let isHeaderHidden = false;
-const headerContainer = document.querySelector('.header-container');
-const mainContent = document.querySelector('.main-content');
-const scrollThreshold = 10; // 滚动阈值，避免小幅滚动触发
-
-if (headerContainer && mainContent) {
-    window.addEventListener('scroll', function() {
-        // 只在移动设备上启用此功能
-        if (window.innerWidth <= 768) {
-            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // 避免负值
-            if (currentScrollTop < 0) return;
-            
-            // 计算滚动差值
-            const scrollDiff = Math.abs(currentScrollTop - lastScrollTop);
-            
-            // 只有滚动距离超过阈值才触发
-            if (scrollDiff > scrollThreshold) {
-                if (currentScrollTop > lastScrollTop && currentScrollTop > 100 && !isHeaderHidden) {
-                    // 向下滚动且滚动距离超过100px，隐藏顶部
-                    headerContainer.classList.add('header-hidden');
-                    mainContent.classList.add('header-hidden');
-                    isHeaderHidden = true;
-                } else if (currentScrollTop < lastScrollTop && isHeaderHidden) {
-                    // 向上滚动，显示顶部
-                    headerContainer.classList.remove('header-hidden');
-                    mainContent.classList.remove('header-hidden');
-                    isHeaderHidden = false;
-                }
-                
-                lastScrollTop = currentScrollTop;
-            }
-        }
-    }, { passive: true });
-    
-    // 监听窗口大小变化，在桌面端时重置状态
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && isHeaderHidden) {
-            headerContainer.classList.remove('header-hidden');
-            mainContent.classList.remove('header-hidden');
-            isHeaderHidden = false;
-        }
-    });
-}
-}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("historyBtn").addEventListener("click",()=>{y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("missBtn").addEventListener("click",()=>{m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("hitBtn").addEventListener("click",()=>{m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("exportBtn").addEventListener("click",()=>{if(!r.length)return void(v.textContent="没有数据可导出");let t="期数,数据\n";r.forEach(e=>{t+=`${e.period},${e.input}\n`});const e=new Blob([t],{type:"text/csv;charset=utf-8;"}),n=URL.createObjectURL(e),o=document.createElement("a");o.setAttribute("href",n),o.setAttribute("download",`台湾PK数据_${(new Date).toISOString().slice(0,10)}.csv`),o.style.visibility="hidden",document.body.appendChild(o),o.click(),document.body.removeChild(o),v.textContent="数据已导出"}),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const G=document.getElementById("helpModal");document.getElementById("helpBtn").addEventListener("click",()=>{G.classList.remove("hidden")}),document.getElementById("closeHelpBtn").addEventListener("click",()=>{G.classList.add("hidden")}),document.getElementById("gotItBtn").addEventListener("click",()=>{G.classList.add("hidden")}),G.addEventListener("click",t=>{t.target===G&&G.classList.add("hidden")});let Q=!1;document.getElementById("themeToggle").addEventListener("click",()=>{Q=!Q,document.body.classList.toggle("bg-gray-900",Q),document.body.classList.toggle("text-white",Q),document.body.classList.toggle("bg-gray-50",!Q),document.body.classList.toggle("text-dark",!Q);const t=document.getElementById("themeToggle").querySelector("i");t.classList.toggle("fa-moon-o",!Q),t.classList.toggle("fa-sun-o",Q)});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
+try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyOnlineUsage(keyData.nonce);if(isUsed){localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("密钥已被使用，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}else{_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}catch(err){console.error("在线验证失败，使用本地验证:",err);_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}else{localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("historyBtn").addEventListener("click",()=>{y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("missBtn").addEventListener("click",()=>{m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("hitBtn").addEventListener("click",()=>{m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("exportBtn").addEventListener("click",()=>{if(!r.length)return void(v.textContent="没有数据可导出");let t="期数,数据\n";r.forEach(e=>{t+=`${e.period},${e.input}\n`});const e=new Blob([t],{type:"text/csv;charset=utf-8;"}),n=URL.createObjectURL(e),o=document.createElement("a");o.setAttribute("href",n),o.setAttribute("download",`台湾PK数据_${(new Date).toISOString().slice(0,10)}.csv`),o.style.visibility="hidden",document.body.appendChild(o),o.click(),document.body.removeChild(o),v.textContent="数据已导出"}),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const G=document.getElementById("helpModal");document.getElementById("helpBtn").addEventListener("click",()=>{G.classList.remove("hidden")}),document.getElementById("closeHelpBtn").addEventListener("click",()=>{G.classList.add("hidden")}),document.getElementById("gotItBtn").addEventListener("click",()=>{G.classList.add("hidden")}),G.addEventListener("click",t=>{t.target===G&&G.classList.add("hidden")});let Q=!1;document.getElementById("themeToggle").addEventListener("click",()=>{Q=!Q,document.body.classList.toggle("bg-gray-900",Q),document.body.classList.toggle("text-white",Q),document.body.classList.toggle("bg-gray-50",!Q),document.body.classList.toggle("text-dark",!Q);const t=document.getElementById("themeToggle").querySelector("i");t.classList.toggle("fa-moon-o",!Q),t.classList.toggle("fa-sun-o",Q)});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
 
 // 黄金切割页面事件处理
 document.addEventListener('DOMContentLoaded', function() {

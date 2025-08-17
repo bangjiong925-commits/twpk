@@ -2048,10 +2048,6 @@ function initFiveStarModule(moduleId) {
       }, 2000);
       return;
     }
-
-    // 先全选输入框内容
-    resultInput.select();
-    resultInput.setSelectionRange(0, 99999); // 兼容移动设备
     
     // 复制存储的筛选结果 - 组内空格，组间逗号
     // moduleState.results中每个元素已经是格式化的字符串（如"01 02 03 04 05"）
@@ -2064,8 +2060,8 @@ function initFiveStarModule(moduleId) {
 
     // 复制到剪贴板
     navigator.clipboard.writeText(textToCopy).then(() => {
-      // 复制成功后保持原有显示，不添加额外提示
-      resultCount.textContent = `共${moduleState.results.length}注`;
+      // 复制成功后显示红色的已复制提示
+      resultCount.innerHTML = `共${moduleState.results.length}注 <span style="color: red;">已复制${moduleState.results.length}注</span>`;
     }).catch(err => {
       console.error('复制失败:', err);
       // 错误提示：显示红色错误文本
@@ -2074,7 +2070,7 @@ function initFiveStarModule(moduleId) {
         resultCount.textContent = `共${moduleState.results.length}注`;
       }, 2000);
     });
-  });
+    });
 
   // 清除按钮点击事件
   clearBtn.addEventListener('click', function() {

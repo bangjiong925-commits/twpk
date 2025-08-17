@@ -2115,8 +2115,43 @@ document.addEventListener('DOMContentLoaded', function() {
   const fiveStarPage = document.getElementById('fiveStarPage');
   const goldenRatioPage = document.getElementById('goldenRatioPage');
   
+  // 滚动位置保存和恢复功能
+  const scrollPositions = {
+    dataAnalysis: 0,
+    fiveStar: 0,
+    goldenRatio: 0
+  };
+  
+  // 保存当前页面的滚动位置
+  function saveScrollPosition(pageType) {
+    scrollPositions[pageType] = window.pageYOffset || document.documentElement.scrollTop;
+  }
+  
+  // 恢复指定页面的滚动位置
+  function restoreScrollPosition(pageType) {
+    setTimeout(() => {
+      window.scrollTo({
+        top: scrollPositions[pageType],
+        behavior: 'auto'
+      });
+    }, 50); // 延迟50ms确保页面切换完成
+  }
+  
+  // 获取当前显示的页面类型
+  function getCurrentPageType() {
+    if (!dataAnalysisPage.classList.contains('hidden')) return 'dataAnalysis';
+    if (!fiveStarPage.classList.contains('hidden')) return 'fiveStar';
+    if (!goldenRatioPage.classList.contains('hidden')) return 'goldenRatio';
+    return 'dataAnalysis'; // 默认
+  }
+
   if (dataAnalysisBtn && fiveStarBtn && goldenRatioBtn && dataAnalysisPage && fiveStarPage && goldenRatioPage) {
     dataAnalysisBtn.addEventListener('click', function() {
+      // 保存当前页面的滚动位置
+      const currentPage = getCurrentPageType();
+      saveScrollPosition(currentPage);
+      
+      // 切换页面
       dataAnalysisPage.classList.remove('hidden');
       fiveStarPage.classList.add('hidden');
       goldenRatioPage.classList.add('hidden');
@@ -2126,9 +2161,17 @@ document.addEventListener('DOMContentLoaded', function() {
       fiveStarBtn.classList.remove('bg-primary');
       goldenRatioBtn.classList.add('bg-gray-600');
       goldenRatioBtn.classList.remove('bg-primary');
+      
+      // 恢复数据分析页面的滚动位置
+      restoreScrollPosition('dataAnalysis');
     });
     
     fiveStarBtn.addEventListener('click', function() {
+      // 保存当前页面的滚动位置
+      const currentPage = getCurrentPageType();
+      saveScrollPosition(currentPage);
+      
+      // 切换页面
       dataAnalysisPage.classList.add('hidden');
       fiveStarPage.classList.remove('hidden');
       goldenRatioPage.classList.add('hidden');
@@ -2138,9 +2181,17 @@ document.addEventListener('DOMContentLoaded', function() {
       dataAnalysisBtn.classList.remove('bg-primary');
       goldenRatioBtn.classList.add('bg-gray-600');
       goldenRatioBtn.classList.remove('bg-primary');
+      
+      // 恢复五星做号页面的滚动位置
+      restoreScrollPosition('fiveStar');
     });
     
     goldenRatioBtn.addEventListener('click', function() {
+      // 保存当前页面的滚动位置
+      const currentPage = getCurrentPageType();
+      saveScrollPosition(currentPage);
+      
+      // 切换页面
       dataAnalysisPage.classList.add('hidden');
       fiveStarPage.classList.add('hidden');
       goldenRatioPage.classList.remove('hidden');
@@ -2150,6 +2201,9 @@ document.addEventListener('DOMContentLoaded', function() {
       dataAnalysisBtn.classList.remove('bg-primary');
       fiveStarBtn.classList.add('bg-gray-600');
       fiveStarBtn.classList.remove('bg-primary');
+      
+      // 恢复黄金切割页面的滚动位置
+      restoreScrollPosition('goldenRatio');
     });
   } else {
     console.error('页面切换所需元素未找到');

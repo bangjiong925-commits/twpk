@@ -2374,16 +2374,32 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleFullscreen(true);
       }
       // 向下滑动且滑动距离超过30px时退出全屏
-      else if (scrollDelta > 30) {
+      // 或者滚动到页面顶部附近时也退出全屏
+      else if (scrollDelta > 30 || currentScrollY < 50) {
         toggleFullscreen(false);
       }
-    }, 100);
+    }, 150); // 增加延迟时间，减少误触发
     
     lastScrollY = currentScrollY;
   }
   
   // 添加滚动事件监听器
   window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // 为工具栏按钮添加点击事件监听，防止误触发全屏
+  const toolbarButtons = document.querySelectorAll('.bg-gray-800 button');
+  toolbarButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // 点击按钮时暂时禁用滚动检测
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      // 短暂延迟后重新启用滚动检测
+      setTimeout(() => {
+        lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      }, 300);
+    });
+  });
   
   // 窗口大小改变时重置全屏状态
   window.addEventListener('resize', () => {

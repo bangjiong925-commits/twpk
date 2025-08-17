@@ -128,6 +128,80 @@
       .number-row {
         @apply flex justify-center space-x-1 mb-1;
       }
+      
+      /* 手机端五星做号页面优化 */
+      @media (max-width: 768px) {
+        /* 移除主容器的左右边距 */
+        #fiveStarPage .container {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          max-width: 100% !important;
+        }
+        
+        /* 移除模块容器的边距和圆角 */
+        #fiveStarPage .bg-white {
+          border-radius: 0 !important;
+          padding: 8px !important;
+          margin: 0 !important;
+        }
+        
+        /* 移除模块间距 */
+        #modules-container {
+          gap: 8px !important;
+          padding: 0 !important;
+        }
+        
+        /* 移除模块边框和圆角 */
+        .five-star-module {
+          border: none !important;
+          border-radius: 0 !important;
+          padding: 8px !important;
+          margin: 0 !important;
+        }
+        
+        /* 优化数字按钮尺寸 - 确保一行放10个 */
+        .number-btn {
+          width: calc(10% - 2px) !important;
+          height: 32px !important;
+          min-width: 28px !important;
+          font-size: 11px !important;
+          padding: 0 !important;
+          margin: 1px !important;
+        }
+        
+        /* 优化数字按钮容器 */
+        .number-buttons {
+          gap: 0 !important;
+          margin-bottom: 8px !important;
+        }
+        
+        /* 优化胆码按钮 */
+        .dama-btn {
+          font-size: 11px !important;
+          padding: 4px 8px !important;
+          margin: 1px !important;
+        }
+        
+        /* 优化胆码按钮容器 */
+        .dama-buttons {
+          gap: 2px !important;
+          margin-bottom: 8px !important;
+        }
+        
+        /* 优化筛选组间距 */
+        .filter-group {
+          margin-bottom: 8px !important;
+          padding-bottom: 8px !important;
+        }
+        
+        /* 优化模块总容错区域 */
+        .module-tolerance {
+          margin-bottom: 8px !important;
+          padding: 8px !important;
+        }
+      }
       .fixed-width-period {
         width: 120px;
       }

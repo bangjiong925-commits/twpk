@@ -360,9 +360,17 @@
       }
       .fixed-width-period {
         width: 120px;
+        transition: opacity 0.3s ease;
       }
       .fixed-width-data {
         width: 150px;
+        transition: left 0.3s ease;
+      }
+      .table-header-sticky {
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+        background-color: #f9fafb;
       }
       .sticky-bg-white {
         background-color: white !important;
@@ -455,9 +463,9 @@
       .vertical-slider-fill {
         @apply absolute w-1 bg-primary rounded-full;
       }
-      /* 限制表格容器高度，最多显示11行 */
+      /* 限制表格容器高度，最多显示50行 */
       .table-container {
-        max-height: calc(11 * 52px); /* 每行约52px高度 */
+        max-height: calc(100vh - 400px); /* 页面一屏高度减去其他元素高度 */
         overflow-y: auto;
         position: relative;
       }
@@ -608,14 +616,7 @@
         <h1 class="text-xl md:text-2xl font-bold text-primary flex items-center">
           <i class="fa fa-line-chart mr-2"></i>台湾PK数据分析工具
         </h1>
-        <div class="flex items-center space-x-2 mt-2 md:mt-0">
-          <button id="helpBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="帮助">
-            <i class="fa fa-question-circle text-gray-500"></i>
-          </button>
-          <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="切换主题">
-            <i class="fa fa-moon-o text-gray-500"></i>
-          </button>
-        </div>
+
       </div>
   </div>
     
@@ -658,23 +659,48 @@
 
       <!-- 筛选和统计控制区域 -->
       <section class="bg-white rounded-lg shadow-md p-5 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- 胆码数筛选 -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">胆码数筛选：</label>
-            <div id="numButtons" class="flex flex-wrap gap-2"></div>
-          </div>
-          
-          <!-- 中出筛选 -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">中出筛选：</label>
-            <div id="hitButtons" class="flex flex-wrap gap-2"></div>
-          </div>
-          
+        <div class="grid grid-cols-1 gap-4">
           <!-- 自定义组合 -->
-          <div class="md:col-span-2">
+          <div>
             <label for="customCombos" class="block text-sm font-medium text-gray-700 mb-1">自定义组合（用空格分隔不同组合，每个组合内的数字用逗号分隔）：</label>
-            <textarea id="customCombos" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" placeholder="1,2,3 1,2,4"></textarea>
+            <div class="flex gap-3 items-start">
+              <textarea id="customCombos" rows="2" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200" placeholder="1,2,3 1,2,4"></textarea>
+              <div class="flex flex-col gap-2">
+                <button id="statBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover whitespace-nowrap">
+                  <i class="fa fa-bar-chart mr-2"></i>加入统计
+                </button>
+                <button id="clearBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover whitespace-nowrap">
+                  <i class="fa fa-trash mr-2"></i>清空数据
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 筛选模块 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 胆码数筛选 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">前五码数：</label>
+              <div id="numButtons" class="flex flex-wrap gap-2"></div>
+            </div>
+            
+            <!-- 位置选择 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">位置选择：</label>
+              <div id="positionButtons" class="flex flex-wrap gap-2">
+                <button class="position-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-position="1">1名</button>
+                <button class="position-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-position="2">2名</button>
+                <button class="position-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-position="3">3名</button>
+                <button class="position-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-position="4">4名</button>
+                <button class="position-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-position="5">5名</button>
+              </div>
+            </div>
+            
+            <!-- 中出筛选 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">命中码数：</label>
+              <div id="hitButtons" class="flex flex-wrap gap-2"></div>
+            </div>
           </div>
         </div>
         
@@ -683,17 +709,7 @@
           <button id="sortToggle" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover hidden">
             <i class="fa fa-sort mr-2"></i><span id="sortText">按连中次数排序</span>
           </button>
-          <button id="statBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
-            <i class="fa fa-bar-chart mr-2"></i>加入统计
-          </button>
-
-          <button id="clearBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
-            <i class="fa fa-trash mr-2"></i>清空数据
-          </button>
         </div>
-        
-        <!-- 统计摘要 -->
-        <div id="summary" class="mt-4 p-3 bg-gray-50 rounded-md text-sm font-medium"></div>
       </section>
 
       <!-- 结果表格 -->
@@ -738,7 +754,7 @@
         </div>
         
         <div class="relative">
-          <div class="overflow-x-auto scrollbar-hide" id="tableContainer">
+          <div class="overflow-x-auto table-container scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" id="tableContainer">
             <table id="resultTable" class="min-w-full divide-y divide-gray-200">
               <thead></thead>
               <tbody></tbody>
@@ -752,6 +768,9 @@
             <div class="vertical-slider-thumb" id="verticalThumb"></div>
           </div>
         </div>
+        
+        <!-- 统计摘要 -->
+        <div id="summary" class="mt-4 p-3 bg-gray-50 rounded-md text-sm font-medium"></div>
       </section>
     </div>
     
@@ -1400,45 +1419,7 @@
     </div>
   </footer>
 
-  <!-- 帮助模态框 -->
-  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-      <div class="p-5 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-xl font-semibold">使用帮助</h3>
-        <button id="closeHelpBtn" class="text-gray-400 hover:text-gray-600">
-          <i class="fa fa-times text-xl"></i>
-        </button>
-      </div>
-      <div class="p-5">
-        <h4 class="font-medium text-lg mb-2">功能介绍</h4>
-        <p class="mb-4">台湾PK数据分析工具可以帮助您分析和预测台湾PK的开奖结果，通过统计历史数据和组合的命中情况，为您提供参考依据。</p>
-        
-        <h4 class="font-medium text-lg mb-2">使用方法</h4>
-        <ol class="list-decimal list-inside space-y-2 mb-4">
-          <li>您可以手动输入数据或使用自动获取功能获取最新的开奖结果</li>
-          <li>选择胆码数和中出条件来筛选感兴趣的组合</li>
-          <li>您也可以添加自定义组合进行分析</li>
-          <li>使用排序功能可以按照连中次数或遗漏次数对组合进行排序</li>
-          <li>表格中的"连"表示历史最大连中次数，"漏"表示历史最大遗漏次数</li>
-          <li>您可以通过表格上方的期数按钮选择显示最新的30期、50期或100期数据</li>
-          <li>使用表格上方的水平滑块可以左右滚动表格内容</li>
-          <li>使用表格右侧的垂直滑块可以上下滚动表格内容</li>
-        </ol>
-        
-        <h4 class="font-medium text-lg mb-2">数据格式</h4>
-        <p class="mb-4">手动输入数据时，请按照"期数 数据"的格式，例如：202504181232 02,05,01,04,07,10,09,03,06,08 </p>
-        
-        <h4 class="font-medium text-lg mb-2">快捷键</h4>
-        <ul class="list-disc list-inside space-y-1">
-          <li>在输入框中按下Enter键可快速计算</li>
-          <li>使用Ctrl+S可保存当前数据</li>
-        </ul>
-      </div>
-      <div class="p-5 border-t border-gray-200 flex justify-end">
-        <button id="gotItBtn" class="px-4 py-2 bg-primary text-white rounded-md btn-hover">我知道了</button>
-      </div>
-    </div>
-  </div>
+
 
   <!-- 密钥验证模态框 -->
   <div id="keyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center" style="z-index: 9999;">
@@ -2610,7 +2591,13 @@ function _0xIntegrityCheck() {
 }
 
 // 兼容性变量（保持原有功能）
-let b = false;const h="pk4_access_key",g=document.getElementById("keyModal"),p=document.getElementById("keyInput"),v=document.getElementById("output"),x=document.getElementById("tableContainer"),w=document.getElementById("horizontalThumb"),k=document.getElementById("horizontalFill"),$=document.getElementById("verticalSlider"),B=document.getElementById("verticalThumb"),I=document.getElementById("verticalFill"),M=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,M.appendChild(e)}const S=document.getElementById("hitButtons");function N(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),L()}))}function C(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),L()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",S.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),N(Array.from(M.children)),C(Array.from(S.children));let T=null;function D(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(T);const t=Y();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,void setTimeout(()=>{window.location.reload()},3e3)}const r=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),a=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${r}天 ${i}小时 ${a}分钟 ${s}秒`;const d=24*r+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}T&&clearInterval(T),o(),e.classList.remove("hidden"),T=setInterval(o,1e3)}function generateDeviceFingerprint(){
+let b = false;const h="pk4_access_key",g=document.getElementById("keyModal"),p=document.getElementById("keyInput"),v=document.getElementById("output"),x=document.getElementById("tableContainer"),w=document.getElementById("horizontalThumb"),k=document.getElementById("horizontalFill"),$=document.getElementById("verticalSlider"),B=document.getElementById("verticalThumb"),I=document.getElementById("verticalFill"),M=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,M.appendChild(e)}const S=document.getElementById("hitButtons");function N(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),L()}))}function C(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),L()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",S.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),N(Array.from(M.children)),C(Array.from(S.children));
+
+// 位置选择按钮事件处理
+const positionButtons = document.querySelectorAll('.position-btn');
+C(Array.from(positionButtons));
+
+let T=null;function D(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(T);const t=Y();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,void setTimeout(()=>{window.location.reload()},3e3)}const r=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),a=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${r}天 ${i}小时 ${a}分钟 ${s}秒`;const d=24*r+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}T&&clearInterval(T),o(),e.classList.remove("hidden"),T=setInterval(o,1e3)}function generateDeviceFingerprint(){
   // 使用固定的通用指纹，允许密钥在任何设备上使用
   // 这样可以确保密钥的跨设备兼容性
     return 'universal_device_2024';
@@ -3109,7 +3096,7 @@ function renderValidationResults(validation) {
     
     html += '</div>';
     validationContent.innerHTML = html;
-}function H(t,e){const n={};return e.forEach(e=>{let o=0,c=0,r=0,i=0;t.forEach(t=>{t.cells[e].hit?(r++,i=0,r>o&&(o=r)):(i++,r=0,i>c&&(c=i))}),n[e]={maxHit:o,maxMiss:c}}),n}function U(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&t[n].cells[e].hit;n++)o++;n[e]=o}),n}function z(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&!t[n].cells[e].hit;n++)o++;n[e]=o}),n}function L(){if(!_0xAuthCheck()) return; const t=document.querySelector("#resultTable thead"),e=document.querySelector("#resultTable tbody");t.innerHTML="",e.innerHTML="";if(!r.length){const t=document.createElement("tr"),n=document.createElement("td");return n.colSpan=100,n.className="py-4 text-center text-gray-500",n.textContent="暂无数据，请先输入或获取数据",t.appendChild(n),e.appendChild(t),void j()}const n=r.slice(0,f);totalPages=Math.ceil(n.length/pageSize);const o=+document.querySelector("#numButtons .btn-active")?.dataset.num||0,c=Array.from(document.querySelectorAll("#hitButtons .btn-active")).map(t=>+t.dataset.hit),i=[...Array(10)].map((t,e)=>e+1),a=[...o>0&&o<=10?R(i,o):[],...document.getElementById("customCombos").value.trim().split(/\s+/).filter(Boolean).map(t=>t.split(",").map(t=>+t).filter(t=>!isNaN(t)))].filter(t=>t.length>0).map(t=>t.join(",")),s=n.map(t=>({rec:t,cells:{}}));a.forEach(t=>{let e=0;for(let n=s.length-1;n>=0;n--){const o=s[n].rec,r=t.split(",").map(t=>+t).filter(t=>o.data.slice(0,5).includes(t)).length;c.length&&c.includes(r)?(s[n].cells[t]={txt:t,hit:!0},e=0):(e++,s[n].cells[t]={txt:e,hit:!1})}});const d=H(s,a),u=U(s,a),l=z(s,a),b=a.slice().sort((t,e)=>{if(y){const{maxHit:n,maxMiss:o}=d[t],{maxHit:c,maxMiss:r}=d[e];return m?c-n||o-r:o-r||c-n}return m?u[e]-u[t]||l[t]-l[e]:l[t]-l[e]||u[e]-u[t]});document.getElementById("sortText").textContent=m?"按遗漏次数排序":"按连中次数排序";const startIndex=(currentPage-1)*pageSize,endIndex=Math.min(startIndex+pageSize,s.length),pageData=s.slice(startIndex,endIndex);document.getElementById("summary").innerHTML=`\n        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">\n          <div>共 ${b.length} 注分析组合</div>\n          <div>当前显示: ${n.length} 期 / 总计: ${r.length} 期</div>\n          <div>筛选条件: ${o}码组合，命中${c.length>0?c.join("/"):"全部"}胆</div>\n          <div>第 ${currentPage}/${totalPages} 页 (${pageData.length}/${s.length} 行)</div>\n        </div>\n        <div class="flex justify-center items-center mt-4 space-x-2">\n          <button id="prevPage" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" ${currentPage<=1?'disabled':''}>上一页</button>\n          <span class="text-sm text-gray-600">第 ${currentPage} 页，共 ${totalPages} 页</span>\n          <button id="nextPage" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" ${currentPage>=totalPages?'disabled':''}>下一页</button>\n        </div>`;const h=document.createElement("tr");h.className="bg-gray-50",h.innerHTML='\n        <th class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 fixed-width-period sticky-bg-white">期数</th>\n        <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>\n      ',b.forEach(t=>{const{maxHit:e,maxMiss:n}=d[t],o=document.createElement("th");o.className="px-3 py-2 text-center border-r border-gray-200",o.innerHTML=y?m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${e}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${n}</div>\n            `:m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${u[t]}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${l[t]}</div>\n            `,h.appendChild(o)}),t.appendChild(h),pageData.forEach((t,n)=>{const o=document.createElement("tr");o.className=0===n?"bg-gray-100":1===n?"bg-gray-50":"",o.innerHTML=`\n          <td class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 font-medium fixed-width-period ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">${t.rec.period}</td>\n          <td class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">\n            <div class="number-row">${t.rec.data.slice(0,5).join(",")}</div>\n            <div class="number-row">${t.rec.data.slice(5).join(",")}</div>\n          </td>\n        `,b.forEach(e=>{const n=t.cells[e],c=document.createElement("td");c.className="px-3 py-2 text-center border-r border-gray-200 "+(n.hit?"hit-cell":"miss-cell"),c.textContent=n.txt,o.appendChild(c)}),e.appendChild(o)}),setTimeout(()=>{const t=document.getElementById("prevPage"),e=document.getElementById("nextPage");t&&t.addEventListener("click",()=>{currentPage>1&&(currentPage--,L())}),e&&e.addEventListener("click",()=>{currentPage<totalPages&&(currentPage++,L())})},100),j()}function j(){const t=document.getElementById("resultTable"),e=document.getElementById("tableContainer"),n=t.offsetWidth,o=e.offsetWidth;if(n>o){document.querySelector(".slider-container").style.display="block";const u=o/n,l=Math.max(20,u*o);k.style.width=e.scrollLeft/(n-o)*100+"%",w.style.left=e.scrollLeft/(n-o)*(o-l)+"px",w.style.width=`${l}px`,k.style.width=e.scrollLeft/(n-o)*100+"%";let m=!1;function c(t){if(!m)return;const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"}function r(){m=!1,document.removeEventListener("mousemove",c),document.removeEventListener("mouseup",r)}w.addEventListener("mousedown",t=>{m=!0,document.addEventListener("mousemove",c),document.addEventListener("mouseup",r),t.preventDefault()}),document.querySelector(".slider-track").addEventListener("click",t=>{const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"})}else document.querySelector(".slider-container").style.display="none";const i=t.offsetHeight,a=e.offsetHeight;if(i>a){$.style.display="flex";const f=a/i,y=Math.max(20,f*a);I.style.height=e.scrollTop/(i-a)*100+"%",B.style.top=e.scrollTop/(i-a)*(a-y)+"px",B.style.height=`${y}px`,I.style.height=e.scrollTop/(i-a)*100+"%";let b=!1;function s(t){if(!b)return;const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"}function d(){b=!1,document.removeEventListener("mousemove",s),document.removeEventListener("mouseup",d)}B.addEventListener("mousedown",t=>{b=!0,document.addEventListener("mousemove",s),document.addEventListener("mouseup",d),t.preventDefault()}),document.querySelector(".vertical-slider-track").addEventListener("click",t=>{const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"})}else $.style.display="none";e.addEventListener("scroll",()=>{if(n>o){const t=e.scrollLeft/(n-o);w.style.left=t*(o-parseInt(getComputedStyle(w).width))+"px",k.style.width=100*t+"%"}if(i>a){const t=e.scrollTop/(i-a);B.style.top=t*(a-parseInt(getComputedStyle(B).height))+"px",I.style.height=100*t+"%"}})}async function V(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n").filter(Boolean);for(const t of e)q(t);r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),document.getElementById("periodCount").textContent=r.length,L()}catch(t){v.textContent=`读取文件错误: ${t.message}`}}async function W(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n")[0],n=e.trim().split(/\t+/);if(2!==n.length)return;const o=n[0].trim();if(o===u)return;u=o,q(e),document.getElementById("periodCount").textContent=r.length,L()}catch(t){}}function q(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return;e=t.trim().split(/\s+/)}if(e.length<2)return;const n=e[0].trim();if(d.has(n))return;let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}10!==o.length||o.some(isNaN)||(d.add(n),r.unshift({period:n,data:o,input:o.join(",")}))}P.addEventListener("click",async function(){const t=p.value.trim();if(t){this.disabled=!0,this.textContent="验证中...";try{const e=await A(t);if(e.valid){// 标记密钥为已使用
+}function H(t,e){const n={};return e.forEach(e=>{let o=0,c=0,r=0,i=0;t.forEach(t=>{t.cells[e].hit?(r++,i=0,r>o&&(o=r)):(i++,r=0,i>c&&(c=i))}),n[e]={maxHit:o,maxMiss:c}}),n}function U(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&t[n].cells[e].hit;n++)o++;n[e]=o}),n}function z(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&!t[n].cells[e].hit;n++)o++;n[e]=o}),n}function L(){if(!_0xAuthCheck()) return; const t=document.querySelector("#resultTable thead"),e=document.querySelector("#resultTable tbody");t.innerHTML="",e.innerHTML="";if(!r.length){const t=document.createElement("tr"),n=document.createElement("td");return n.colSpan=100,n.className="py-4 text-center text-gray-500",n.textContent="暂无数据，请先输入或获取数据",t.appendChild(n),e.appendChild(t),void j()}const n=r.slice(0,Math.min(r.length,f));totalPages=Math.ceil(n.length/pageSize);const o=+document.querySelector("#numButtons .btn-active")?.dataset.num||0,c=Array.from(document.querySelectorAll("#hitButtons .btn-active")).map(t=>+t.dataset.hit),selectedPositions=Array.from(document.querySelectorAll(".position-btn.btn-active")).map(t=>+t.dataset.position),i=[...Array(10)].map((t,e)=>e+1),a=[...o>0&&o<=10?R(i,o):[],...document.getElementById("customCombos").value.trim().split(/\s+/).filter(Boolean).map(t=>t.split(",").map(t=>+t).filter(t=>!isNaN(t)))].filter(t=>t.length>0).map(t=>t.join(",")),s=n.map(t=>({rec:t,cells:{}}));a.forEach(t=>{let e=0;for(let n=s.length-1;n>=0;n--){const o=s[n].rec,frontFive=o.data.slice(0,5);let r=0;if(selectedPositions.length>0){selectedPositions.forEach(pos=>{if(pos>=1&&pos<=5&&t.split(",").map(t=>+t).includes(frontFive[pos-1])){r++}});}else{r=t.split(",").map(t=>+t).filter(t=>frontFive.includes(t)).length;}c.length&&c.includes(r)?(s[n].cells[t]={txt:t,hit:!0},e=0):(e++,s[n].cells[t]={txt:e,hit:!1})}});const d=H(s,a),u=U(s,a),l=z(s,a),b=a.slice().sort((t,e)=>{if(y){const{maxHit:n,maxMiss:o}=d[t],{maxHit:c,maxMiss:r}=d[e];return m?c-n||o-r:o-r||c-n}return m?u[e]-u[t]||l[t]-l[e]:l[t]-l[e]||u[e]-u[t]});document.getElementById("sortText").textContent=m?"按遗漏次数排序":"按连中次数排序";const startIndex=(currentPage-1)*pageSize,endIndex=Math.min(startIndex+pageSize,s.length),pageData=s.slice(startIndex,endIndex);document.getElementById("summary").innerHTML=`\n        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">\n          <div>共 ${b.length} 注分析组合</div>\n          <div>当前显示: ${n.length} 期 / 总计: ${r.length} 期</div>\n          <div>筛选条件: ${o}码组合，命中${c.length>0?c.join("/"):"全部"}胆${selectedPositions.length>0?`，位置${selectedPositions.join("/")}名`:""}</div>\n          <div>第 ${currentPage}/${totalPages} 页 (${pageData.length}/${s.length} 行)</div>\n        </div>\n        <div class="flex justify-center items-center mt-4 space-x-2">\n          <button id="prevPage" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" ${currentPage<=1?'disabled':''}>上一页</button>\n          <span class="text-sm text-gray-600">第 ${currentPage} 页，共 ${totalPages} 页</span>\n          <button id="nextPage" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" ${currentPage>=totalPages?'disabled':''}>下一页</button>\n        </div>`;const h=document.createElement("tr");h.className="bg-gray-50 table-header-sticky",h.innerHTML='<th class="px-3 py-2 text-center sticky-col left-0 border-r border-gray-200 fixed-width-period sticky-bg-white" style="position: sticky; top: 0; z-index: 1001;">期数</th><th class="px-3 py-2 text-center sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white" style="position: sticky; top: 0; z-index: 1001;">数据</th>';b.forEach(t=>{const{maxHit:e,maxMiss:n}=d[t],o=document.createElement("th");o.className="px-3 py-2 text-center border-r border-gray-200",o.innerHTML=y?m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${e} (${Math.round((s.filter(row=>row.cells[t]&&row.cells[t].hit).length/s.length)*100)||0}%)</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${n} (${Math.round((s.filter(row=>row.cells[t]&&row.cells[t].hit).length/s.length)*100)||0}%)</div>\n            `:m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${u[t]} (${Math.round((s.filter(row=>row.cells[t]&&row.cells[t].hit).length/s.length)*100)||0}%)</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${l[t]} (${Math.round((s.filter(row=>row.cells[t]&&row.cells[t].hit).length/s.length)*100)||0}%)</div>\n            `,h.appendChild(o)}),t.appendChild(h),pageData.forEach((t,n)=>{const o=document.createElement("tr");o.className=0===n?"bg-gray-100":1===n?"bg-gray-50":"",o.innerHTML=`\n          <td class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 font-medium fixed-width-period ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">${t.rec.period}</td>\n          <td class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">\n            <div class="number-row">${t.rec.data.slice(0,5).join(",")}</div>\n            <div class="number-row">${t.rec.data.slice(5).join(",")}</div>\n          </td>\n        `,b.forEach(e=>{const n=t.cells[e],c=document.createElement("td");c.className="px-3 py-2 text-center border-r border-gray-200 "+(n.hit?"hit-cell":"miss-cell"),c.textContent=n.txt,o.appendChild(c)}),e.appendChild(o)}),setTimeout(()=>{const t=document.getElementById("prevPage"),e=document.getElementById("nextPage");t&&t.addEventListener("click",()=>{if(currentPage>1){const tableContainer=document.getElementById("tableContainer");const scrollPosition=tableContainer.scrollTop;sessionStorage.setItem(`scrollPosition_${currentPage}`,scrollPosition);currentPage--;L();setTimeout(()=>{const savedPosition=sessionStorage.getItem(`scrollPosition_${currentPage}`);if(savedPosition!==null){tableContainer.scrollTop=parseInt(savedPosition);}else{tableContainer.scrollTop=0;}},50);}}),e&&e.addEventListener("click",()=>{if(currentPage<totalPages){const tableContainer=document.getElementById("tableContainer");const scrollPosition=tableContainer.scrollTop;sessionStorage.setItem(`scrollPosition_${currentPage}`,scrollPosition);currentPage++;L();setTimeout(()=>{const savedPosition=sessionStorage.getItem(`scrollPosition_${currentPage}`);if(savedPosition!==null){tableContainer.scrollTop=parseInt(savedPosition);}else{tableContainer.scrollTop=0;}},50);}})},100),j()}function j(){const t=document.getElementById("resultTable"),e=document.getElementById("tableContainer"),n=t.offsetWidth,o=e.offsetWidth;if(n>o){document.querySelector(".slider-container").style.display="block";const u=o/n,l=Math.max(20,u*o);k.style.width=e.scrollLeft/(n-o)*100+"%",w.style.left=e.scrollLeft/(n-o)*(o-l)+"px",w.style.width=`${l}px`,k.style.width=e.scrollLeft/(n-o)*100+"%";let m=!1;function c(t){if(!m)return;const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"}function r(){m=!1,document.removeEventListener("mousemove",c),document.removeEventListener("mouseup",r)}w.addEventListener("mousedown",t=>{m=!0,document.addEventListener("mousemove",c),document.addEventListener("mouseup",r),t.preventDefault()}),document.querySelector(".slider-track").addEventListener("click",t=>{const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"})}else document.querySelector(".slider-container").style.display="none";const i=t.offsetHeight,a=e.offsetHeight;if(i>a){$.style.display="none";const f=a/i,y=Math.max(20,f*a);I.style.height=e.scrollTop/(i-a)*100+"%",B.style.top=e.scrollTop/(i-a)*(a-y)+"px",B.style.height=`${y}px`,I.style.height=e.scrollTop/(i-a)*100+"%";let b=!1;function s(t){if(!b)return;const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"}function d(){b=!1,document.removeEventListener("mousemove",s),document.removeEventListener("mouseup",d)}B.addEventListener("mousedown",t=>{b=!0,document.addEventListener("mousemove",s),document.addEventListener("mouseup",d),t.preventDefault()}),document.querySelector(".vertical-slider-track").addEventListener("click",t=>{const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"})}else $.style.display="none";e.addEventListener("scroll",()=>{if(n>o){const t=e.scrollLeft/(n-o);w.style.left=t*(o-parseInt(getComputedStyle(w).width))+"px",k.style.width=100*t+"%";const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");if(e.scrollLeft>10){periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")}else{periodCols.forEach(col=>col.style.opacity="1");dataCols.forEach(col=>col.style.left="120px")}}if(i>a){const t=e.scrollTop/(i-a);const thumbHeight=Math.max(20,f*a);B.style.top=Math.min(t*(a-thumbHeight),a-thumbHeight)+"px",I.style.height=Math.min(100*t,100)+"%"}})}async function V(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n").filter(Boolean);for(const t of e)q(t);r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),document.getElementById("periodCount").textContent=r.length,L()}catch(t){v.textContent=`读取文件错误: ${t.message}`}}async function W(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n")[0],n=e.trim().split(/\t+/);if(2!==n.length)return;const o=n[0].trim();if(o===u)return;u=o,q(e),document.getElementById("periodCount").textContent=r.length,L()}catch(t){}}function q(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return;e=t.trim().split(/\s+/)}if(e.length<2)return;const n=e[0].trim();if(d.has(n))return;let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}10!==o.length||o.some(isNaN)||(d.add(n),r.unshift({period:n,data:o,input:o.join(",")}))}P.addEventListener("click",async function(){const t=p.value.trim();if(t){this.disabled=!0,this.textContent="验证中...";try{const e=await A(t);if(e.valid){// 标记密钥为已使用
 await markKeyAsUsedOnline(e.data.nonce);
 // 记录密钥使用信息到后台
 await recordKeyUsage(e.data);
@@ -3118,7 +3105,7 @@ const n=Y();localStorage.setItem(`validKey_${n}`,t),localStorage.setItem(`keyExp
 _0xSetAuth(t);
 b=!0;
 D(e.data.expiry)}else alert("密钥验证失败: "+e.reason)}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message)}finally{this.disabled=!1,this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",async function(){try{const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const r=parseInt(n);if(o<r){// 密钥未过期，但需要在线验证是否已被使用
-try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyOnlineUsage(keyData.nonce);if(isUsed){localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("密钥已被使用，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}else{_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}catch(err){console.error("在线验证失败，使用本地验证:",err);_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}else{localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("historyBtn").addEventListener("click",()=>{y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("missBtn").addEventListener("click",()=>{m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("hitBtn").addEventListener("click",()=>{m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const G=document.getElementById("helpModal");document.getElementById("helpBtn").addEventListener("click",()=>{G.classList.remove("hidden")}),document.getElementById("closeHelpBtn").addEventListener("click",()=>{G.classList.add("hidden")}),document.getElementById("gotItBtn").addEventListener("click",()=>{G.classList.add("hidden")}),G.addEventListener("click",t=>{t.target===G&&G.classList.add("hidden")});let Q=!1;document.getElementById("themeToggle").addEventListener("click",()=>{Q=!Q,document.body.classList.toggle("bg-gray-900",Q),document.body.classList.toggle("text-white",Q),document.body.classList.toggle("bg-gray-50",!Q),document.body.classList.toggle("text-dark",!Q);const t=document.getElementById("themeToggle").querySelector("i");t.classList.toggle("fa-moon-o",!Q),t.classList.toggle("fa-sun-o",Q)});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
+try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyOnlineUsage(keyData.nonce);if(isUsed){localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("密钥已被使用，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}else{_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}catch(err){console.error("在线验证失败，使用本地验证:",err);_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}else{localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("historyBtn").addEventListener("click",()=>{y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("missBtn").addEventListener("click",()=>{m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("hitBtn").addEventListener("click",()=>{m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,currentPage=1,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),currentPage=1,L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
 
 // 黄金切割页面事件处理
 document.addEventListener('DOMContentLoaded', function() {

@@ -2,12 +2,16 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>台湾PK数据分析工具</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   
   <!-- Tailwind配置 -->
+  
   
   
   <style type="text/tailwindcss">
@@ -16,14 +20,31 @@
         content-visibility: auto;
       }
       .sticky-header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-      .sticky-col {
-        position: sticky;
-        z-index: 20;
-      }
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .sticky-col {
+    position: sticky;
+    z-index: 50;
+  }
+  .header-title {
+    transition: transform 0.3s ease, opacity 0.3s ease, height 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+  }
+  .header-title.hidden-on-scroll {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    pointer-events: none;
+  }
+  .toolbar-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+  }
       .scrollbar-hide::-webkit-scrollbar {
         display: none;
       }
@@ -43,8 +64,288 @@
       .btn-hover {
         @apply hover:bg-primary/80 hover:text-white transition-colors duration-200;
       }
+      
+      /* 按钮悬停变色为FF7373 - 仅在支持hover的设备上生效 */
+      @media (hover: hover) {
+        button:hover {
+          background-color: #FF7373 !important;
+          transition: background-color 0.2s ease;
+        }
+      }
+      
+      /* 移动端触摸反馈 - 避免保持hover状态 */
+      @media (hover: none) {
+        button:active {
+          background-color: #FF7373 !important;
+          transition: background-color 0.1s ease;
+        }
+      }
+      
+      /* 防止移动端双击放大和意外缩放 */
+      * {
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      
+      /* 允许输入框和文本区域选择文本 */
+      input, textarea, [contenteditable] {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+      }
+      
+      /* 胆码按钮特殊处理 - 确保触摸反馈正常 */
+      .dama-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      /* 胆码按钮未选中状态 - 覆盖全局hover样式 */
+      @media (hover: hover) {
+        .dama-btn:not(.bg-primary):hover {
+          background-color: #e5e7eb !important; /* gray-200 */
+          color: #374151 !important; /* gray-700 */
+        }
+      }
+      
+      /* 胆码按钮选中状态保持红色 */
+      .dama-btn.bg-primary {
+        background-color: #d62828 !important;
+        color: white !important;
+      }
+      
+      @media (hover: hover) {
+        .dama-btn.bg-primary:hover {
+          background-color: #b91c1c !important; /* 稍深的红色 */
+          color: white !important;
+        }
+      }
+      
+      /* 防止页面缩放 */
+      html {
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+      }
       .number-row {
         @apply flex justify-center space-x-1 mb-1;
+      }
+      
+      /* 手机端五星做号页面优化 */
+      @media (max-width: 768px) {
+        /* 移除主容器的左右边距 */
+        #fiveStarPage .container {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          max-width: 100% !important;
+        }
+        
+        /* 移除模块容器的边距和圆角 */
+        #fiveStarPage .bg-white {
+          border-radius: 0 !important;
+          padding: 8px !important;
+          margin: 0 !important;
+        }
+        
+        /* 移除模块间距 */
+        #modules-container {
+          gap: 8px !important;
+          padding: 0 !important;
+        }
+        
+        /* 移除模块边框和圆角 */
+        .five-star-module {
+          border: none !important;
+          border-radius: 0 !important;
+          padding: 8px !important;
+          margin: 0 !important;
+        }
+        
+        /* 优化数字按钮尺寸 - 确保一行放10个 */
+        .number-btn {
+          width: calc(10% - 2px) !important;
+          height: 32px !important;
+          min-width: 28px !important;
+          font-size: 13px !important;
+          padding: 0 !important;
+          margin: 1px !important;
+          flex-shrink: 0 !important; /* 防止按钮收缩 */
+        }
+        
+        /* 优化数字按钮容器 - 确保不换行 */
+        .number-buttons {
+          gap: 0 !important;
+          margin-bottom: 8px !important;
+          flex-wrap: nowrap !important; /* 强制不换行 */
+          overflow-x: auto !important; /* 如果内容过宽则允许横向滚动 */
+        }
+        
+        /* 优化胆码按钮 */
+        .dama-btn {
+          font-size: 13px !important;
+          padding: 4px 8px !important;
+          margin: 1px !important;
+        }
+        
+        /* 优化胆码按钮容器 */
+        .dama-buttons {
+          gap: 2px !important;
+          margin-bottom: 8px !important;
+        }
+        
+        /* 优化筛选组间距 */
+        .filter-group {
+          margin-bottom: 8px !important;
+          padding-bottom: 8px !important;
+        }
+        
+        /* 优化模块总容错区域 */
+        .module-tolerance {
+          margin-bottom: 8px !important;
+          padding: 8px !important;
+        }
+      }
+      
+      /* 手机端黄金切割页面优化 */
+      @media (max-width: 768px) {
+        /* 移除黄金切割页面主容器的左右边距 */
+        #goldenRatioPage .container {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          max-width: 100% !important;
+        }
+        
+        /* 移除主模块的边距和圆角 */
+        #goldenRatioPage .bg-white {
+          border-radius: 0 !important;
+          padding: 12px !important;
+          margin: 0 !important;
+          box-shadow: none !important;
+        }
+        
+        /* 优化模式选择按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3 {
+          gap: 8px !important;
+        }
+        
+        #goldenRatioPage button[data-mode] {
+          padding: 8px 16px !important;
+          font-size: 14px !important;
+        }
+        
+        /* 优化输入区域 */
+        #goldenInputData {
+          padding: 8px !important;
+          font-size: 14px !important;
+        }
+        
+        /* 优化操作按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3.mb-6 {
+          gap: 6px !important;
+          flex-wrap: wrap !important;
+        }
+        
+        #goldenRatioPage .flex.justify-center.gap-3.mb-6 button {
+          padding: 8px 12px !important;
+          font-size: 13px !important;
+          flex: 1 !important;
+          min-width: 80px !important;
+        }
+        
+        /* 优化结果显示区域 */
+        #goldenRatioPage .grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-5 {
+          grid-template-columns: 1fr 1fr !important;
+          gap: 4px !important;
+        }
+        
+        /* 优化验证结果区域 */
+        #validationResults {
+          padding: 8px !important;
+          margin-top: 12px !important;
+        }
+        
+        /* 优化标题和摘要 */
+        #goldenRatioPage h3 {
+          font-size: 16px !important;
+        }
+        
+        #goldenRatioPage .text-sm {
+          font-size: 12px !important;
+        }
+      }
+      
+      /* 手机端黄金切割页面优化 */
+      @media (max-width: 768px) {
+        /* 移除黄金切割页面主容器的左右边距 */
+        #goldenRatioPage .container {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          max-width: 100% !important;
+        }
+        
+        /* 移除主模块的边框、圆角和阴影 */
+        #goldenRatioPage .bg-white {
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          padding: 8px !important;
+          margin: 0 !important;
+        }
+        
+        /* 优化模式选择按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3 button {
+          padding: 8px 16px !important;
+          font-size: 14px !important;
+          margin: 2px !important;
+        }
+        
+        /* 优化输入区域 */
+        #goldenRatioPage textarea {
+          padding: 8px !important;
+          font-size: 14px !important;
+          border-radius: 4px !important;
+        }
+        
+        /* 优化操作按钮 */
+        #goldenRatioPage .flex.justify-center.gap-3.mb-6 button {
+          padding: 8px 12px !important;
+          font-size: 13px !important;
+          margin: 2px !important;
+        }
+        
+        /* 优化结果显示区域 */
+        #goldenRatioPage .grid.gap-2 {
+          gap: 4px !important;
+        }
+        
+        /* 优化验证结果区域 */
+        #goldenRatioPage #validationResults {
+          padding: 8px !important;
+          margin-top: 8px !important;
+          border-radius: 4px !important;
+        }
+        
+        /* 减少各区域的边距 */
+        #goldenRatioPage .mb-6 {
+          margin-bottom: 12px !important;
+        }
+        
+        #goldenRatioPage .mb-4 {
+          margin-bottom: 8px !important;
+        }
+        
+        #goldenRatioPage .mb-2 {
+          margin-bottom: 4px !important;
+        }
       }
       .fixed-width-period {
         width: 120px;
@@ -57,6 +358,64 @@
       }
       .sticky-bg-gray-100 {
         background-color: #f3f4f6 !important;
+      }
+      
+      /* 自定义滚动条样式 */
+      .scrollbar-thin {
+        scrollbar-width: thin;
+      }
+      
+      .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      
+      .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+        background-color: #d1d5db;
+        border-radius: 3px;
+      }
+      
+      .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb:hover {
+        background-color: #9ca3af;
+      }
+      
+      .scrollbar-track-gray-100::-webkit-scrollbar-track {
+        background-color: #f3f4f6;
+        border-radius: 3px;
+      }
+      
+      /* 黄金切割结果容器样式 */
+      #goldenResults {
+        scroll-behavior: smooth;
+      }
+      
+      #goldenResults::-webkit-scrollbar {
+        height: 8px;
+      }
+      
+      #goldenResults::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      
+      #goldenResults::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      
+      #goldenResults::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      
+      /* 模式切换按钮样式 */
+      .active-mode {
+        background-color: #3b82f6 !important;
+        color: white !important;
+      }
+      
+      .inactive-mode {
+        background-color: #d1d5db !important;
+        color: #374151 !important;
       }
       .sticky-bg-gray-50 {
         background-color: #f9fafb !important;
@@ -91,8 +450,69 @@
         overflow-y: auto;
         position: relative;
       }
+      
+      /* 手机端全屏模式样式 */
+      @media (max-width: 768px) {
+        /* 全屏模式下的工具栏样式 */
+        .fullscreen-toolbar {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          z-index: 1000 !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        /* 全屏模式下隐藏的元素 */
+        .fullscreen-hidden {
+          transform: translateY(-100%) !important;
+          transition: transform 0.3s ease-in-out !important;
+        }
+        
+        /* 全屏模式下主内容区域的调整 */
+        .fullscreen-main {
+          padding-top: 50px !important;
+          transition: padding-top 0.3s ease-in-out !important;
+        }
+        
+        /* 优化手机端滚动性能 */
+        body {
+          -webkit-overflow-scrolling: touch;
+        }
+        
+        /* 全屏模式下的工具栏按钮优化 */
+        .fullscreen-toolbar .container {
+          padding-left: 1rem !important;
+          padding-right: 1rem !important;
+        }
+        
+        .fullscreen-toolbar button {
+          font-size: 14px !important;
+          padding: 0.5rem 1rem !important;
+        }
+        
+        /* 防止全屏切换时的闪烁 */
+        header * {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        
+        /* 全屏模式下的阴影效果 */
+        .fullscreen-toolbar::after {
+          content: '';
+          position: absolute;
+          bottom: -8px;
+          left: 0;
+          right: 0;
+          height: 8px;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+          pointer-events: none;
+        }
+      }
     }
   </style>
+  
+  
 </head>
 <body class="bg-gray-50 font-sans text-dark min-h-screen flex flex-col">
   <!-- 密钥倒计时通知栏 -->
@@ -101,32 +521,33 @@
   </div>
   
   <!-- 顶部导航 -->
-  <header class="bg-white shadow-sm sticky-header">
-  <!-- 标题区域 - 移至最顶部 -->
-  <div class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
-      <h1 class="text-xl md:text-2xl font-bold text-primary flex items-center">
-        <i class="fa fa-line-chart mr-2"></i>台湾PK数据分析工具
-      </h1>
-      <div class="flex items-center space-x-2 mt-2 md:mt-0">
-        <button id="helpBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="帮助">
-          <i class="fa fa-question-circle text-gray-500"></i>
-        </button>
-        <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="切换主题">
-          <i class="fa fa-moon-o text-gray-500"></i>
-        </button>
+  <!-- 标题区域 - 独立模块 -->
+  <div class="header-title bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
+        <h1 class="text-xl md:text-2xl font-bold text-primary flex items-center">
+          <i class="fa fa-line-chart mr-2"></i>台湾PK数据分析工具
+        </h1>
+        <div class="flex items-center space-x-2 mt-2 md:mt-0">
+          <button id="helpBtn" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="帮助">
+            <i class="fa fa-question-circle text-gray-500"></i>
+          </button>
+          <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200" title="切换主题">
+            <i class="fa fa-moon-o text-gray-500"></i>
+          </button>
+        </div>
       </div>
-    </div>
+  </div>
     
-  <!-- 工具栏区域 - 移至标题下方 -->
-  <div class="bg-gray-800 text-white py-2">
+  <!-- 工具栏区域 - 独立粘性模块 -->
+  <nav class="bg-gray-800 text-white py-2 sticky-header toolbar-sticky" style="top: 0; z-index: 100;">
     <div class="container mx-auto px-4">
       <div class="flex space-x-4">
         <button id="dataAnalysisBtn" class="px-4 py-1 rounded bg-primary text-white font-medium">数据分析</button>
         <button id="fiveStarBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">五星做号</button>
+        <button id="goldenRatioBtn" class="px-4 py-1 rounded bg-gray-600 text-white font-medium hover:bg-primary transition-colors">黄金切割</button>
       </div>
     </div>
-  </div>
-  </header>
+  </nav>
 
   <!-- 主要内容 -->
   <main class="flex-1 container mx-auto px-4 py-6">
@@ -178,15 +599,13 @@
         
         <!-- 操作按钮 -->
         <div class="flex flex-wrap gap-3 mt-5">
-          <button id="sortToggle" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
+          <button id="sortToggle" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover hidden">
             <i class="fa fa-sort mr-2"></i><span id="sortText">按连中次数排序</span>
           </button>
           <button id="statBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
-            <i class="fa fa-bar-chart mr-2"></i>更新统计
+            <i class="fa fa-bar-chart mr-2"></i>加入统计
           </button>
-          <button id="exportBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
-            <i class="fa fa-download mr-2"></i>导出数据
-          </button>
+
           <button id="clearBtn" class="px-4 py-2 bg-gray-700 text-white rounded-md flex items-center btn-hover">
             <i class="fa fa-trash mr-2"></i>清空数据
           </button>
@@ -216,11 +635,12 @@
             </div>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="30">30期</button>
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover btn-active" data-period="15">15期</button>
+            <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="30">30期</button>
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="50">50期</button>
             <button class="period-btn px-3 py-1 rounded-md bg-gray-200 btn-hover" data-period="100">100期</button>
             <div class="flex items-center gap-1">
-              <input type="number" id="customPeriod" min="1" max="10000" value="30" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <input type="number" id="customPeriod" min="1" max="10000" value="15" class="w-16 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
               <button id="customPeriodBtn" class="px-3 py-1 rounded-md bg-gray-200 btn-hover">自定义</button>
             </div>
           </div>
@@ -262,20 +682,55 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="modules-container">
             <!-- 左侧卡片 - 模块1 (5组筛选条件) -->
         <div id="module1" class="border border-gray-200 rounded-lg p-4 five-star-module">
-          <!-- 模块级共享容错选择器 -->
-          <div class="flex items-center mb-2 pb-4 border-b">
-            <span class="text-gray-600 mr-2">模块容错</span>
-            <select class="tolerance-min border border-gray-300 rounded px-2 py-1 text-sm" data-module="1">
-              <option>0</option>
-            </select>
-            <span class="mx-2">至</span>
-            <select class="tolerance-max border border-gray-300 rounded px-2 py-1 text-sm" data-module="1">
-              <option>0</option>
-            </select>
+          <!-- 模块总容错设置 -->
+          <div class="module-tolerance mb-4 p-3 bg-gray-50 rounded border">
+            <div class="flex items-center text-sm">
+              <span class="text-gray-700 font-medium mr-3">模块总容错：</span>
+              <span class="text-gray-600 mr-2">允许</span>
+              <select class="module-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1">
+                <option value="0" selected>0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="ml-2 text-gray-600">个条件不成立</span>
+            </div>
           </div>
           
           <!-- 第1组筛选条件 -->
-          <div class="filter-group mb-2 pb-0 border-b">
+          <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件1容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件1容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="1">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="1">02</button>
@@ -289,7 +744,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="1">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="1">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="1">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="1">2胆</button>
@@ -300,7 +755,28 @@
           </div>
           
           <!-- 第2组筛选条件 -->
-          <div class="filter-group mb-2 pb-0 border-b">
+          <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件2容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件2容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="2">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="2">02</button>
@@ -314,7 +790,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="2">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="2">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="2">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="2">2胆</button>
@@ -325,7 +801,28 @@
           </div>
           
           <!-- 第3组筛选条件 -->
-          <div class="filter-group mb-2 pb-0 border-b">
+          <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件3容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件3容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="3">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="3">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="3">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="3">02</button>
@@ -339,7 +836,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="3">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="3">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="3">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="3">2胆</button>
@@ -350,7 +847,28 @@
           </div>
           
           <!-- 第4组筛选条件 -->
-          <div class="filter-group mb-2 pb-0 border-b">
+          <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件4容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件4容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="4">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="4">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="4">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="4">02</button>
@@ -364,7 +882,7 @@
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="10" data-module="1" data-group="4">10</button>
             </div>
             
-            <div class="flex flex-wrap gap-2 mb-2 dama-buttons">
+            <div class="flex flex-wrap gap-2 mb-0 dama-buttons">
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="0" data-module="1" data-group="4">0胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="1" data-module="1" data-group="4">1胆</button>
               <button class="dama-btn px-3 py-1 border border-gray-300 rounded text-sm" data-dama="2" data-module="1" data-group="4">2胆</button>
@@ -375,7 +893,28 @@
           </div>
           
           <!-- 第5组筛选条件 -->
-          <div class="filter-group mb-2 pb-0">
+          <div class="filter-group mb-2 pb-2">
+            <!-- 条件5容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件5容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="5">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="1" data-group="5">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="1" data-group="5">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="1" data-group="5">02</button>
@@ -418,20 +957,55 @@
             
             <!-- 右侧卡片 - 模块2 (结构与模块1相同，data-module="2") -->
         <div id="module2" class="border border-gray-200 rounded-lg p-4 five-star-module">
-          <!-- 模块级共享容错选择器 -->
-          <div class="flex items-center mb-2 pb-4 border-b">
-            <span class="text-gray-600 mr-2">模块容错</span>
-            <select class="tolerance-min border border-gray-300 rounded px-2 py-1 text-sm" data-module="2">
-              <option>0</option>
-            </select>
-            <span class="mx-2">至</span>
-            <select class="tolerance-max border border-gray-300 rounded px-2 py-1 text-sm" data-module="2">
-              <option>0</option>
-            </select>
+          <!-- 模块总容错设置 -->
+          <div class="module-tolerance mb-4 p-3 bg-gray-50 rounded border">
+            <div class="flex items-center text-sm">
+              <span class="text-gray-700 font-medium mr-3">模块总容错：</span>
+              <span class="text-gray-600 mr-2">允许</span>
+              <select class="module-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="module-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2">
+                <option value="0" selected>0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="ml-2 text-gray-600">个条件不成立</span>
+            </div>
           </div>
           
           <!-- 第1组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件1容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件1容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="1">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="1">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="1">02</button>
@@ -457,6 +1031,27 @@
           
           <!-- 第2组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件2容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件2容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="2">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="2">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="2">02</button>
@@ -482,6 +1077,27 @@
           
           <!-- 第3组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件3容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件3容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="3">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="3">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="3">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="3">02</button>
@@ -507,6 +1123,27 @@
           
           <!-- 第4组筛选条件 -->
           <div class="filter-group mb-2 pb-2 border-b">
+            <!-- 条件4容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件4容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="4">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="4">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="4">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="4">02</button>
@@ -532,6 +1169,27 @@
           
           <!-- 第5组筛选条件 -->
           <div class="filter-group mb-2 pb-0">
+            <!-- 条件5容错选择器 -->
+            <div class="flex items-center mb-2 text-sm">
+              <span class="text-gray-600 mr-2">条件5容错</span>
+              <select class="condition-tolerance-min border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="5">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="mx-1">至</span>
+              <select class="condition-tolerance-max border border-gray-300 rounded px-2 py-1 text-xs" data-module="2" data-group="5">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
             <div class="flex flex-wrap gap-2 mb-2 number-buttons">
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="1" data-module="2" data-group="5">01</button>
               <button class="number-btn w-10 h-10 border border-gray-300 rounded flex items-center justify-center text-sm" data-number="2" data-module="2" data-group="5">02</button>
@@ -574,6 +1232,82 @@
         </div>
       </div>
     </div>
+
+    <!-- 黄金分割页面 -->
+    <div id="goldenRatioPage" class="hidden">
+      <div class="container mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <!-- 切割模式选择 -->
+          <div class="mb-6">
+            <div class="flex justify-center gap-3 mb-4">
+              <button 
+                id="modeUniformBtn" 
+                class="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 transition-colors active-mode"
+                data-mode="uniform"
+              >均匀</button>
+              <button 
+                id="modeStableBtn" 
+                class="px-6 py-2 bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400 transition-colors"
+                data-mode="stable"
+              >稳定</button>
+            </div>
+            <div class="text-center text-sm text-gray-600 mb-4">
+              <span id="modeDescription">均匀模式：一次性分完就用，不保持历史分组</span>
+            </div>
+          </div>
+          
+          <!-- 输入区域 -->
+          <div class="mb-6">
+            <label for="goldenInputData" class="block text-sm font-medium text-gray-700 mb-2">请输入数据 <span id="goldenInputCount" class="text-red-500 text-sm font-medium hidden">共 0 项</span></label>
+            <textarea 
+              id="goldenInputData" 
+              rows="6" 
+              placeholder="示例：01,02,03,04,05,06,07,08,09,10" 
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none overflow-auto whitespace-pre-wrap"
+            ></textarea>
+          </div>
+          
+          <!-- 操作按钮 -->
+          <div class="flex justify-center gap-3 mb-6">
+            <button 
+              id="goldenSplitBtn" 
+              class="px-6 py-2 bg-primary text-white font-medium rounded-md hover:bg-primary/80 transition-colors"
+            >开始分割</button>
+            <button 
+              id="goldenPasteBtn" 
+              class="px-6 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 transition-colors"
+            >粘贴数据</button>
+            <button 
+              id="goldenClearBtn" 
+              class="px-6 py-2 bg-gray-500 text-white font-medium rounded-md hover:bg-gray-600 transition-colors"
+            >清空</button>
+          </div>
+          
+          <!-- 结果显示区域 -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">分割结果</h3>
+              <div class="text-sm text-gray-500" id="resultSummary"></div>
+            </div>
+            
+            <!-- 5个紧凑排列的框 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+              <div id="goldenResults" class="col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                <!-- 5个分组结果将在这里动态生成 -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- 验证结果显示 -->
+          <div id="validationResults" class="mt-6 p-4 bg-gray-50 rounded-md hidden">
+            <h3 class="text-lg font-semibold mb-2">5in4验证结果</h3>
+            <div id="validationContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </main>
   
   
@@ -581,7 +1315,7 @@
   <!-- 页脚 -->
   <footer class="bg-white border-t border-gray-200 py-4">
     <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
-      <p>台湾PK数据分析工具 © 2025</p>
+      <p>台湾PK数据分析工具 © 2025，联系✈️@suibian925</p>
     </div>
   </footer>
 
@@ -626,7 +1360,7 @@
   </div>
 
   <!-- 密钥验证模态框 -->
-  <div id="keyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+  <div id="keyModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center" style="z-index: 9999;">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
       <div class="text-center mb-6">
         <h3 class="text-2xl font-bold text-gray-800 mb-2">请输入访问密钥</h3>
@@ -648,7 +1382,7 @@
 
 
 <script>
-function t(t){const e={groups:[{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]},{selectedNumbers:[],selectedDamas:[]}],results:[],allPermutations:[],originalResults:[],isReversed:!1},n=document.getElementById(`module${t}`),o=n.querySelectorAll(".number-btn"),r=n.querySelectorAll(".dama-btn"),i=n.querySelector(".generate-btn"),a=n.querySelector(".copy-btn"),s=n.querySelector(".clear-btn"),d=n.querySelector(".reverse-btn"),u=n.querySelector(".result-input"),l=n.querySelector(".result-count"),m=n.querySelector(".tolerance-min"),f=n.querySelector(".tolerance-max");function y(){const t=e.results.length,n=(t>500?e.results.slice(0,500):e.results).map(t=>t.map(t=>t.toString().padStart(2,"0")).join(",")).join(" ");u.value=t>500?n+"...":n,l.textContent=`共${t}注`}o.forEach(t=>{t.addEventListener("click",function(){const t=parseInt(this.dataset.number),n=parseInt(this.dataset.group),o=e.groups[n-1],c=o.selectedNumbers.indexOf(t);-1===c?(o.selectedNumbers.push(t),this.classList.add("bg-primary","text-white")):(o.selectedNumbers.splice(c,1),this.classList.remove("bg-primary","text-white"))})}),r.forEach(t=>{t.addEventListener("click",function(){const t=parseInt(this.dataset.dama),n=parseInt(this.dataset.group),o=e.groups[n-1],c=o.selectedDamas.indexOf(t);-1===c?(o.selectedDamas.push(t),this.classList.add("bg-primary","text-white")):(o.selectedDamas.splice(c,1),this.classList.remove("bg-primary","text-white"))})}),m.addEventListener("change",function(){e.toleranceMin=parseInt(this.value)}),f.addEventListener("change",function(){e.toleranceMax=parseInt(this.value)}),i.addEventListener("click",function(){const t=c([1,2,3,4,5,6,7,8,9,10],5);e.allPermutations=t;const n=t.filter(t=>e.groups.every(e=>{if(0===e.selectedNumbers.length&&0===e.selectedDamas.length)return!0;const n=t.filter(t=>e.selectedNumbers.includes(t)).length;return 0===e.selectedDamas.length?n>0:e.selectedDamas.some(t=>n===t)}));e.results=n,e.originalResults=[...n],y()}),a.addEventListener("click",function(){if(0===e.results.length)return l.innerHTML='<span style="color: red;">没有可复制的结果</span>',void setTimeout(()=>{l.textContent=`共${e.results.length}注`},2e3);const t=e.results.map(t=>t.join(",")).join(" ");navigator.clipboard.writeText(t).then(()=>{const t=l.textContent;l.innerHTML=`${t} <span style="color: red;">已复制 ${e.results.length} 组号码</span>`,setTimeout(()=>{l.textContent=t},2e3)}).catch(t=>{console.error("复制失败:",t),l.innerHTML='<span style="color: red;">复制失败，请手动复制</span>',setTimeout(()=>{l.textContent=`共${e.results.length}注`},2e3)})}),s.addEventListener("click",function(){e.groups.forEach(t=>{t.selectedNumbers=[],t.selectedDamas=[]}),e.results=[],e.originalResults=[],e.isReversed=!1,o.forEach(t=>t.classList.remove("bg-primary","text-white")),r.forEach(t=>t.classList.remove("bg-primary","text-white")),u.value="",l.textContent="共0注"}),d.addEventListener("click",function(){if(0!==e.allPermutations.length&&0!==e.originalResults.length){if(e.isReversed)e.results=e.originalResults,e.isReversed=!1;else{const t=new Set(e.originalResults.map(t=>t.join(","))),n=e.allPermutations.filter(e=>!t.has(e.join(",")));e.results=n,e.isReversed=!0}y()}else alert('请先点击"做号"生成结果')})}function e(e){const n=document.getElementById("modules-container"),c=n.querySelectorAll(".five-star-module");if(c.length>=14)return void alert("最多只能添加14个模块");const r=parseInt(c[c.length-1].id.replace("module",""))+1,i=document.getElementById(`module${e}`).cloneNode(!0);i.id=`module${r}`,i.querySelectorAll("[data-module]").forEach(t=>{t.dataset.module=r}),o(i),i.querySelector(".add-btn").setAttribute("onclick",`addModule(${r})`),i.querySelector(".remove-btn").setAttribute("onclick",`removeModule(${r})`),n.appendChild(i),t(r)}function n(t){const e=document.getElementById("modules-container").querySelectorAll(".five-star-module"),n=document.getElementById(`module${t}`);e.length<=2?alert("至少保留2个模块"):n.remove()}function o(t){t.querySelectorAll(".number-btn, .dama-btn").forEach(t=>{t.classList.remove("bg-primary","text-white")}),t.querySelector(".result-input").value="",t.querySelector(".result-count").textContent="共0注"}function c(t,e){const n=[];return 1===e?t.map(t=>[t]):(t.forEach((t,o,r)=>{const i=c([...r.slice(0,o),...r.slice(o+1)],e-1).map(e=>[t,...e]);n.push(...i)}),n)}tailwind.config={theme:{extend:{colors:{primary:"#d62828",secondary:"#f77f00",neutral:"#f5f5f5",dark:"#333333"},fontFamily:{sans:["Inter","system-ui","sans-serif"]}}}},document.addEventListener("DOMContentLoaded",function(){const t=document.getElementById("dataAnalysisBtn"),e=document.getElementById("fiveStarBtn"),n=document.getElementById("dataAnalysisPage"),o=document.getElementById("fiveStarPage");t&&e&&n&&o?(t.addEventListener("click",function(){n.classList.remove("hidden"),o.classList.add("hidden"),t.classList.add("bg-primary"),t.classList.remove("bg-gray-600"),e.classList.add("bg-gray-600"),e.classList.remove("bg-primary")}),e.addEventListener("click",function(){n.classList.add("hidden"),o.classList.remove("hidden"),e.classList.add("bg-primary"),e.classList.remove("bg-gray-600"),t.classList.add("bg-gray-600"),t.classList.remove("bg-primary")})):console.error("页面切换所需元素未找到")}),document.addEventListener("DOMContentLoaded",function(){t(1),t(2)});let r=[],i=1,a=null,s=null,d=new Set,u=null,l=null,m=!1,f=30,y=!1,b=!1;const h="pk4_access_key",g=document.getElementById("keyModal"),p=document.getElementById("keyInput"),v=document.getElementById("output"),x=document.getElementById("tableContainer"),w=document.getElementById("horizontalThumb"),k=document.getElementById("horizontalFill"),$=document.getElementById("verticalSlider"),B=document.getElementById("verticalThumb"),I=document.getElementById("verticalFill"),M=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,M.appendChild(e)}const S=document.getElementById("hitButtons");function N(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),L()}))}function C(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),L()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",S.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),N(Array.from(M.children)),C(Array.from(S.children));let T=null;function D(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(T);const t=Y();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,void setTimeout(()=>{window.location.reload()},3e3)}const r=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),a=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${r}天 ${i}小时 ${a}分钟 ${s}秒`;const d=24*r+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}T&&clearInterval(T),o(),e.classList.remove("hidden"),T=setInterval(o,1e3)}function _(){return"universal_device_2024"}async function O(t){try{const e=await fetch(`http://localhost:3000/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}return{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}catch(e){return console.warn("云端验证失败，使用本地验证:",e),{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}}async function K(t){try{const e=await fetch("http://localhost:3000/api/nonce/mark",{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}console.warn("云端记录失败，使用本地记录")}catch(t){console.warn("云端记录失败，使用本地记录:",t)}const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const P=document.getElementById("verifyKeyBtn");function E(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}async function A(t){try{const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};const c=(new Date).getTime();if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};const r=_();return o.deviceFingerprint!==r?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await O(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}}catch(t){return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}}}function F(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");const t=document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);if(!t.length)return void(v.textContent="请输入数据");let e=0;for(const n of t){const t=E(n);if(!t)return void(v.textContent="格式错误：请输入正确的数据格式");const{period:o,data:c}=t,i=c.join(",");d.has(o)||r.length&&r[r.length-1].input===i||(r.push({period:o,data:c,input:i}),d.add(o),e++)}document.getElementById("numbersInput").value="",v.textContent=e>0?`成功添加 ${e} 期数据`:"没有新数据添加",document.getElementById("periodCount").textContent=r.length,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}async function J(){if(!b)return g.classList.remove("hidden"),void alert("请先验证有效的密钥");try{v.textContent="正在获取数据...";const t=await fetch("https://api.duoqu.online/data?id=406&limit=1&key=ibjweyjfzt"),e=await t.json();if("success"===e.info&&e.data.length){const t=e.data[0].openNumber.split(",").map(Number),n=e.data[0].period||n++,o=t.join(",");if(d.has(n)||r.length&&r[r.length-1].input===o)return void(v.textContent="已是最新数据");r.push({period:n,data:t,input:o}),d.add(n),document.getElementById("periodCount").textContent=r.length,v.textContent=`成功获取第 ${n} 期数据`,r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),L()}else v.textContent="获取数据失败："+(e.message||"未知错误")}catch(t){v.textContent=`获取数据错误：${t.message}`}}function R(t,e){if(!b)return g.classList.remove("hidden"),alert("请先验证有效的密钥"),[];const n=[];return function o(c,r){if(r.length!==e)for(let e=c;e<t.length;e++)r.push(t[e]),o(e+1,r),r.pop();else n.push(r.slice())}(0,[]),n}function H(t,e){const n={};return e.forEach(e=>{let o=0,c=0,r=0,i=0;t.forEach(t=>{t.cells[e].hit?(r++,i=0,r>o&&(o=r)):(i++,r=0,i>c&&(c=i))}),n[e]={maxHit:o,maxMiss:c}}),n}function U(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&t[n].cells[e].hit;n++)o++;n[e]=o}),n}function z(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&!t[n].cells[e].hit;n++)o++;n[e]=o}),n}function L(){const t=document.querySelector("#resultTable thead"),e=document.querySelector("#resultTable tbody");t.innerHTML="",e.innerHTML="";const n=r.slice(0,f);if(!n.length){const t=document.createElement("tr"),n=document.createElement("td");return n.colSpan=100,n.className="py-4 text-center text-gray-500",n.textContent="暂无数据，请先输入或获取数据",t.appendChild(n),e.appendChild(t),void j()}const o=+document.querySelector("#numButtons .btn-active")?.dataset.num||0,c=Array.from(document.querySelectorAll("#hitButtons .btn-active")).map(t=>+t.dataset.hit),i=[...Array(10)].map((t,e)=>e+1),a=[...o>0&&o<=10?R(i,o):[],...document.getElementById("customCombos").value.trim().split(/\s+/).filter(Boolean).map(t=>t.split(",").map(t=>+t).filter(t=>!isNaN(t)))].filter(t=>t.length>0).map(t=>t.join(",")),s=n.map(t=>({rec:t,cells:{}}));a.forEach(t=>{let e=0;for(let n=s.length-1;n>=0;n--){const o=s[n].rec,r=t.split(",").map(t=>+t).filter(t=>o.data.slice(0,5).includes(t)).length;c.length&&c.includes(r)?(s[n].cells[t]={txt:t,hit:!0},e=0):(e++,s[n].cells[t]={txt:e,hit:!1})}});const d=H(s,a),u=U(s,a),l=z(s,a),b=a.slice().sort((t,e)=>{if(y){const{maxHit:n,maxMiss:o}=d[t],{maxHit:c,maxMiss:r}=d[e];return m?c-n||o-r:o-r||c-n}return m?u[e]-u[t]||l[t]-l[e]:l[t]-l[e]||u[e]-u[t]});document.getElementById("sortText").textContent=m?"按遗漏次数排序":"按连中次数排序",document.getElementById("summary").innerHTML=`\n        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">\n          <div>共 ${b.length} 注分析组合</div>\n          <div>当前显示: ${n.length} 期 / 总计: ${r.length} 期</div>\n          <div>筛选条件: ${o}码组合，命中${c.length>0?c.join("/"):"全部"}胆`;const h=document.createElement("tr");h.className="bg-gray-50",h.innerHTML='\n        <th class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 fixed-width-period sticky-bg-white">期数</th>\n        <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>\n      ',b.forEach(t=>{const{maxHit:e,maxMiss:n}=d[t],o=document.createElement("th");o.className="px-3 py-2 text-center border-r border-gray-200",o.innerHTML=y?m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${e}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${n}</div>\n            `:m?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${u[t]}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${l[t]}</div>\n            `,h.appendChild(o)}),t.appendChild(h),s.forEach((t,n)=>{const o=document.createElement("tr");o.className=0===n?"bg-gray-100":1===n?"bg-gray-50":"",o.innerHTML=`\n          <td class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 font-medium fixed-width-period ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">${t.rec.period}</td>\n          <td class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">\n            <div class="number-row">${t.rec.data.slice(0,5).join(",")}</div>\n            <div class="number-row">${t.rec.data.slice(5).join(",")}</div>\n          </td>\n        `,b.forEach(e=>{const n=t.cells[e],c=document.createElement("td");c.className="px-3 py-2 text-center border-r border-gray-200 "+(n.hit?"hit-cell":"miss-cell"),c.textContent=n.txt,o.appendChild(c)}),e.appendChild(o)}),j()}function j(){const t=document.getElementById("resultTable"),e=document.getElementById("tableContainer"),n=t.offsetWidth,o=e.offsetWidth;if(n>o){document.querySelector(".slider-container").style.display="block";const u=o/n,l=Math.max(20,u*o);k.style.width=e.scrollLeft/(n-o)*100+"%",w.style.left=e.scrollLeft/(n-o)*(o-l)+"px",w.style.width=`${l}px`,k.style.width=e.scrollLeft/(n-o)*100+"%";let m=!1;function c(t){if(!m)return;const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"}function r(){m=!1,document.removeEventListener("mousemove",c),document.removeEventListener("mouseup",r)}w.addEventListener("mousedown",t=>{m=!0,document.addEventListener("mousemove",c),document.addEventListener("mouseup",r),t.preventDefault()}),document.querySelector(".slider-track").addEventListener("click",t=>{const c=e.getBoundingClientRect(),r=t.clientX-c.left-l/2,i=o-l,a=Math.max(0,Math.min(r,i)),s=a/i,d=s*(n-o);e.scrollLeft=d,w.style.left=`${a}px`,k.style.width=100*s+"%"})}else document.querySelector(".slider-container").style.display="none";const i=t.offsetHeight,a=e.offsetHeight;if(i>a){$.style.display="flex";const f=a/i,y=Math.max(20,f*a);I.style.height=e.scrollTop/(i-a)*100+"%",B.style.top=e.scrollTop/(i-a)*(a-y)+"px",B.style.height=`${y}px`,I.style.height=e.scrollTop/(i-a)*100+"%";let b=!1;function s(t){if(!b)return;const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"}function d(){b=!1,document.removeEventListener("mousemove",s),document.removeEventListener("mouseup",d)}B.addEventListener("mousedown",t=>{b=!0,document.addEventListener("mousemove",s),document.addEventListener("mouseup",d),t.preventDefault()}),document.querySelector(".vertical-slider-track").addEventListener("click",t=>{const n=e.getBoundingClientRect(),o=t.clientY-n.top-y/2,c=a-y,r=Math.max(0,Math.min(o,c)),s=r/c,d=s*(i-a);e.scrollTop=d,B.style.top=`${r}px`,I.style.height=100*s+"%"})}else $.style.display="none";e.addEventListener("scroll",()=>{if(n>o){const t=e.scrollLeft/(n-o);w.style.left=t*(o-parseInt(getComputedStyle(w).width))+"px",k.style.width=100*t+"%"}if(i>a){const t=e.scrollTop/(i-a);B.style.top=t*(a-parseInt(getComputedStyle(B).height))+"px",I.style.height=100*t+"%"}})}async function V(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n").filter(Boolean);for(const t of e)q(t);r.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),document.getElementById("periodCount").textContent=r.length,L()}catch(t){v.textContent=`读取文件错误: ${t.message}`}}async function W(){if(s)try{const t=await s.getFile(),e=(await t.text()).trim().split("\n")[0],n=e.trim().split(/\t+/);if(2!==n.length)return;const o=n[0].trim();if(o===u)return;u=o,q(e),document.getElementById("periodCount").textContent=r.length,L()}catch(t){}}function q(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return;e=t.trim().split(/\s+/)}if(e.length<2)return;const n=e[0].trim();if(d.has(n))return;let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}10!==o.length||o.some(isNaN)||(d.add(n),r.unshift({period:n,data:o,input:o.join(",")}))}P.addEventListener("click",async function(){const t=p.value.trim();if(t){this.disabled=!0,this.textContent="验证中...";try{const e=await A(t);if(e.valid){await K(e.data.nonce);const n=Y();localStorage.setItem(`validKey_${n}`,t),localStorage.setItem(`keyExpiry_${n}`,e.data.expiry),g.classList.add("hidden"),g.style.display="none",b=!0,D(e.data.expiry)}else alert("密钥验证失败: "+e.reason)}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message)}finally{this.disabled=!1,this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",function(){try{const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const e=parseInt(n);o<e?(b=!0,D(e),g.classList.add("hidden"),g.style.display="none"):(localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex")}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("historyBtn").addEventListener("click",()=>{y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("missBtn").addEventListener("click",()=>{m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("hitBtn").addEventListener("click",()=>{m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L()}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("exportBtn").addEventListener("click",()=>{if(!r.length)return void(v.textContent="没有数据可导出");let t="期数,数据\n";r.forEach(e=>{t+=`${e.period},${e.input}\n`});const e=new Blob([t],{type:"text/csv;charset=utf-8;"}),n=URL.createObjectURL(e),o=document.createElement("a");o.setAttribute("href",n),o.setAttribute("download",`台湾PK数据_${(new Date).toISOString().slice(0,10)}.csv`),o.style.visibility="hidden",document.body.appendChild(o),o.click(),document.body.removeChild(o),v.textContent="数据已导出"}),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const G=document.getElementById("helpModal");document.getElementById("helpBtn").addEventListener("click",()=>{G.classList.remove("hidden")}),document.getElementById("closeHelpBtn").addEventListener("click",()=>{G.classList.add("hidden")}),document.getElementById("gotItBtn").addEventListener("click",()=>{G.classList.add("hidden")}),G.addEventListener("click",t=>{t.target===G&&G.classList.add("hidden")});let Q=!1;document.getElementById("themeToggle").addEventListener("click",()=>{Q=!Q,document.body.classList.toggle("bg-gray-900",Q),document.body.classList.toggle("text-white",Q),document.body.classList.toggle("bg-gray-50",!Q),document.body.classList.toggle("text-dark",!Q);const t=document.getElementById("themeToggle").querySelector("i");t.classList.toggle("fa-moon-o",!Q),t.classList.toggle("fa-sun-o",Q)});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
+tailwind.config={theme:{extend:{colors:{primary:"#3b82f6",secondary:"#10b981"}}}};let t=0,e=!1,n=!1,o=null;function c(){e||n||(o&&clearTimeout(o),e=!0,o=setTimeout(()=>{requestAnimationFrame(()=>{const n=window.pageYOffset||document.documentElement.scrollTop,o=document.querySelector(".header-title"),c=document.getElementById("keyCountdown"),a=n>t?"down":"up";n>80&&"down"===a?(o.classList.add("hidden-on-scroll"),c&&!c.classList.contains("hidden")&&(c.style.height="0",c.style.opacity="0",c.style.paddingTop="0",c.style.paddingBottom="0",c.style.overflow="hidden",c.style.transition="all 0.3s ease-in-out")):n<40&&"up"===a&&(o.classList.remove("hidden-on-scroll"),c&&!c.classList.contains("hidden")&&(c.style.height="auto",c.style.opacity="1",c.style.paddingTop="0.5rem",c.style.paddingBottom="0.5rem",c.style.overflow="visible",c.style.transition="all 0.3s ease-in-out")),t=n<=0?0:n,e=!1})},50))}function a(){n=!0,setTimeout(()=>{n=!1},300)}function i(t){const e=document.getElementById("modules-container"),n=e.querySelectorAll(".five-star-module");if(n.length>=14)return void alert("最多只能添加14个模块");const o=parseInt(n[n.length-1].id.replace("module",""))+1,c=document.getElementById(`module${t}`).cloneNode(!0);c.id=`module${o}`,c.querySelectorAll("[data-module]").forEach(t=>{t.dataset.module=o}),s(c),c.querySelector(".add-btn").setAttribute("onclick",`addModule(${o})`),c.querySelector(".remove-btn").setAttribute("onclick",`removeModule(${o})`),e.appendChild(c),u(o)}function r(t){const e=document.getElementById("modules-container").querySelectorAll(".five-star-module"),n=document.getElementById(`module${t}`);e.length<=2?alert("至少保留2个模块"):n.remove()}function s(t){t.querySelectorAll(".number-btn, .dama-btn").forEach(t=>{t.classList.remove("bg-primary","text-white")}),t.querySelector(".result-input").value="",t.querySelector(".result-count").textContent="共0注"}function d(t,e){if(0===e)return[[]];if(1===e)return t.map(t=>[t]);const n=[],o=[{current:[],remaining:t,depth:0}];for(;o.length>0;){const{current:t,remaining:c,depth:a}=o.pop();if(a!==e)for(let e=0;e<c.length;e++){const n=[...t,c[e]],i=c.slice(0,e).concat(c.slice(e+1));o.push({current:n,remaining:i,depth:a+1})}else n.push([...t])}return n}function u(t){if(window.moduleStates&&window.moduleStates[t])return void console.log(`模块${t}已经初始化过，跳过重复初始化`);window.moduleStates||(window.moduleStates={});const e=window.moduleStates[t]={groups:[{selectedNumbers:[],selectedDamas:[],toleranceMin:0,toleranceMax:0},{selectedNumbers:[],selectedDamas:[],toleranceMin:0,toleranceMax:0},{selectedNumbers:[],selectedDamas:[],toleranceMin:0,toleranceMax:0},{selectedNumbers:[],selectedDamas:[],toleranceMin:0,toleranceMax:0},{selectedNumbers:[],selectedDamas:[],toleranceMin:0,toleranceMax:0}],moduleToleranceMin:0,moduleToleranceMax:0,results:[],allPermutations:[],originalResults:[],isReversed:!1},n=document.getElementById(`module${t}`),o=n.querySelectorAll(".number-btn"),c=n.querySelectorAll(".dama-btn"),a=n.querySelector(".generate-btn"),i=n.querySelector(".copy-btn"),r=n.querySelector(".clear-btn"),s=n.querySelector(".reverse-btn"),u=n.querySelector(".result-input"),l=n.querySelector(".result-count"),m=n.querySelectorAll(".condition-tolerance-min"),f=n.querySelectorAll(".condition-tolerance-max"),g=n.querySelector(".module-tolerance-min"),p=n.querySelector(".module-tolerance-max");function y(){const t=e.results.length,n=t>200?e.results.slice(0,200):e.results;let o="";for(let t=0;t<n.length;t++)t>0&&(o+=","),o+=n[t];u.value=t>200?o+"...":o,l.textContent=`共${t}注`,setTimeout(()=>{u.value=t>200?o+"...":o},10)}o.forEach(t=>{t.addEventListener("click",function(){const t=parseInt(this.dataset.number),n=parseInt(this.dataset.group)-1,o=e.groups[n],c=o.selectedNumbers.indexOf(t);-1===c?(o.selectedNumbers.push(t),this.classList.add("bg-primary","text-white")):(o.selectedNumbers.splice(c,1),this.classList.remove("bg-primary","text-white"))})}),c.forEach(t=>{function n(){const n=parseInt(t.dataset.dama),o=parseInt(t.dataset.group)-1,c=e.groups[o],a=c.selectedDamas.indexOf(n);-1===a?(c.selectedDamas.push(n),t.classList.add("bg-primary","text-white")):(c.selectedDamas.splice(a,1),t.classList.remove("bg-primary","text-white"))}let o=0,c=!1,a=!1;t.addEventListener("click",function(t){a?a=!1:n()}),t.addEventListener("touchstart",function(t){o=Date.now(),c=!1,a=!1,this.style.opacity="0.7"},{passive:!0}),t.addEventListener("touchmove",function(t){c=!0,this.style.opacity=""},{passive:!0}),t.addEventListener("touchend",function(t){const e=Date.now()-o;this.style.opacity="",!c&&e<500&&(a=!0,n(),setTimeout(()=>{a=!1},100))},{passive:!0}),t.addEventListener("touchcancel",function(t){this.style.opacity=""},{passive:!0})}),m.forEach(t=>{t.addEventListener("change",function(){const t=parseInt(this.dataset.group)-1;e.groups[t].toleranceMin=parseInt(this.value)})}),f.forEach(t=>{t.addEventListener("change",function(){const t=parseInt(this.dataset.group)-1;e.groups[t].toleranceMax=parseInt(this.value)})}),g&&g.addEventListener("change",function(){e.moduleToleranceMin=parseInt(this.value)}),p&&p.addEventListener("change",function(){e.moduleToleranceMax=parseInt(this.value)}),a.addEventListener("click",function(){const t=e.groups.filter(t=>t.selectedNumbers.length>0||t.selectedDamas.length>0);let n=[];if(0===t.length){console.log("没有活跃条件，生成所有排列");const t=d([1,2,3,4,5,6,7,8,9,10],5);console.log(`生成排列数: ${t.length}`),n=t}else{console.log("有活跃条件，使用筛选逻辑"),console.log("活跃条件:",t);const o=d([1,2,3,4,5,6,7,8,9,10],5);e.allPermutations=o,n=o.filter(t=>{const n=function(t,n){const o=t.filter(t=>t.selectedNumbers.length>0||t.selectedDamas.length>0);if(0===o.length)return{ok:!0,details:[],failedCount:0,moduleToleranceRange:[e.moduleToleranceMin,e.moduleToleranceMax]};const c=o.map(t=>function(t,e){if(0===t.selectedNumbers.length&&0===t.selectedDamas.length)return{ok:!0,errors:0};const n=t.selectedNumbers,o=n.length,c=function(t,e){const n=new Set(e.map(String));let o=0;for(const e of t)n.has(String(e))&&o++;return o}(n,e);if(0===t.selectedDamas.length)return{ok:!1,errors:o-c,hitCount:c};if(!t.selectedDamas.includes(c)){const e=t.toleranceMin,n=t.toleranceMax,a=1;return{ok:a>=e&&a<=n,errors:o-c,hitCount:c}}return{ok:!0,errors:o-c,hitCount:c}}(t,n)),a=c.filter(t=>!t.ok).length;return{ok:a>=e.moduleToleranceMin&&a<=e.moduleToleranceMax,details:c,failedCount:a,moduleToleranceRange:[e.moduleToleranceMin,e.moduleToleranceMax]}}(e.groups,t);return o.indexOf(t)<5&&console.log(`组合 ${t.join(",")} 评估结果:`,{ok:n.ok,failedCount:n.failedCount,moduleToleranceRange:n.moduleToleranceRange,details:n.details.map(t=>({ok:t.ok,hitCount:t.hitCount}))}),n.ok})}console.log(`模块总容错设置: ${e.moduleToleranceMin}-${e.moduleToleranceMax}`),console.log(`活跃条件数: ${e.groups.filter(t=>t.selectedNumbers.length>0||t.selectedDamas.length>0).length}`),console.log(`筛选结果: ${n.length}`),console.log(`最终筛选结果数量: ${n.length}`);const o=n.map(t=>t.map(t=>t.toString().padStart(2,"0")).join(" "));console.log(`格式化后结果数量: ${o.length}`),e.results=o,e.originalResults=[...o],e.isReversed=!1,y()}),i.addEventListener("click",function(){if(0===e.results.length)return l.innerHTML='<span style="color: red;">没有可复制的结果</span>',void setTimeout(()=>{l.textContent=`共${e.results.length}注`},2e3);let t="";for(let n=0;n<e.results.length;n++)n>0&&(t+=","),t+=e.results[n];navigator.clipboard.writeText(t).then(()=>{l.innerHTML=`共${e.results.length}注 <span style="color: red;">已复制${e.results.length}注</span>`}).catch(t=>{console.error("复制失败:",t),l.innerHTML='<span style="color: red;">复制失败，请手动复制</span>',setTimeout(()=>{l.textContent=`共${e.results.length}注`},2e3)})}),r.addEventListener("click",function(){e.groups.forEach(t=>{t.selectedNumbers=[],t.selectedDamas=[]}),e.results=[],e.originalResults=[],e.isReversed=!1,o.forEach(t=>t.classList.remove("bg-primary","text-white")),c.forEach(t=>t.classList.remove("bg-primary","text-white")),u.value="",l.textContent="共0注"}),s.addEventListener("click",function(){if(0!==e.allPermutations.length&&0!==e.originalResults.length){if(e.isReversed)e.results=e.originalResults,e.isReversed=!1;else{const t=new Set(e.originalResults),n=e.allPermutations.filter(e=>{const n=e.map(t=>t.toString().padStart(2,"0")).join(" ");return!t.has(n)}).map(t=>t.map(t=>t.toString().padStart(2,"0")).join(" "));e.results=n,e.isReversed=!0}y()}else alert('请先点击"做号"生成结果')})}function i(t){const e=document.getElementById("modules-container"),n=e.querySelectorAll(".five-star-module");if(n.length>=14)return void alert("最多只能添加14个模块");const o=parseInt(n[n.length-1].id.replace("module",""))+1,c=document.getElementById(`module${t}`).cloneNode(!0);c.id=`module${o}`,c.querySelectorAll("[data-module]").forEach(t=>{t.dataset.module=o}),s(c),c.querySelector(".add-btn").setAttribute("onclick",`addModule(${o})`),c.querySelector(".remove-btn").setAttribute("onclick",`removeModule(${o})`),e.appendChild(c),u(o)}function r(t){const e=document.getElementById("modules-container").querySelectorAll(".five-star-module"),n=document.getElementById(`module${t}`);e.length<=2?alert("至少保留2个模块"):n.remove()}function s(t){t.querySelectorAll(".number-btn, .dama-btn").forEach(t=>{t.classList.remove("bg-primary","text-white")}),t.querySelector(".result-input").value="",t.querySelector(".result-count").textContent="共0注";const e=t.querySelector(".module-tolerance-min"),n=t.querySelector(".module-tolerance-max");e&&(e.value="0"),n&&(n.value="0")}document.addEventListener("DOMContentLoaded",function(){window.addEventListener("scroll",c,{passive:!0})}),window.moduleStates={},document.addEventListener("DOMContentLoaded",function(){window.moduleStates&&window.moduleStates[1]||u(1),window.moduleStates&&window.moduleStates[2]||u(2)}),tailwind.config={theme:{extend:{colors:{primary:"#d62828",secondary:"#f77f00",neutral:"#f5f5f5",dark:"#333333"},fontFamily:{sans:["Inter","system-ui","sans-serif"]}}}},document.addEventListener("DOMContentLoaded",function(){const t=document.getElementById("dataAnalysisBtn"),e=document.getElementById("fiveStarBtn"),n=document.getElementById("goldenRatioBtn"),o=document.getElementById("dataAnalysisPage"),c=document.getElementById("fiveStarPage"),i=document.getElementById("goldenRatioPage"),r={dataAnalysis:0,fiveStar:0,goldenRatio:0};function s(t){r[t]=window.pageYOffset||document.documentElement.scrollTop}function d(t){requestAnimationFrame(()=>{window.scrollTo({top:r[t],behavior:"instant"})})}function u(){return o.classList.contains("hidden")?c.classList.contains("hidden")?i.classList.contains("hidden")?"dataAnalysis":"goldenRatio":"fiveStar":"dataAnalysis"}t&&e&&n&&o&&c&&i?(t.addEventListener("click",function(){a(),s(u()),o.classList.remove("hidden"),c.classList.add("hidden"),i.classList.add("hidden"),t.classList.add("bg-primary"),t.classList.remove("bg-gray-600"),e.classList.add("bg-gray-600"),e.classList.remove("bg-primary"),n.classList.add("bg-gray-600"),n.classList.remove("bg-primary"),d("dataAnalysis")}),e.addEventListener("click",function(){a(),s(u()),o.classList.add("hidden"),c.classList.remove("hidden"),i.classList.add("hidden"),e.classList.add("bg-primary"),e.classList.remove("bg-gray-600"),t.classList.add("bg-gray-600"),t.classList.remove("bg-primary"),n.classList.add("bg-gray-600"),n.classList.remove("bg-primary"),d("fiveStar")}),n.addEventListener("click",function(){a(),s(u()),o.classList.add("hidden"),c.classList.add("hidden"),i.classList.remove("hidden"),n.classList.add("bg-primary"),n.classList.remove("bg-gray-600"),t.classList.add("bg-gray-600"),t.classList.remove("bg-primary"),e.classList.add("bg-gray-600"),e.classList.remove("bg-primary"),d("goldenRatio")})):console.error("页面切换所需元素未找到");let l=0,m=!1,f=null;function g(){return window.innerWidth<=768}function p(t){if(!g())return;const e=document.querySelector("header"),n=e.querySelector(".container"),o=e.querySelector(".bg-gray-800"),c=document.getElementById("keyCountdown");if(t&&!m){m=!0,n&&(n.style.transform="translateY(-100%)",n.style.transition="transform 0.3s ease-in-out"),c&&!c.classList.contains("hidden")&&(c.style.height="0",c.style.opacity="0",c.style.paddingTop="0",c.style.paddingBottom="0",c.style.overflow="hidden",c.style.transition="all 0.3s ease-in-out"),o&&(o.style.position="fixed",o.style.top="0",o.style.left="0",o.style.right="0",o.style.zIndex="1000",o.style.transition="all 0.3s ease-in-out");const t=document.querySelector("main");t&&(t.style.paddingTop="50px",t.style.transition="padding-top 0.3s ease-in-out")}else if(!t&&m){m=!1,n&&(n.style.transform="translateY(0)"),c&&!c.classList.contains("hidden")&&(c.style.height="auto",c.style.opacity="1",c.style.paddingTop="0.5rem",c.style.paddingBottom="0.5rem",c.style.overflow="visible",c.style.transition="all 0.3s ease-in-out"),o&&(o.style.position="",o.style.top="",o.style.left="",o.style.right="",o.style.zIndex="");const t=document.querySelector("main");t&&(t.style.paddingTop="")}}window.addEventListener("scroll",function(){if(!g())return;const t=window.pageYOffset||document.documentElement.scrollTop,e=t-l;f&&clearTimeout(f),f=setTimeout(()=>{e<-50&&t>100?p(!0):(e>30||t<50)&&p(!1)},150),l=t},{passive:!0}),document.querySelectorAll(".bg-gray-800 button").forEach(t=>{t.addEventListener("click",()=>{f&&clearTimeout(f),setTimeout(()=>{l=window.pageYOffset||document.documentElement.scrollTop},300)})}),window.addEventListener("resize",()=>{!g()&&m&&p(!1)})});let l=[],m=1,f=null,g=null,p=new Set,y=null,b=null,h=!1,v=15,x=!1,w=1,$=50,k=1,I=!1,S=null,M=[],B=(new Date).getTime(),T="aGVsbG93b3JsZA==",D=Math.random().toString(36).substring(2),C=btoa(window.location.href).slice(-10);function A(){if((new Date).getTime()-B>36e5)return!1;const t=btoa(String.fromCharCode(...M)),e=S&&I&&t.length>0,n=D.length>5&&C.length>5;return e&&n}function N(t){I=!0,S=t,M=Array.from(t).map(t=>t.charCodeAt(0)),B=(new Date).getTime(),D=btoa(t).slice(0,10),F()}function P(){return!!U()&&(E()?!!A():(I=0,!1))}let O=!1;function _(){O=!0}function R(){return O}function J(){return Math.random()>.5}function K(){return"valid"===localStorage.getItem("user")}function E(){const t=performance.now();return performance.now()-t<100}function z(){const t=Date.now(),e=Math.floor(1e6*Math.random());return btoa(t+":"+e+":"+I)}let j=!1;function F(){j||(j=!0,setInterval(()=>{I&&!P()&&(document.body.innerHTML='<div style="text-align:center;padding:50px;color:red;">验证失效，请重新加载页面</div>',setTimeout(()=>location.reload(),2e3))},3e4))}function U(){const t=[A,N,P];for(let e of t)if("function"!=typeof e)return document.body.innerHTML='<div style="text-align:center;padding:50px;color:red;">系统检测到异常，请刷新页面</div>',!1;return!0}let V=!1;const G="pk4_access_key",L=document.getElementById("keyModal"),H=document.getElementById("keyInput"),W=document.getElementById("output"),q=document.getElementById("tableContainer"),Y=document.getElementById("horizontalThumb"),Z=document.getElementById("horizontalFill"),Q=document.getElementById("verticalSlider"),X=document.getElementById("verticalThumb"),tt=document.getElementById("verticalFill"),et=document.getElementById("numButtons");for(let t=1;t<=10;t++){const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.num=t,e.textContent=t,et.appendChild(e)}const nt=document.getElementById("hitButtons");function ot(t){t.forEach(e=>e.addEventListener("click",()=>{t.forEach(t=>t.classList.remove("btn-active")),e.classList.add("btn-active"),Nt()}))}function ct(t){t.forEach(t=>t.addEventListener("click",()=>{t.classList.toggle("btn-active"),Nt()}))}[0,1,2,3,4,5].forEach(t=>{const e=document.createElement("button");e.className="px-3 py-1 rounded-md bg-gray-200 btn-hover",e.dataset.hit=t,e.textContent=t+"胆",nt.appendChild(e)}),document.querySelector('#numButtons button[data-num="5"]').classList.add("btn-active"),document.querySelector('#hitButtons button[data-hit="2"]').classList.add("btn-active"),ot(Array.from(et.children)),ct(Array.from(nt.children));let at=null;function it(t){const e=document.getElementById("keyCountdown"),n=document.getElementById("timeRemaining");function o(){const o=new Date,c=new Date(1e3*t)-o;if(c<=0){n.textContent="已过期",e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500"),clearInterval(at);const t=zt();return localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),V=!1,void setTimeout(()=>{window.location.reload()},3e3)}const a=Math.floor(c/864e5),i=Math.floor(c%864e5/36e5),r=Math.floor(c%36e5/6e4),s=Math.floor(c%6e4/1e3);n.textContent=`${a}天 ${i}小时 ${r}分钟 ${s}秒`;const d=24*a+i;d<=24?(e.classList.remove("bg-primary","bg-amber-500"),e.classList.add("bg-red-500")):d<=72?(e.classList.remove("bg-primary","bg-red-500"),e.classList.add("bg-amber-500")):(e.classList.remove("bg-amber-500","bg-red-500"),e.classList.add("bg-primary"))}at&&clearInterval(at),o(),e.classList.remove("hidden"),at=setInterval(o,1e3)}function rt(){return"universal_device_2024"}async function st(t){try{const e=rt(),n={keyId:t.nonce,deviceId:e,usedAt:(new Date).toISOString(),expiresAt:new Date(1e3*t.expiry).toISOString(),userAgent:navigator.userAgent};try{const t=await fetch("https://myyz.vercel.app/api/key-records",{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify(n)});if(t.ok){const e=await t.json();return console.log("密钥使用记录已保存到服务器:",e),{success:!0,data:e}}}catch(t){console.warn("API连接失败:",t)}console.warn("API连接失败，使用本地备份");const o={keyId:t.nonce,deviceInfo:navigator.userAgent,usedAt:(new Date).toISOString(),savedLocally:!0};return localStorage.setItem(`keyRecord_${t.nonce}`,JSON.stringify(o)),{success:!1,error:"网络连接失败",localBackup:!0}}catch(t){return console.error("记录密钥使用信息失败:",t),{success:!1,error:t.message}}}async function dt(t){try{const e=await fetch(`https://myyz.vercel.app/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}}catch(t){console.warn("API连接失败:",t)}return console.warn("API连接失败，使用本地验证"),{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}async function ut(t){try{const e=await fetch("https://myyz.vercel.app/api/nonce/mark",{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}}catch(e){console.warn("API连接失败:",e)}console.warn("API连接失败，使用本地记录");const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const lt=document.getElementById("verifyKeyBtn");function mt(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}async function ft(t){try{const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};const c=(new Date).getTime();if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};const a=rt();return o.deviceFingerprint!==a?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await gt(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}}catch(t){return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}}}async function gt(t){try{const e=await fetch(`https://myyz.vercel.app/api/key-records/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("在线密钥验证响应:",t),{used:t.used}}}catch(t){console.warn("API连接失败:",t)}return console.warn("所有API连接失败，使用本地验证"),{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}async function pt(t){try{const e=await fetch("https://myyz.vercel.app/api/key-records/mark-used",{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("密钥已标记为已使用:",t),{success:!0}}}catch(t){console.warn("API连接失败:",t)}console.warn("所有API连接失败，使用本地标记");const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地标记nonce:",t)),{success:!0}}async function st(t){try{const e=await fetch("http://localhost:3000/api/key-records",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({keyId:t.nonce,deviceInfo:navigator.userAgent,usedAt:(new Date).toISOString(),expiryTime:new Date(1e3*t.expiry).toISOString(),createdTime:(new Date).toISOString()})});if(!e.ok)throw new Error(`HTTP error! status: ${e.status}`);const n=await e.json();return console.log("密钥使用记录已保存:",n),{success:!0,data:n}}catch(e){console.error("记录密钥使用信息失败:",e);const n={keyId:t.nonce,deviceInfo:navigator.userAgent,usedAt:(new Date).toISOString(),savedLocally:!0};return localStorage.setItem(`keyRecord_${t.nonce}`,JSON.stringify(n)),{success:!1,error:e.message,localBackup:!0}}}function yt(){if(!P())return L.classList.remove("hidden"),void alert("请先验证有效的密钥");const t=document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);if(!t.length)return void(W.textContent="请输入数据");let e=0;for(const n of t){const t=mt(n);if(!t)return void(W.textContent="格式错误：请输入正确的数据格式");const{period:o,data:c}=t,a=c.join(",");p.has(o)||l.length&&l[l.length-1].input===a||(l.push({period:o,data:c,input:a}),p.add(o),e++)}document.getElementById("numbersInput").value="",W.textContent=e>0?`成功添加 ${e} 期数据`:"没有新数据添加",document.getElementById("periodCount").textContent=l.length,l.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),Nt()}async function bt(){if(!P())return L.classList.remove("hidden"),void alert("请先验证有效的密钥");try{W.textContent="正在获取数据...";const t=await fetch("https://api.duoqu.online/data?id=406&limit=1&key=ibjweyjfzt"),e=await t.json();if("success"===e.info&&e.data.length){const t=e.data[0].openNumber.split(",").map(Number),n=e.data[0].period||n++,o=t.join(",");if(p.has(n)||l.length&&l[l.length-1].input===o)return void(W.textContent="已是最新数据");l.push({period:n,data:t,input:o}),p.add(n),document.getElementById("periodCount").textContent=l.length,W.textContent=`成功获取第 ${n} 期数据`,l.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),Nt()}else W.textContent="获取数据失败："+(e.message||"未知错误")}catch(t){W.textContent=`获取数据错误：${t.message}`}}function ht(t,e){if(!P())return L.classList.remove("hidden"),alert("请先验证有效的密钥"),[];const n=[];return function o(c,a){if(a.length!==e)for(let e=c;e<t.length;e++)a.push(t[e]),o(e+1,a),a.pop();else n.push(a.slice())}(0,[]),n}function vt(t,e="roundrobin"){const n=Array.from({length:5},()=>[]),o=new Array(t.length);if("hash"===e)for(let e=0;e<t.length;e++)o[e]=c(t[e]);else for(let e=0;e<t.length;e++)o[e]=e%5;for(let e=0;e<t.length;e++){const c=o[e];for(let o=0;o<5;o++)o!==c&&n[o].push(t[e])}return n;function c(t){let e=2166136261;for(let n=0;n<t.length;n++)e^=t.charCodeAt(n),e=Math.imul(e,16777619);return e%5}}function xt(t,e){const n=new Set((o=e,Array.from(new Set(o))));var o;const c=t.length;for(let e=0;e<c;e++){const o=new Set;for(let n=0;n<c;n++)if(n!==e)for(const e of t[n])o.add(e);if(o.size!==n.size)return!1;for(const t of n)if(!o.has(t))return!1}return!0}function wt(t){const e=t.split(/[\n,]+/g).map(t=>t.trim()).filter(Boolean),n=new Set,o=[];for(const t of e)n.has(t)||(n.add(t),o.push(t));return o}function $t(t){if(!t||t.length<4)return{valid:!1,results:{},all_valid:!1,total_data_size:0};const e=new Set;t.forEach(t=>{t.forEach(t=>e.add(t))});const n={},o=e.size,c=[];for(let e=0;e<t.length;e++)for(let n=e+1;n<t.length;n++)for(let o=n+1;o<t.length;o++)for(let a=o+1;a<t.length;a++)c.push([e,n,o,a]);c.forEach(e=>{const c=new Set;e.forEach(e=>{t[e].forEach(t=>c.add(t))});const a=c.size===o;n[e.join(",")]={combo:e,size:c.size,is_complete:a,coverage:o>0?c.size/o:0}});const a=Object.values(n).every(t=>t.is_complete);return{valid:a,results:n,all_valid:a,total_data_size:o,combinations_count:c.length}}function kt(t,e=[],n=!1){const o=document.getElementById("goldenResults"),c=document.getElementById("resultSummary"),a=document.getElementById("validationResults"),i=document.getElementById("validationContent");if(o.innerHTML="",!t||0===t.length)return o.innerHTML='<div class="col-span-5 text-center text-gray-500 py-8">暂无分割结果</div>',c.textContent="",void a.classList.add("hidden");const r=t.reduce((t,e)=>t+e.length,0),s=Math.round(r/t.length);c.innerHTML=`共${t.length}组，总计${r}项，平均每组${s}项 | 验证结果：${n?'<span class="text-green-600 font-semibold">✅ 通过</span>':'<span class="text-red-600 font-semibold">❌ 失败</span>'}`,e.length>0?(i.innerHTML=`\n            <div class="text-sm text-gray-600">\n                <p class="mb-2">原始数据：${e.length} 注</p>\n                <p class="mb-2">分组结果：${t.length} 组</p>\n                <p class="mb-2">5中4验证：${n?'<span class="text-green-600 font-semibold">通过 - 任意4组合并等于全集</span>':'<span class="text-red-600 font-semibold">失败 - 不满足5中4条件</span>'}</p>\n            </div>\n        `,a.classList.remove("hidden")):a.classList.add("hidden");const d=[...t];for(;d.length<5;)d.push([]);d.slice(0,5).forEach((t,e)=>{const n=document.createElement("div");n.className="bg-white border border-gray-200 rounded-lg p-3",0===t.length?n.innerHTML=`\n                <div class="text-center text-gray-400 py-4">\n                    <div class="text-sm font-medium mb-1">组 ${e+1}</div>\n                    <div class="text-xs">暂无数据</div>\n                </div>\n            `:n.innerHTML=`\n                <div class="flex items-center justify-between mb-2">\n                    <h4 class="font-semibold text-gray-800 text-sm">组 ${e+1}</h4>\n                    <div class="flex items-center gap-1">\n                        <span class="text-xs text-gray-500">${t.length}项</span>\n                        <button \n                            onclick="copyGroupData(${e})" \n                            class="px-1 py-0.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"\n                            title="复制本组数据"\n                        >\n                            复制\n                        </button>\n                    </div>\n                </div>\n                <div class="max-h-32 overflow-y-auto">\n                    <div class="text-xs space-y-1" id="group-${e}-data" data-full-data="${t.join(",")}">\n                        ${t.slice(0,200).map(t=>`<div class="p-1 bg-gray-50 rounded text-center hover:bg-gray-100 transition-colors">${t}</div>`).join("")}\n                        ${t.length>200?'<div class="p-1 text-center text-gray-400 text-xs">...还有'+(t.length-200)+"项</div>":""}\n                    </div>\n                </div>\n            `,o.appendChild(n)})}function It(t){const e=document.getElementById(`group-${t}-data`);if(!e)return void alert("未找到数据");const n=e.getAttribute("data-full-data")||"";n?navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(n).then(()=>{Bt(t)}).catch(e=>{console.error("复制失败:",e),St(n,t)}):St(n,t):alert("没有可复制的数据")}function St(t,e){const n=document.createElement("textarea");n.value=t,n.style.position="fixed",n.style.left="-999999px",n.style.top="-999999px",n.style.opacity="0",n.style.pointerEvents="none",n.readOnly=!0,n.setAttribute("readonly","readonly"),n.setAttribute("inputmode","none"),document.body.appendChild(n),/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||n.focus(),n.select();try{document.execCommand("copy")?Bt(e):alert("复制失败，请手动选择复制")}catch(t){console.error("复制失败:",t),alert("复制失败，请手动选择复制")}document.body.removeChild(n)}function Mt(){document.querySelectorAll('button[onclick^="copyGroupData("]').forEach(t=>{t.innerHTML="复制",t.classList.remove("bg-green-500"),t.classList.add("bg-blue-500","hover:bg-blue-600")})}function Bt(t){const e=document.querySelector(`button[onclick="copyGroupData(${t})"]`);e&&(e.innerHTML='<i class="fa fa-check"></i> 已复制',e.classList.remove("bg-blue-500","hover:bg-blue-600"),e.classList.add("bg-green-500"))}function Tt(t){const e=document.getElementById("validationResults"),n=document.getElementById("validationContent");if(!t||!t.results)return void e.classList.add("hidden");e.classList.remove("hidden");let o=`\n        <div class="mb-4">\n            <div class="text-sm text-gray-600 mb-2">\n                总数据量: ${t.total_data_size} 注 | \n                验证组合数: ${t.combinations_count} 个 | \n                整体验证: ${t.all_valid?'<span class="text-green-600 font-semibold">✅ 通过</span>':'<span class="text-red-600 font-semibold">❌ 失败</span>'}\n            </div>\n        </div>\n        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">\n    `;Object.entries(t.results).forEach(([t,e])=>{const n=e.combo.map(t=>`组${t+1}`).join(" + "),c=e.is_complete?"bg-green-50 border-green-200":"bg-red-50 border-red-200",a=e.is_complete?"✅":"❌";o+=`\n            <div class="${c} border rounded-lg p-3">\n                <div class="font-medium text-sm">${n}</div>\n                <div class="text-xs text-gray-600 mt-1">\n                    ${e.size}注 (${(100*e.coverage).toFixed(1)}%) ${a}\n                </div>\n            </div>\n        `}),o+="</div>",n.innerHTML=o}function Dt(t,e){const n={};return e.forEach(e=>{let o=0,c=0,a=0,i=0;t.forEach(t=>{t.cells[e].hit?(a++,i=0,a>o&&(o=a)):(i++,a=0,i>c&&(c=i))}),n[e]={maxHit:o,maxMiss:c}}),n}function Ct(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&t[n].cells[e].hit;n++)o++;n[e]=o}),n}function At(t,e){const n={};return e.forEach(e=>{let o=0;for(let n=0;n<t.length&&!t[n].cells[e].hit;n++)o++;n[e]=o}),n}function Nt(){if(!P())return;const t=document.querySelector("#resultTable thead"),e=document.querySelector("#resultTable tbody");if(t.innerHTML="",e.innerHTML="",!l.length){const t=document.createElement("tr"),n=document.createElement("td");return n.colSpan=100,n.className="py-4 text-center text-gray-500",n.textContent="暂无数据，请先输入或获取数据",t.appendChild(n),e.appendChild(t),void Pt()}const n=l.slice(0,v);k=Math.ceil(n.length/$);const o=+document.querySelector("#numButtons .btn-active")?.dataset.num||0,c=Array.from(document.querySelectorAll("#hitButtons .btn-active")).map(t=>+t.dataset.hit),a=[...Array(10)].map((t,e)=>e+1),i=[...o>0&&o<=10?ht(a,o):[],...document.getElementById("customCombos").value.trim().split(/\s+/).filter(Boolean).map(t=>t.split(",").map(t=>+t).filter(t=>!isNaN(t)))].filter(t=>t.length>0).map(t=>t.join(",")),r=n.map(t=>({rec:t,cells:{}}));i.forEach(t=>{let e=0;for(let n=r.length-1;n>=0;n--){const o=r[n].rec,a=t.split(",").map(t=>+t).filter(t=>o.data.slice(0,5).includes(t)).length;c.length&&c.includes(a)?(r[n].cells[t]={txt:t,hit:!0},e=0):(e++,r[n].cells[t]={txt:e,hit:!1})}});const s=Dt(r,i),d=Ct(r,i),u=At(r,i),m=i.slice().sort((t,e)=>{if(x){const{maxHit:n,maxMiss:o}=s[t],{maxHit:c,maxMiss:a}=s[e];return h?c-n||o-a:o-a||c-n}return h?d[e]-d[t]||u[t]-u[e]:u[t]-u[e]||d[e]-d[t]});document.getElementById("sortText").textContent=h?"按遗漏次数排序":"按连中次数排序";const f=(w-1)*$,g=Math.min(f+$,r.length),p=r.slice(f,g);document.getElementById("summary").innerHTML=`\n        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">\n          <div>共 ${m.length} 注分析组合</div>\n          <div>当前显示: ${n.length} 期 / 总计: ${l.length} 期</div>\n          <div>筛选条件: ${o}码组合，命中${c.length>0?c.join("/"):"全部"}胆</div>\n          <div>第 ${w}/${k} 页 (${p.length}/${r.length} 行)</div>\n        </div>\n        <div class="flex justify-center items-center mt-4 space-x-2">\n          <button id="prevPage" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" ${w<=1?"disabled":""}>上一页</button>\n          <span class="text-sm text-gray-600">第 ${w} 页，共 ${k} 页</span>\n          <button id="nextPage" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" ${w>=k?"disabled":""}>下一页</button>\n        </div>`;const y=document.createElement("tr");y.className="bg-gray-50",y.innerHTML='\n        <th class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 fixed-width-period sticky-bg-white">期数</th>\n        <th class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data sticky-bg-white">数据</th>\n      ',m.forEach(t=>{const{maxHit:e,maxMiss:n}=s[t],o=document.createElement("th");o.className="px-3 py-2 text-center border-r border-gray-200",o.innerHTML=x?h?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${e}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${n}</div>\n            `:h?`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">连:${d[t]}</div>\n            `:`\n              <div class="font-medium">${t}</div>\n              <div class="text-xs text-gray-500">漏:${u[t]}</div>\n            `,y.appendChild(o)}),t.appendChild(y),p.forEach((t,n)=>{const o=document.createElement("tr");o.className=0===n?"bg-gray-100":1===n?"bg-gray-50":"",o.innerHTML=`\n          <td class="px-3 py-2 text-left sticky-col left-0 border-r border-gray-200 font-medium fixed-width-period ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">${t.rec.period}</td>\n          <td class="px-3 py-2 text-left sticky-col left-[120px] border-r border-gray-200 fixed-width-data ${0===n?"sticky-bg-gray-100":1===n?"sticky-bg-gray-50":"sticky-bg-white"}">\n            <div class="number-row">${t.rec.data.slice(0,5).join(",")}</div>\n            <div class="number-row">${t.rec.data.slice(5).join(",")}</div>\n          </td>\n        `,m.forEach(e=>{const n=t.cells[e],c=document.createElement("td");c.className="px-3 py-2 text-center border-r border-gray-200 "+(n.hit?"hit-cell":"miss-cell"),c.textContent=n.txt,o.appendChild(c)}),e.appendChild(o)}),setTimeout(()=>{const t=document.getElementById("prevPage"),e=document.getElementById("nextPage");t&&t.addEventListener("click",()=>{w>1&&(w--,Nt())}),e&&e.addEventListener("click",()=>{w<k&&(w++,Nt())})},100),Pt()}function Pt(){const t=document.getElementById("resultTable"),e=document.getElementById("tableContainer"),n=t.offsetWidth,o=e.offsetWidth;if(n>o){document.querySelector(".slider-container").style.display="block";const u=o/n,l=Math.max(20,u*o);Z.style.width=e.scrollLeft/(n-o)*100+"%",Y.style.left=e.scrollLeft/(n-o)*(o-l)+"px",Y.style.width=`${l}px`,Z.style.width=e.scrollLeft/(n-o)*100+"%";let m=!1;function c(t){if(!m)return;const c=e.getBoundingClientRect(),a=t.clientX-c.left-l/2,i=o-l,r=Math.max(0,Math.min(a,i)),s=r/i,d=s*(n-o);e.scrollLeft=d,Y.style.left=`${r}px`,Z.style.width=100*s+"%"}function a(){m=!1,document.removeEventListener("mousemove",c),document.removeEventListener("mouseup",a)}Y.addEventListener("mousedown",t=>{m=!0,document.addEventListener("mousemove",c),document.addEventListener("mouseup",a),t.preventDefault()}),document.querySelector(".slider-track").addEventListener("click",t=>{const c=e.getBoundingClientRect(),a=t.clientX-c.left-l/2,i=o-l,r=Math.max(0,Math.min(a,i)),s=r/i,d=s*(n-o);e.scrollLeft=d,Y.style.left=`${r}px`,Z.style.width=100*s+"%"})}else document.querySelector(".slider-container").style.display="none";const i=t.offsetHeight,r=e.offsetHeight;if(i>r){Q.style.display="flex";const f=r/i,g=Math.max(20,f*r);tt.style.height=e.scrollTop/(i-r)*100+"%",X.style.top=e.scrollTop/(i-r)*(r-g)+"px",X.style.height=`${g}px`,tt.style.height=e.scrollTop/(i-r)*100+"%";let p=!1;function s(t){if(!p)return;const n=e.getBoundingClientRect(),o=t.clientY-n.top-g/2,c=r-g,a=Math.max(0,Math.min(o,c)),s=a/c,d=s*(i-r);e.scrollTop=d,X.style.top=`${a}px`,tt.style.height=100*s+"%"}function d(){p=!1,document.removeEventListener("mousemove",s),document.removeEventListener("mouseup",d)}X.addEventListener("mousedown",t=>{p=!0,document.addEventListener("mousemove",s),document.addEventListener("mouseup",d),t.preventDefault()}),document.querySelector(".vertical-slider-track").addEventListener("click",t=>{const n=e.getBoundingClientRect(),o=t.clientY-n.top-g/2,c=r-g,a=Math.max(0,Math.min(o,c)),s=a/c,d=s*(i-r);e.scrollTop=d,X.style.top=`${a}px`,tt.style.height=100*s+"%"})}else Q.style.display="none";e.addEventListener("scroll",()=>{if(n>o){const t=e.scrollLeft/(n-o);Y.style.left=t*(o-parseInt(getComputedStyle(Y).width))+"px",Z.style.width=100*t+"%"}if(i>r){const t=e.scrollTop/(i-r);X.style.top=t*(r-parseInt(getComputedStyle(X).height))+"px",tt.style.height=100*t+"%"}})}async function Ot(){if(g)try{const t=await g.getFile(),e=(await t.text()).trim().split("\n").filter(Boolean);for(const t of e)Rt(t);l.sort((t,e)=>{const n=t.period.toString();return e.period.toString().localeCompare(n)}),document.getElementById("periodCount").textContent=l.length,Nt()}catch(t){W.textContent=`读取文件错误: ${t.message}`}}async function _t(){if(g)try{const t=await g.getFile(),e=(await t.text()).trim().split("\n")[0],n=e.trim().split(/\t+/);if(2!==n.length)return;const o=n[0].trim();if(o===y)return;y=o,Rt(e),document.getElementById("periodCount").textContent=l.length,Nt()}catch(t){}}function Rt(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return;e=t.trim().split(/\s+/)}if(e.length<2)return;const n=e[0].trim();if(p.has(n))return;let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}10!==o.length||o.some(isNaN)||(p.add(n),l.unshift({period:n,data:o,input:o.join(",")}))}lt.addEventListener("click",async function(){const t=H.value.trim();if(t){this.disabled=!0,this.textContent="验证中...";try{const e=await ft(t);if(e.valid){await pt(e.data.nonce),await st(e.data);const n=zt();localStorage.setItem(`validKey_${n}`,t),localStorage.setItem(`keyExpiry_${n}`,e.data.expiry),L.classList.add("hidden"),L.style.display="none",N(t),V=!0,it(e.data.expiry)}else alert("密钥验证失败: "+e.reason)}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message)}finally{this.disabled=!1,this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",async function(){try{const t=zt(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const c=parseInt(n);if(o<c)try{const n=JSON.parse(atob(e.split(".")[1]));await gt(n.nonce)?(localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),V=!1,alert("密钥已被使用，请重新验证密钥"),L.classList.remove("hidden"),L.style.display="flex"):(N(e),V=!0,it(c),L.classList.add("hidden"),L.style.display="none")}catch(t){console.error("在线验证失败，使用本地验证:",t),N(e),V=!0,it(c),L.classList.add("hidden"),L.style.display="none"}else localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),V=!1,alert("您的访问密钥已过期，请重新验证密钥"),L.classList.remove("hidden"),L.style.display="flex"}else V=!1,L.classList.remove("hidden"),L.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),V=!1,L.classList.remove("hidden"),L.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",yt),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),yt())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{f?(clearInterval(f),f=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',W.textContent="已停止自动获取"):(bt(),f=setInterval(bt,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',W.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{h=!h,Nt()}),document.getElementById("currentBtn").addEventListener("click",()=>{x=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),Nt()}),document.getElementById("historyBtn").addEventListener("click",()=>{x=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),Nt()}),document.getElementById("missBtn").addEventListener("click",()=>{h=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),Nt()}),document.getElementById("hitBtn").addEventListener("click",()=>{h=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),Nt()}),document.getElementById("statBtn").addEventListener("click",Nt),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(l=[],m=1,p.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",Nt(),W.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[g]=await window.showOpenFilePicker(),p.clear(),y=null,l=[],m=1,await Ot(),b&&clearInterval(b),b=setInterval(_t,3e3),W.textContent=`已加载文件: ${g.name}`}catch(t){W.textContent=`文件选择错误: ${t.message}`}})});const Jt=document.getElementById("helpModal");document.getElementById("helpBtn").addEventListener("click",()=>{Jt.classList.remove("hidden")}),document.getElementById("closeHelpBtn").addEventListener("click",()=>{Jt.classList.add("hidden")}),document.getElementById("gotItBtn").addEventListener("click",()=>{Jt.classList.add("hidden")}),Jt.addEventListener("click",t=>{t.target===Jt&&Jt.classList.add("hidden")});let Kt=!1;document.getElementById("themeToggle").addEventListener("click",()=>{Kt=!Kt,document.body.classList.toggle("bg-gray-900",Kt),document.body.classList.toggle("text-white",Kt),document.body.classList.toggle("bg-gray-50",!Kt),document.body.classList.toggle("text-dark",!Kt);const t=document.getElementById("themeToggle").querySelector("i");t.classList.toggle("fa-moon-o",!Kt),t.classList.toggle("fa-sun-o",Kt)});const Et=document.querySelectorAll(".period-btn");function zt(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}Et.forEach(t=>{t.addEventListener("click",()=>{Et.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),v=parseInt(t.dataset.period),document.getElementById("customPeriod").value=v,Nt()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(v=t,Et.forEach(t=>t.classList.remove("btn-active")),Nt()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",Pt),Nt(),document.addEventListener("DOMContentLoaded",function(){const t=document.getElementById("goldenInputData"),e=document.getElementById("goldenInputCount");t&&e&&t.addEventListener("input",function(){const t=this.value.trim();if(!t)return void e.classList.add("hidden");const n=t.split(/[\n,;，]+/).map(t=>t.trim()).filter(t=>t);e.textContent=`共 ${n.length} 项`,e.classList.remove("hidden")});const n=document.getElementById("modeUniformBtn"),o=document.getElementById("modeStableBtn"),c=document.getElementById("modeDescription");let a="uniform";n&&o&&(n.addEventListener("click",function(){a="uniform",n.classList.add("active-mode"),n.classList.remove("inactive-mode"),o.classList.add("inactive-mode"),o.classList.remove("active-mode"),c.textContent="均匀模式：一次性分完就用，不保持历史分组"}),o.addEventListener("click",function(){a="stable",o.classList.add("active-mode"),o.classList.remove("inactive-mode"),n.classList.add("inactive-mode"),n.classList.remove("active-mode"),c.textContent="稳定模式：维护长期分组，不想每次重新切割"}));const i=document.getElementById("goldenSplitBtn");i&&i.addEventListener("click",function(){const t=document.getElementById("goldenInputData").value.trim();if(!t)return void alert("请输入要分割的数据");const e=wt(t);if(0===e.length)return void alert("没有有效的数据");const n=vt(e,"uniform"===a?"roundrobin":"hash"),o=xt(n,e);Mt(),kt(n,e,o),console.log("分割完成:",n,"验证结果:",o)});const r=document.getElementById("goldenPasteBtn");r&&r.addEventListener("click",async function(){try{if(!navigator.clipboard||!navigator.clipboard.readText){const t=document.createElement("textarea");document.body.appendChild(t),t.focus(),document.execCommand("paste");const e=t.value;if(document.body.removeChild(t),e.trim()){document.getElementById("goldenInputData").value=e.trim();const t=new Event("input",{bubbles:!0});document.getElementById("goldenInputData").dispatchEvent(t)}return}const t=await navigator.clipboard.readText();if(t.trim()){document.getElementById("goldenInputData").value=t.trim();const e=new Event("input",{bubbles:!0});document.getElementById("goldenInputData").dispatchEvent(e)}else alert("剪贴板为空")}catch(t){console.error("无法访问剪贴板:",t),alert("请使用 Ctrl+V (Windows) 或 Cmd+V (Mac) 手动粘贴数据到输入框")}});const s=document.getElementById("goldenClearBtn");s&&s.addEventListener("click",function(){document.getElementById("goldenInputData").value="",document.getElementById("goldenInputCount").classList.add("hidden"),document.getElementById("goldenResults").innerHTML="",document.getElementById("validationResults").classList.add("hidden"),console.log("已清空所有数据")})});
 </script>
 </body>
 </html>

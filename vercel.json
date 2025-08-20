@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/taiwan-pk10-live.js": {
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",

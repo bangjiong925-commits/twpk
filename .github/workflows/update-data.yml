@@ -1,30 +1,45 @@
-name: Update Taiwan PK10 Data
+name: Update Taiwan PK10 Data (High Frequency)
 
 on:
   schedule:
-    # 每10分钟运行一次（台湾PK10开奖频率较高）
-    - cron: '*/10 * * * *'
+    # 每1分钟运行一次，在单次运行中每5秒抓取一次数据
+    - cron: '* * * * *'
   workflow_dispatch: # 允许手动触发
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     
     steps:
-    - name: Update Taiwan PK10 Data
+    - name: High Frequency Data Update (Every 5 seconds)
       run: |
-        # 调用Vercel部署的更新API
-        curl -X GET "https://${{ secrets.VERCEL_DOMAIN }}/api/update-taiwan-pk10?token=${{ secrets.UPDATE_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          -H "User-Agent: GitHub-Actions-Bot" \
-          --fail-with-body \
-          --show-error \
-          --silent
+        echo "Starting high frequency data update at $(date)"
         
-        echo "Data update completed at $(date)"
+        # 在1分钟内每5秒抓取一次数据（共12次）
+        for i in {1..12}; do
+          echo "Update attempt $i/12 at $(date)"
+          
+          # 调用Vercel部署的更新API
+          curl -X GET "https://${{ secrets.VERCEL_DOMAIN }}/api/update-taiwan-pk10?token=${{ secrets.UPDATE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions-Bot" \
+            --fail-with-body \
+            --show-error \
+            --silent \
+            --max-time 4 || echo "Update $i failed"
+          
+          # 等待5秒（除了最后一次）
+          if [ $i -lt 12 ]; then
+            sleep 5
+          fi
+        done
+        
+        echo "High frequency update cycle completed at $(date)"
     
     - name: Log Update Status
       if: always()
       run: |
         echo "Update job finished with status: ${{ job.status }}"
         echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+        echo "Next update cycle will start in approximately 5 seconds"

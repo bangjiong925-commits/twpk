@@ -2,6 +2,9 @@
   "functions": {
     "api/taiwan-pk10-live.js": {
       "maxDuration": 30
+    },
+    "api/update-taiwan-pk10.js": {
+      "maxDuration": 45
     }
   },
   "rewrites": [

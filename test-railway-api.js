@@ -5,7 +5,7 @@ async function testRailwayHealth() {
     try {
         console.log('🔍 检查Railway API健康状态...');
         
-        const response = await fetch('https://twpk-production.up.railway.app/api/health', {
+        const response = await fetch('https://twpk.up.railway.app/api/health', {
             method: 'GET',
             headers: {
                 'User-Agent': 'TWPK-KeyValidator/1.0'
@@ -41,7 +41,7 @@ async function testKeyRecordCreation() {
         
         console.log('📝 发送测试记录:', testRecord);
         
-        const response = await fetch('https://twpk-production.up.railway.app/api/key-records', {
+        const response = await fetch('https://twpk.up.railway.app/api/key-records', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ async function testKeyRecordRetrieval() {
     try {
         console.log('\n🔍 重新检查密钥记录...');
         
-        const response = await fetch('https://twpk-railway-deployment-production.up.railway.app/api/key-records', {
+        const response = await fetch('https://twpk.up.railway.app/api/key-records', {
             method: 'GET',
             headers: {
                 'User-Agent': 'TWPK-KeyValidator/1.0'
@@ -110,7 +110,7 @@ async function cleanupTestRecord(keyId) {
     try {
         console.log(`\n🧹 清理测试记录: ${keyId}`);
         
-        const response = await fetch(`https://twpk-production.up.railway.app/api/key-records/${encodeURIComponent(keyId)}`, {
+        const response = await fetch(`https://twpk.up.railway.app/api/key-records/${encodeURIComponent(keyId)}`, {
             method: 'DELETE',
             headers: {
                 'User-Agent': 'TWPK-KeyValidator/1.0'

@@ -5,7 +5,7 @@ async function checkRailwayRecords() {
     try {
         console.log('🔍 检查Railway部署的密钥记录...');
         
-        const response = await fetch('https://twpk-production.up.railway.app/api/key-records', {
+        const response = await fetch('https://twpk.up.railway.app/api/key-records', {
             method: 'GET',
             headers: {
                 'User-Agent': 'TWPK-KeyValidator/1.0'

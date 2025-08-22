@@ -56,9 +56,13 @@ const keyRecordSchema = new mongoose.Schema({
 keyRecordSchema.index({ usedAt: -1 });
 keyRecordSchema.index({ expiresAt: 1 });
 
-// 添加虚拟字段计算剩余时间
+// 添加虚拟字段来计算剩余时间
 keyRecordSchema.virtual('remainingTime').get(function() {
-  return Math.max(0, this.expiresAt - new Date());
+  if (!this.expiresAt) return null;
+  const now = new Date();
+  const remaining = this.expiresAt - now;
+  // 返回剩余时间的分钟数，如果已过期则返回0
+  return Math.max(0, Math.floor(remaining / (1000 * 60))); // 返回分钟数
 });
 
 // 确保虚拟字段在JSON序列化时包含

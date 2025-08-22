@@ -2921,6 +2921,10 @@ async function markKeyAsUsedOnline(nonce) {
         const result = await response.json();
         console.log('密钥已标记为已使用:', result);
         return { success: true };
+    } else if (response.status === 409) {
+        // 处理409冲突错误（密钥已被使用）
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || '该密钥已经被验证过，无法重复使用');
     } else {
         throw new Error(`服务器响应错误: ${response.status} ${response.statusText}`);
     }

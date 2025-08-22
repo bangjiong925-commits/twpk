@@ -78,7 +78,7 @@ router.get('/', checkDatabaseConnection, async (req, res) => {
       ipAddress: record.ipAddress || 'N/A',
       used: record.used,
       verified: record.verified,
-      remainingTime: Math.max(0, new Date(record.expiresAt) - new Date())
+      remainingTime: Math.max(0, new Date(record.expiresAt).getTime() - new Date().getTime())
     }));
     
     res.json(formattedRecords);
@@ -239,9 +239,10 @@ router.post('/mark-used', checkDatabaseConnection, async (req, res) => {
     );
     
     if (existingRecord) {
-      return res.json({
-        success: true,
-        message: '密钥已被标记为使用',
+      return res.status(409).json({
+        success: false,
+        error: '密钥已被使用',
+        message: '该密钥已经被验证过，无法重复使用',
         record: existingRecord
       });
     }

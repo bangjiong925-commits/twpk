@@ -25,19 +25,47 @@ app.use(express.static('.'));
 // Railway环境检测
 const isRailwayEnvironment = !!(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.env.RAILWAY_SERVICE_ID);
 
-// MongoDB连接配置 - 严格按照优先级：DATABASE_URL > MONGO_URL > MONGOHOST > 本地连接
+// MongoDB连接配置 - 严格按照优先级：DATABASE_URL (MongoDB Atlas) > TCP_PROXY > MONGO_PUBLIC_URL > MONGO_URL > MONGOHOST > 本地连接
 let mongoUri;
 let connectionMethod = '';
 
-// 优先级1: DATABASE_URL (Railway标准)
+// 优先级1: DATABASE_URL (MongoDB Atlas 或 Railway标准)
 if (process.env.DATABASE_URL) {
   mongoUri = process.env.DATABASE_URL;
-  connectionMethod = 'DATABASE_URL (Railway标准数据库连接)';
-  console.log('✅ 使用DATABASE_URL连接');
+  // 检测是否为MongoDB Atlas连接
+  if (mongoUri.includes('mongodb+srv://') || mongoUri.includes('mongodb.net')) {
+    connectionMethod = 'DATABASE_URL (MongoDB Atlas云数据库)';
+    console.log('✅ 使用DATABASE_URL连接MongoDB Atlas云数据库');
+  } else {
+    connectionMethod = 'DATABASE_URL (Railway标准数据库连接)';
+    console.log('✅ 使用DATABASE_URL连接Railway数据库');
+  }
 } 
-// 优先级2: MONGO_URL (Railway私有网络)
+// 优先级2: Railway TCP代理 (公共网络连接，解决DNS问题)
+else if (process.env.RAILWAY_TCP_PROXY_DOMAIN && process.env.RAILWAY_TCP_PROXY_PORT && process.env.MONGO_URL) {
+  // 从MONGO_URL中提取用户名和密码
+  const mongoUrlMatch = process.env.MONGO_URL.match(/mongodb:\/\/([^:]+):([^@]+)@/);
+  if (mongoUrlMatch) {
+    const [, username, password] = mongoUrlMatch;
+    mongoUri = `mongodb://${username}:${password}@${process.env.RAILWAY_TCP_PROXY_DOMAIN}:${process.env.RAILWAY_TCP_PROXY_PORT}/railway`;
+    connectionMethod = 'Railway TCP代理 (公共网络连接)';
+    console.log('✅ 使用Railway TCP代理连接（解决DNS问题）');
+  } else {
+    // 如果无法解析MONGO_URL，回退到下一个选项
+    mongoUri = process.env.MONGO_URL;
+    connectionMethod = 'MONGO_URL (私有网络连接)';
+    console.log('⚠️ 无法解析MONGO_URL，使用原始连接');
+  }
+}
+// 优先级3: MONGO_PUBLIC_URL (Railway公共连接)
+else if (process.env.MONGO_PUBLIC_URL) {
+  mongoUri = process.env.MONGO_PUBLIC_URL;
+  connectionMethod = 'MONGO_PUBLIC_URL (公共网络连接)';
+  console.log('✅ 使用MONGO_PUBLIC_URL环境变量（公共网络连接）');
+} 
+// 优先级4: MONGO_URL (Railway私有网络)
 else if (process.env.MONGO_URL) {
-  // 第二优先级：MONGO_URL（Railway私有网络连接，避免出口费用）
+  // 第四优先级：MONGO_URL（Railway私有网络连接，可能有DNS问题）
   mongoUri = process.env.MONGO_URL;
   connectionMethod = 'MONGO_URL (私有网络连接)';
   console.log('✅ 使用MONGO_URL环境变量（私有网络连接）');
@@ -90,23 +118,53 @@ console.log('🔗 当前连接方式：' + connectionMethod);
 
 console.log('MongoDB连接URI:', mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')); // 隐藏密码
 
-// MongoDB连接选项 - 移除废弃选项
-const mongoOptions = {
-  maxPoolSize: 5, // 减少连接池大小适应Railway限制
-  serverSelectionTimeoutMS: 10000, // 增加超时时间
-  socketTimeoutMS: 45000,
-  connectTimeoutMS: 10000,
-  family: 4, // 强制使用IPv4
-  retryWrites: true,
-  w: 'majority',
-  directConnection: false, // 允许副本集连接
-  heartbeatFrequencyMS: 10000
-};
+// MongoDB连接选项 - 根据连接类型优化配置
+let mongoOptions;
 
-// 连接重试机制
+// 为MongoDB Atlas优化的连接选项
+if (mongoUri && (mongoUri.includes('mongodb+srv://') || mongoUri.includes('mongodb.net'))) {
+  mongoOptions = {
+    // MongoDB Atlas 优化配置
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000, // Atlas响应更快
+    socketTimeoutMS: 45000,
+    connectTimeoutMS: 10000,
+    retryWrites: true,
+    w: 'majority',
+    // Atlas 特定配置
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    bufferCommands: false,
+    maxIdleTimeMS: 30000,
+    // 针对云数据库的优化
+    compressors: ['zlib'],
+    zlibCompressionLevel: 6
+  };
+  console.log('🔧 使用MongoDB Atlas优化配置');
+} else {
+  // Railway 或本地连接的配置
+  mongoOptions = {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 30000,
+    socketTimeoutMS: 60000,
+    connectTimeoutMS: 30000,
+    family: 4, // 强制使用IPv4 (Railway需要)
+    retryWrites: true,
+    w: 'majority',
+    directConnection: false,
+    heartbeatFrequencyMS: 10000,
+    bufferCommands: false,
+    maxIdleTimeMS: 30000,
+    waitQueueTimeoutMS: 30000
+  };
+  console.log('🔧 使用Railway/本地连接配置');
+}
+
+// 连接重试机制 - 针对不同数据库类型优化
 let retryCount = 0;
-const maxRetries = 3; // 减少重试次数
-const baseDelay = 2000; // 增加基础延迟
+const isAtlas = mongoUri && (mongoUri.includes('mongodb+srv://') || mongoUri.includes('mongodb.net'));
+const maxRetries = isAtlas ? 5 : 3; // Atlas允许更多重试
+const baseDelay = isAtlas ? 1000 : 2000; // Atlas重试间隔更短
 
 async function connectWithRetry() {
   while (retryCount < maxRetries) {
@@ -114,21 +172,74 @@ async function connectWithRetry() {
       retryCount++;
       console.log(`MongoDB连接尝试 ${retryCount}/${maxRetries}`);
       console.log('连接目标:', mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@'));
+      console.log('连接类型:', isAtlas ? 'MongoDB Atlas' : 'Railway/本地');
       
       await mongoose.connect(mongoUri, mongoOptions);
       console.log('✅ MongoDB连接成功!');
       console.log('数据库状态:', mongoose.connection.readyState);
+      console.log('数据库名称:', mongoose.connection.db?.databaseName || 'unknown');
+      
+      // 重置重试计数器
+      retryCount = 0;
       return;
     } catch (error) {
       console.log(`❌ MongoDB连接失败 (尝试 ${retryCount}/${maxRetries}):`, error.message);
       console.log('错误详情:', {
         code: error.code,
         codeName: error.codeName,
-        name: error.name
+        name: error.name,
+        errno: error.errno,
+        syscall: error.syscall,
+        hostname: error.hostname
       });
+      
+      // MongoDB Atlas 特定错误处理
+      if (isAtlas) {
+        if (error.message.includes('authentication failed')) {
+          console.log('🔐 MongoDB Atlas认证失败:');
+          console.log('- 请检查用户名和密码是否正确');
+          console.log('- 请确认数据库用户已创建并有适当权限');
+          console.log('- 请检查连接字符串格式是否正确');
+        } else if (error.message.includes('ENOTFOUND') || error.message.includes('getaddrinfo')) {
+          console.log('🌐 MongoDB Atlas网络连接错误:');
+          console.log('- 请检查网络连接');
+          console.log('- 请确认IP地址已添加到Atlas白名单');
+          console.log('- 建议添加 0.0.0.0/0 到网络访问列表');
+        } else if (error.message.includes('MongoServerSelectionError')) {
+          console.log('🎯 MongoDB Atlas服务器选择错误:');
+          console.log('- 请检查集群是否正在运行');
+          console.log('- 请确认连接字符串中的集群地址正确');
+        }
+      } else {
+        // Railway 特定错误处理
+        if (error.message.includes('ENOTFOUND') || error.message.includes('getaddrinfo')) {
+          console.log('🔍 检测到DNS解析错误:');
+          console.log('- 错误类型: DNS解析失败');
+          console.log('- 目标主机:', error.hostname || 'unknown');
+          console.log('- 建议: 尝试使用TCP代理或公共连接');
+          
+          if (mongoUri.includes('mongodb.railway.internal')) {
+            console.log('⚠️ Railway内部DNS解析失败，这是已知问题');
+            console.log('💡 解决方案: 使用TCP代理连接或联系Railway支持');
+          }
+        } else if (error.message.includes('ECONNRESET')) {
+          console.log('🔌 检测到连接重置错误:');
+          console.log('- Railway TCP代理可能不稳定');
+          console.log('- 建议使用MongoDB Atlas获得更稳定的连接');
+        }
+      }
       
       if (retryCount >= maxRetries) {
         console.log('💥 MongoDB连接失败，已达到最大重试次数');
+        if (isAtlas) {
+          console.log('❌ MongoDB Atlas连接失败，请检查:');
+          console.log('1. 连接字符串是否正确');
+          console.log('2. 用户名密码是否正确');
+          console.log('3. 网络访问是否已配置 (0.0.0.0/0)');
+          console.log('4. 集群是否正在运行');
+        } else {
+          console.log('❌ Railway MongoDB连接失败，建议使用MongoDB Atlas');
+        }
         console.log('⚠️ 应用将在没有数据库连接的情况下启动');
         
         // 设置一个标志表示数据库不可用
@@ -136,7 +247,7 @@ async function connectWithRetry() {
         break;
       }
       
-      const delay = baseDelay * retryCount; // 线性增加延迟
+      const delay = baseDelay * Math.pow(2, retryCount - 1); // 指数退避
       console.log(`⏳ ${delay/1000}秒后重试...`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
@@ -200,8 +311,21 @@ if (isRailwayEnvironment) {
 console.log('🚀 启动MongoDB连接...');
 console.log('📋 环境变量检查:');
 console.log('- NODE_ENV:', process.env.NODE_ENV);
-console.log('- DATABASE_URL存在:', !!process.env.DATABASE_URL, process.env.DATABASE_URL ? '✅ (Railway标准)' : '❌');
-console.log('- MONGO_URL存在:', !!process.env.MONGO_URL, process.env.MONGO_URL ? '✅ (推荐-私有网络)' : '❌');
+
+// DATABASE_URL 详细检查
+if (process.env.DATABASE_URL) {
+  const isAtlasUrl = process.env.DATABASE_URL.includes('mongodb+srv://') || process.env.DATABASE_URL.includes('mongodb.net');
+  console.log('- DATABASE_URL存在:', '✅', isAtlasUrl ? '(MongoDB Atlas)' : '(Railway标准)');
+  if (isAtlasUrl) {
+    console.log('  🌟 检测到MongoDB Atlas连接字符串');
+  }
+} else {
+  console.log('- DATABASE_URL存在:', '❌ (推荐配置MongoDB Atlas)');
+}
+
+console.log('- RAILWAY_TCP_PROXY_DOMAIN存在:', !!process.env.RAILWAY_TCP_PROXY_DOMAIN, process.env.RAILWAY_TCP_PROXY_DOMAIN ? '✅ (TCP代理域名)' : '❌');
+console.log('- RAILWAY_TCP_PROXY_PORT存在:', !!process.env.RAILWAY_TCP_PROXY_PORT, process.env.RAILWAY_TCP_PROXY_PORT ? '✅ (TCP代理端口)' : '❌');
+console.log('- MONGO_URL存在:', !!process.env.MONGO_URL, process.env.MONGO_URL ? '✅ (私有网络)' : '❌');
 console.log('- MONGO_PUBLIC_URL存在:', !!process.env.MONGO_PUBLIC_URL, process.env.MONGO_PUBLIC_URL ? '⚠️ (警告-产生出口费用)' : '✅');
 console.log('- MONGODB_URI存在:', !!process.env.MONGODB_URI, process.env.MONGODB_URI ? '⚠️ (已跳过使用)' : '✅');
 console.log('- MONGOHOST存在:', !!process.env.MONGOHOST, process.env.MONGOHOST ? '✅' : '❌');
@@ -210,7 +334,17 @@ console.log('- MONGOPASSWORD存在:', !!process.env.MONGOPASSWORD, process.env.M
 console.log('- MONGOPORT:', process.env.MONGOPORT || '未设置');
 console.log('- MONGODATABASE:', process.env.MONGODATABASE || '未设置');
 console.log('🎯 实际使用的连接方式：' + connectionMethod);
-console.log('🔧 连接优先级：DATABASE_URL > MONGO_URL > MONGOHOST组合 > 本地连接');
+console.log('🔧 连接优先级：DATABASE_URL (MongoDB Atlas推荐) > TCP代理 > MONGO_PUBLIC_URL > MONGO_URL > MONGOHOST组合 > 本地连接');
+
+// 如果没有配置DATABASE_URL，提示用户配置MongoDB Atlas
+if (!process.env.DATABASE_URL) {
+  console.log('\n💡 建议配置MongoDB Atlas:');
+  console.log('1. 注册MongoDB Atlas账户');
+  console.log('2. 创建免费集群');
+  console.log('3. 获取连接字符串');
+  console.log('4. 设置环境变量: railway variables set DATABASE_URL="your_atlas_connection_string"');
+  console.log('5. 重新部署应用');
+}
 
 connectWithRetry();
 
@@ -282,6 +416,10 @@ app.get('/', (req, res) => {
 
 app.get('/TWPK.html', (req, res) => {
   res.sendFile(__dirname + '/TWPK.html');
+});
+
+app.get('/key-management.html', (req, res) => {
+  res.sendFile(__dirname + '/key-management.html');
 });
 
 // 数据库连接检查中间件
@@ -370,13 +508,19 @@ app.use((error, req, res, next) => {
   });
 });
 
-// 404处理
-app.use('*', (req, res) => {
+// 404处理 - 只处理API路由的404
+app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
     error: 'Not found',
-    message: '请求的资源不存在'
+    message: '请求的API资源不存在'
   });
+});
+
+// 对于非API路由的404，返回主页（SPA路由支持）
+app.use('*', (req, res) => {
+  // 对于所有未匹配的路由，返回主页让前端路由处理
+  res.sendFile(__dirname + '/index.html');
 });
 
 // 启动服务器

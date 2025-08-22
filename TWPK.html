@@ -2651,7 +2651,134 @@ async function recordKeyUsage(keyData) {
     }
 }
 
-async function O(t){try{const e=await fetch(`https://myyz.vercel.app/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}}catch(e){console.warn("API连接失败:",e);}console.warn("API连接失败，使用本地验证");return{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}async function K(t){try{const e=await fetch(`https://myyz.vercel.app/api/nonce/mark`,{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}}catch(e){console.warn("API连接失败:",e);}console.warn("API连接失败，使用本地记录");const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const P=document.getElementById("verifyKeyBtn");function E(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}async function A(t){try{const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};const c=(new Date).getTime();if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};const r=generateDeviceFingerprint();return o.deviceFingerprint!==r?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await checkKeyOnlineUsage(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}}catch(t){return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}}}
+async function O(t){try{const e=await fetch(`https://myyz.vercel.app/api/nonce/check/${encodeURIComponent(t)}`,{method:"GET",headers:{"User-Agent":"TWPK-KeyValidator/1.0"}});if(e.ok){const t=await e.json();return console.log("云端验证响应:",t),{used:t.used}}}catch(e){console.warn("API连接失败:",e);}console.warn("API连接失败，使用本地验证");return{used:JSON.parse(localStorage.getItem("usedNonces")||"[]").includes(t)}}async function K(t){try{const e=await fetch(`https://myyz.vercel.app/api/nonce/mark`,{method:"POST",headers:{"Content-Type":"application/json","User-Agent":"TWPK-KeyValidator/1.0"},body:JSON.stringify({nonce:t})});if(e.ok){const t=await e.json();return console.log("nonce已成功记录到云端:",t),{success:!0}}}catch(e){console.warn("API连接失败:",e);}console.warn("API连接失败，使用本地记录");const e=JSON.parse(localStorage.getItem("usedNonces")||"[]");return e.includes(t)||(e.push(t),localStorage.setItem("usedNonces",JSON.stringify(e)),console.log("本地记录nonce:",t)),{success:!0}}const P=document.getElementById("verifyKeyBtn");function E(t){let e;if(t.includes("\t"))e=t.trim().split(/\t+/);else{if(!t.includes(" "))return null;e=t.trim().split(/\s+/)}if(e.length<2)return null;const n=e[0].trim();let o;if(e[1].includes(","))o=e[1].split(",").map(t=>parseInt(t.trim(),10));else{if(!e[1].includes(" "))return null;o=e[1].split(" ").map(t=>parseInt(t.trim(),10))}return 10!==o.length||o.some(isNaN)?null:{period:n,data:o}}// Base62 解码函数
+function base62Decode(str) {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const base = BigInt(chars.length);
+    let result = BigInt(0);
+    
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        const index = chars.indexOf(char);
+        if (index === -1) {
+            throw new Error('Invalid Base62 character: ' + char);
+        }
+        result = result * base + BigInt(index);
+    }
+    
+    // 转换为16字节的Uint8Array
+    const bytes = new Uint8Array(16);
+    for (let i = 15; i >= 0; i--) {
+        bytes[i] = Number(result & BigInt(0xFF));
+        result = result >> BigInt(8);
+    }
+    
+    return bytes;
+}
+
+// 简化的PBKDF2-HMAC-SHA256实现
+async function simplePBKDF2(password, salt, iterations, keyLength) {
+    const encoder = new TextEncoder();
+    const passwordKey = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveBits']
+    );
+    
+    const derivedBits = await crypto.subtle.deriveBits(
+        {
+            name: 'PBKDF2',
+            salt: salt,
+            iterations: iterations,
+            hash: 'SHA-256'
+        },
+        passwordKey,
+        keyLength * 8
+    );
+    
+    return new Uint8Array(derivedBits);
+}
+
+// 验证新格式短密钥
+async function validateShortKey(keyStr) {
+    try {
+        // Base62解码得到16字节数据
+        const keyData = base62Decode(keyStr);
+        
+        // 提取时间戳（前4字节）
+        const timestampBytes = keyData.slice(0, 4);
+        const expiry = (timestampBytes[0] << 24) | (timestampBytes[1] << 16) | (timestampBytes[2] << 8) | timestampBytes[3];
+        
+        // 提取哈希值（后12字节）
+        const storedHash = keyData.slice(4, 16);
+        
+        // 检查是否过期
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (currentTime > expiry) {
+            return { valid: false, reason: '密钥已过期' };
+        }
+        
+        // 使用确定性方法验证密钥
+        // 使用时间戳作为确定性盐来重新计算哈希
+        const deterministicSalt = new Uint8Array(8);
+        deterministicSalt[0] = (expiry >>> 24) & 0xFF;
+        deterministicSalt[1] = (expiry >>> 16) & 0xFF;
+        deterministicSalt[2] = (expiry >>> 8) & 0xFF;
+        deterministicSalt[3] = expiry & 0xFF;
+        deterministicSalt[4] = (expiry >>> 24) & 0xFF; // 重复填充
+        deterministicSalt[5] = (expiry >>> 16) & 0xFF;
+        deterministicSalt[6] = (expiry >>> 8) & 0xFF;
+        deterministicSalt[7] = expiry & 0xFF;
+        
+        // 使用相同的主密钥重新计算PBKDF2
+        const masterKey = 'TWPK_SECURE_KEY_2024';
+        const computedHash = await simplePBKDF2(masterKey + expiry, deterministicSalt, 10000, 12);
+        
+        // 比较哈希值
+        const hashMatch = storedHash.every((byte, index) => byte === computedHash[index]);
+        
+        if (!hashMatch) {
+            return { valid: false, reason: '密钥验证失败' };
+        }
+        
+        // 生成nonce用于使用记录（基于密钥内容）
+        const nonce = keyStr.slice(0, 16);
+        
+        return {
+            valid: true,
+            data: {
+                expiry: expiry,
+                nonce: nonce,
+                deviceFingerprint: 'universal_device_2024',
+                keyType: 'short'
+            }
+        };
+    } catch (error) {
+        return { valid: false, reason: '短密钥格式错误: ' + error.message };
+    }
+}
+
+async function A(t){
+    // 判断密钥格式：短密钥（16-25字符）还是长密钥（Base64格式）
+    if (t.length >= 16 && t.length <= 25 && /^[0-9A-Za-z]+$/.test(t)) {
+        // 新的短密钥格式
+        return await validateShortKey(t);
+    } else {
+        // 原有的长密钥格式
+        try{
+            const e=atob(t),n=decodeURIComponent(escape(e)),o=JSON.parse(n);
+            if(!o.expiry||!o.nonce||!o.deviceFingerprint)return{valid:!1,reason:"密钥缺少必要字段"};
+            const c=(new Date).getTime();
+            if(Math.floor(c/1e3)>o.expiry)return{valid:!1,reason:"密钥已过期"};
+            const r=generateDeviceFingerprint();
+            return o.deviceFingerprint!==r?{valid:!1,reason:"此密钥不可在当前设备使用"}:(await checkKeyOnlineUsage(o.nonce)).used?{valid:!1,reason:"密钥已被使用，每个密钥只能使用一次"}:{valid:!0,data:o}
+        }catch(t){
+            return t instanceof DOMException&&"InvalidCharacterError"===t.name?{valid:!1,reason:"密钥Base64解码失败"}:t instanceof SyntaxError?{valid:!1,reason:"密钥JSON格式无效"}:{valid:!1,reason:"验证过程异常: "+t.message}
+        }
+    }
+}
 
 // 在线检查密钥是否已被使用
 async function checkKeyOnlineUsage(nonce) {
@@ -2711,7 +2838,11 @@ async function markKeyAsUsedOnline(nonce) {
     // 记录密钥使用信息到后台
     async function recordKeyUsage(keyData) {
       try {
-        const response = await fetch('http://localhost:3000/api/key-records', {
+        // 根据当前环境动态选择API URL
+        const apiUrl = window.location.hostname === 'localhost' 
+          ? 'http://localhost:3000/api/key-records'
+          : '/api/key-records';
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

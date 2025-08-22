@@ -1,16 +1,32 @@
 // Vercel Serverless Function for Key Records API
-const { createClient } = require('@vercel/kv');
+const mongoose = require('mongoose');
+const KeyRecord = require('../models/KeyRecord');
 
-// 初始化KV存储（Vercel的Redis替代方案）
-const kv = createClient({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
-});
+// MongoDB连接
+let isConnected = false;
+
+async function connectToDatabase() {
+  if (isConnected) {
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/twpk', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log('MongoDB连接成功');
+  } catch (error) {
+    console.error('MongoDB连接失败:', error);
+    throw error;
+  }
+}
 
 // CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, User-Agent',
 };
 
@@ -26,49 +42,36 @@ module.exports = async (req, res) => {
   });
 
   try {
+    // 连接数据库
+    await connectToDatabase();
+
     if (req.method === 'GET') {
       // 获取所有密钥记录
-      const keyRecordKeys = await kv.keys('keyRecord:*');
-      const usedNonceKeys = await kv.keys('usedNonce:*');
-      const records = [];
+      const records = await KeyRecord.find({})
+        .sort({ usedAt: -1 })
+        .lean();
       
-      for (const key of keyRecordKeys) {
-        const record = await kv.get(key);
-        if (record) {
-          const recordData = JSON.parse(record);
-          const keyId = key.replace('keyRecord:', '');
-          
-          // 检查是否已使用（通过nonce检查）
-          const isUsed = usedNonceKeys.some(nonceKey => {
-            const nonce = nonceKey.replace('usedNonce:', '');
-            return recordData.nonce === nonce;
-          });
-          
-          // 格式化记录以匹配管理界面需求
-          records.push({
-            keyId: keyId,
-            nonce: recordData.nonce,
-            usedAt: recordData.usedAt,
-            expiryTime: recordData.expiresAt,
-            deviceInfo: {
-              platform: recordData.deviceId || 'Unknown',
-              userAgent: recordData.deviceInfo || recordData.userAgent || 'Unknown'
-            },
-            ipAddress: recordData.ipAddress || 'N/A',
-            used: isUsed,
-            verified: true // 所有记录都是已验证的
-          });
-        }
-      }
+      // 格式化记录以匹配管理界面需求
+      const formattedRecords = records.map(record => ({
+        keyId: record.keyId,
+        nonce: record.nonce,
+        usedAt: record.usedAt,
+        expiryTime: record.expiresAt,
+        deviceInfo: {
+          platform: record.deviceId || 'Unknown',
+          userAgent: record.deviceInfo || record.userAgent || 'Unknown'
+        },
+        ipAddress: record.ipAddress || 'N/A',
+        used: record.used,
+        verified: record.verified,
+        remainingTime: Math.max(0, new Date(record.expiresAt) - new Date())
+      }));
       
-      // 按使用时间排序（最新的在前）
-      records.sort((a, b) => new Date(b.usedAt) - new Date(a.usedAt));
-      
-      return res.status(200).json(records);
+      return res.status(200).json(formattedRecords);
       
     } else if (req.method === 'POST') {
       // 创建新的密钥记录
-      const { keyId, deviceId, usedAt, expiresAt, userAgent } = req.body;
+      const { keyId, deviceId, usedAt, expiresAt, expiryTime, userAgent, ipAddress, nonce } = req.body;
       
       if (!keyId) {
         return res.status(400).json({
@@ -78,34 +81,63 @@ module.exports = async (req, res) => {
       }
       
       // 检查密钥是否已被使用
-      const existingRecord = await kv.get(`keyRecord:${keyId}`);
+      const existingRecord = await KeyRecord.findOne({ keyId });
       if (existingRecord) {
         return res.status(409).json({
           success: false,
           error: '密钥已被使用',
-          record: JSON.parse(existingRecord)
+          record: existingRecord
         });
       }
       
       // 创建新记录
-      const now = new Date().toISOString();
-      const record = {
+      const recordData = {
         keyId,
         deviceId: deviceId || 'unknown',
         deviceInfo: userAgent || 'unknown',
-        usedAt: usedAt || now,
-        expiresAt: expiresAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        createdTime: now,
-        remainingTime: expiresAt ? Math.max(0, new Date(expiresAt) - new Date()) : 24 * 60 * 60 * 1000
+        userAgent: userAgent || 'unknown',
+        ipAddress: ipAddress || req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'N/A',
+        nonce: nonce,
+        usedAt: usedAt ? new Date(usedAt) : new Date(),
+        expiresAt: expiresAt ? new Date(expiresAt) : (expiryTime ? new Date(expiryTime) : new Date(Date.now() + 24 * 60 * 60 * 1000)),
+        used: true,
+        verified: true
       };
       
-      // 保存到KV存储，设置7天TTL
-      await kv.setex(`keyRecord:${keyId}`, 7 * 24 * 60 * 60, JSON.stringify(record));
+      const record = new KeyRecord(recordData);
+      await record.save();
       
       return res.status(201).json({
         success: true,
         message: '密钥记录已保存',
         record: record
+      });
+      
+    } else if (req.method === 'DELETE') {
+      // 删除密钥记录
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      const pathParts = url.pathname.split('/');
+      const keyId = pathParts[pathParts.length - 1];
+      
+      if (!keyId || keyId === 'key-records') {
+        return res.status(400).json({
+          success: false,
+          error: '缺少keyId参数'
+        });
+      }
+      
+      const result = await KeyRecord.deleteOne({ keyId });
+      
+      if (result.deletedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          error: '密钥记录未找到'
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: '密钥记录已删除'
       });
       
     } else {
@@ -117,10 +149,19 @@ module.exports = async (req, res) => {
     
   } catch (error) {
     console.error('API错误:', error);
+    
+    // 处理MongoDB重复键错误
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        error: '密钥已存在'
+      });
+    }
+    
     return res.status(500).json({
       success: false,
       error: '服务器内部错误',
-      details: error.message
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };

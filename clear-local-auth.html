@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清除本地认证信息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #c82333;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .code {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 清除认证信息工具</h1>
+        
+        <div class="section">
+            <h2>1. 清除本地浏览器认证信息</h2>
+            <p>清除当前浏览器中存储的所有密钥认证信息：</p>
+            <button onclick="clearLocalAuth()">清除本地认证</button>
+            <div id="localResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>2. 清除数据库密钥记录</h2>
+            <p>通过API清除服务器数据库中的所有密钥记录：</p>
+            <button onclick="clearDatabaseRecords()">清除数据库记录</button>
+            <div id="dbResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>3. 手动清除数据库（备用方案）</h2>
+            <p>如果API清除失败，可以在浏览器控制台执行以下代码：</p>
+            <div class="code">// 在浏览器控制台执行
+fetch('/api/key-records')
+  .then(res => res.json())
+  .then(records => {
+    console.log(`找到 ${records.length} 条记录`);
+    return Promise.all(
+      records.map(record => 
+        fetch(`/api/key-records/${encodeURIComponent(record.keyId)}`, {method: 'DELETE'})
+      )
+    );
+  })
+  .then(() => console.log('所有记录已删除'))
+  .catch(err => console.error('删除失败:', err));</div>
+        </div>
+        
+        <div class="section">
+            <h2>4. 验证清除结果</h2>
+            <button onclick="checkStatus()">检查当前状态</button>
+            <div id="statusResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function clearLocalAuth() {
+            const resultDiv = document.getElementById('localResult');
+            try {
+                // 清除所有相关的localStorage项
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.startsWith('validKey_') || key.startsWith('keyExpiry_'))) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                
+                // 清除sessionStorage
+                sessionStorage.clear();
+                
+                // 清除可能的cookie
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ 本地认证信息已清除<br>
+                        - 清除了 ${keysToRemove.length} 个localStorage项<br>
+                        - 清除了sessionStorage<br>
+                        - 清除了cookies
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: red;">❌ 清除失败: ${error.message}</div>`;
+            }
+        }
+        
+        async function clearDatabaseRecords() {
+            const resultDiv = document.getElementById('dbResult');
+            resultDiv.innerHTML = '<div class="info">🔄 正在清除数据库记录...</div>';
+            
+            try {
+                // 获取所有记录
+                const response = await fetch('/api/key-records');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const records = await response.json();
+                
+                if (!records || records.length === 0) {
+                    resultDiv.innerHTML = '<div class="success">✅ 数据库中没有密钥记录需要清除</div>';
+                    return;
+                }
+                
+                // 逐个删除记录
+                let deletedCount = 0;
+                const errors = [];
+                
+                for (const record of records) {
+                    try {
+                        const deleteResponse = await fetch(`/api/key-records/${encodeURIComponent(record.keyId)}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        if (deleteResponse.ok) {
+                            deletedCount++;
+                        } else {
+                            errors.push(`${record.keyId}: HTTP ${deleteResponse.status}`);
+                        }
+                    } catch (error) {
+                        errors.push(`${record.keyId}: ${error.message}`);
+                    }
+                }
+                
+                let resultHtml = `<div class="success">✅ 成功删除 ${deletedCount}/${records.length} 条记录</div>`;
+                
+                if (errors.length > 0) {
+                    resultHtml += `<div style="color: orange;">⚠️ 部分删除失败:<br>${errors.join('<br>')}</div>`;
+                }
+                
+                resultDiv.innerHTML = resultHtml;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: red;">❌ 清除失败: ${error.message}</div>`;
+            }
+        }
+        
+        async function checkStatus() {
+            const resultDiv = document.getElementById('statusResult');
+            resultDiv.innerHTML = '<div class="info">🔄 正在检查状态...</div>';
+            
+            try {
+                // 检查本地存储
+                const localKeys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && (key.startsWith('validKey_') || key.startsWith('keyExpiry_'))) {
+                        localKeys.push(key);
+                    }
+                }
+                
+                // 检查数据库记录
+                let dbRecords = [];
+                try {
+                    const response = await fetch('/api/key-records');
+                    if (response.ok) {
+                        dbRecords = await response.json() || [];
+                    }
+                } catch (error) {
+                    console.error('获取数据库记录失败:', error);
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="info">
+                        📊 当前状态:<br>
+                        - 本地存储密钥: ${localKeys.length} 个<br>
+                        - 数据库记录: ${dbRecords.length} 条<br>
+                        ${localKeys.length === 0 && dbRecords.length === 0 ? 
+                            '<div class="success">✅ 所有认证信息已清除</div>' : 
+                            '<div style="color: orange;">⚠️ 仍有认证信息未清除</div>'
+                        }
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: red;">❌ 检查失败: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

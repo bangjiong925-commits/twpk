@@ -581,7 +581,9 @@
             }
             
             try {
-                const response = await fetch(`/api/key-records/${keyId}`, {
+                // 对keyId进行URL编码以处理特殊字符（如斜杠）
+                const encodedKeyId = encodeURIComponent(keyId);
+                const response = await fetch(`/api/key-records/${encodedKeyId}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

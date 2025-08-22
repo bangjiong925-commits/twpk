@@ -9,6 +9,16 @@ restartPolicyMaxRetries = 10
 [environments.production.variables]
 NODE_ENV = "production"
 PORT = "$PORT"
+# Puppeteer和Chrome优化配置
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
+PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium-browser"
+CHROME_BIN = "/usr/bin/chromium-browser"
+# Railway环境标识
+RAILWAY_ENVIRONMENT = "true"
+# 内存优化
+NODE_OPTIONS = "--max-old-space-size=4096"
+# 禁用Chrome沙盒（容器环境必需）
+CHROME_NO_SANDBOX = "true"
 
 [environments.production.plugins.mongodb]
 source = "mongodb"

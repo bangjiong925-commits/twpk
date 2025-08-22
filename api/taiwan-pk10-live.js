@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import { createBrowser } from '../puppeteer.config.js';
 
 export default async function handler(req, res) {
   // 设置CORS头
@@ -50,13 +50,7 @@ export default async function handler(req, res) {
     console.log('检查网站数据可用性...');
     
     // 启动浏览器
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
-    });
+    browser = await createBrowser(puppeteer);
     
     const page = await browser.newPage();
     

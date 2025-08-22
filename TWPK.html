@@ -2506,6 +2506,13 @@ let _0x5s6t7u = btoa(window.location.href).slice(-10);
 
 // 验证令牌生成和检查系统
 function _0xVerifyToken() {
+    // 检查认证版本号
+    const storedVersion = localStorage.getItem('authVersion');
+    if (storedVersion !== AUTH_VERSION) {
+        console.log('认证版本不匹配，需要重新验证');
+        return false;
+    }
+    
     const _0xTime = new Date().getTime();
     const _0xDiff = _0xTime - _0x0j1k2l;
     if (_0xDiff > 3600000) return false; // 1小时过期
@@ -2519,6 +2526,9 @@ function _0xVerifyToken() {
     return _0xCheck && _0xIntegrity;
 }
 
+// 认证版本号 - 更新此值可使所有旧认证失效
+const AUTH_VERSION = '2025_01_22_v3';
+
 // 设置验证状态
 function _0xSetAuth(_0xToken) {
     _0x1a2b3c = true;
@@ -2526,6 +2536,8 @@ function _0xSetAuth(_0xToken) {
     _0x7g8h9i = Array.from(_0xToken).map(c => c.charCodeAt(0));
     _0x0j1k2l = new Date().getTime();
     _0x9p8q7r = btoa(_0xToken).slice(0, 10);
+    // 保存认证版本号
+    localStorage.setItem('authVersion', AUTH_VERSION);
     _0xStartTimer(); // 启动定时验证
 }
 
@@ -3351,7 +3363,22 @@ this.textContent="验证密钥";
 g.classList.add("hidden");
 g.style.display="none"}else{alert("密钥验证失败: "+e.reason);
 this.disabled=!1;
-this.textContent="验证密钥"}}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message);this.disabled=!1;this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",async function(){try{const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const r=parseInt(n);if(o<r){// 密钥未过期，但需要在线验证是否已被使用
+this.textContent="验证密钥"}}catch(t){console.error("密钥验证过程出错:",t),alert("验证过程中发生错误: "+t.message);this.disabled=!1;this.textContent="验证密钥"}}else alert("请输入密钥")}),window.addEventListener("load",async function(){try{// 检查认证版本号，如果不匹配则清除所有认证信息
+const storedVersion = localStorage.getItem('authVersion');
+if (storedVersion !== AUTH_VERSION) {
+    console.log('认证版本不匹配，清除所有认证信息');
+    // 清除所有相关的localStorage项
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+        if (key.startsWith('validKey_') || key.startsWith('keyExpiry_') || key === 'authVersion') {
+            localStorage.removeItem(key);
+        }
+    });
+    b=!1,g.classList.remove("hidden"),g.style.display="flex";
+    return;
+}
+
+const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const r=parseInt(n);if(o<r){// 密钥未过期，但需要在线验证是否已被使用
 try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyOnlineUsage(keyData.nonce);if(isUsed){localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("密钥已被使用，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}else{_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}catch(err){console.error("在线验证失败，使用本地验证:",err);_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}else{localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("historyBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("missBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("hitBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,currentPage=1,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),currentPage=1,L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
 
 // 黄金切割页面事件处理

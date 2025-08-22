@@ -197,6 +197,86 @@ router.get('/:keyId', checkDatabaseConnection, async (req, res) => {
   }
 });
 
+// 检查nonce是否已被使用
+router.get('/check/:nonce', checkDatabaseConnection, async (req, res) => {
+  try {
+    const { nonce } = req.params;
+    const record = await withRetry(() => 
+      KeyRecord.findOne({ keyId: nonce })
+    );
+    
+    res.json({
+      success: true,
+      used: !!record,
+      message: record ? '密钥已被使用' : '密钥未被使用'
+    });
+    
+  } catch (error) {
+    console.error('检查密钥状态错误:', error);
+    res.status(500).json({
+      success: false,
+      error: '服务器内部错误',
+      details: error.message
+    });
+  }
+});
+
+// 标记nonce为已使用
+router.post('/mark-used', checkDatabaseConnection, async (req, res) => {
+  try {
+    const { nonce } = req.body;
+    
+    if (!nonce) {
+      return res.status(400).json({
+        success: false,
+        error: '缺少nonce参数'
+      });
+    }
+    
+    // 检查是否已存在
+    const existingRecord = await withRetry(() => 
+      KeyRecord.findOne({ keyId: nonce })
+    );
+    
+    if (existingRecord) {
+      return res.json({
+        success: true,
+        message: '密钥已被标记为使用',
+        record: existingRecord
+      });
+    }
+    
+    // 创建新记录
+    const newRecord = new KeyRecord({
+      keyId: nonce,
+      deviceId: req.headers['user-agent'] || 'unknown',
+      deviceInfo: req.headers['user-agent'] || 'unknown',
+      userAgent: req.headers['user-agent'] || 'unknown',
+      ipAddress: req.ip || req.connection.remoteAddress || 'unknown',
+      usedAt: new Date(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24小时后过期
+      used: true,
+      verified: true
+    });
+    
+    const savedRecord = await withRetry(() => newRecord.save());
+    
+    res.json({
+      success: true,
+      message: '密钥已标记为使用',
+      record: savedRecord
+    });
+    
+  } catch (error) {
+    console.error('标记密钥使用错误:', error);
+    res.status(500).json({
+      success: false,
+      error: '服务器内部错误',
+      details: error.message
+    });
+  }
+});
+
 // 删除密钥记录
 router.delete('/:keyId', checkDatabaseConnection, async (req, res) => {
   try {

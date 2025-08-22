@@ -2677,7 +2677,15 @@ function base62Decode(str) {
 }
 
 // 简化的PBKDF2-HMAC-SHA256实现
-async function simplePBKDF2(password, salt, iterations, keyLength) {
+// 检查crypto.subtle API支持
+function isCryptoSubtleSupported() {
+    return typeof crypto !== 'undefined' && 
+           typeof crypto.subtle !== 'undefined' && 
+           typeof crypto.subtle.importKey === 'function';
+}
+
+// PBKDF2-HMAC-SHA256实现（Web Crypto API版本）
+async function pbkdf2WebCrypto(password, salt, iterations, keyLength) {
     const encoder = new TextEncoder();
     const passwordKey = await crypto.subtle.importKey(
         'raw',
@@ -2699,6 +2707,107 @@ async function simplePBKDF2(password, salt, iterations, keyLength) {
     );
     
     return new Uint8Array(derivedBits);
+}
+
+// PBKDF2-HMAC-SHA256降级实现（纯JavaScript）
+async function pbkdf2Fallback(password, salt, iterations, keyLength) {
+    // 简化的HMAC-SHA256实现
+    async function hmacSha256(key, data) {
+        const keyBytes = typeof key === 'string' ? new TextEncoder().encode(key) : key;
+        const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data;
+        
+        // 使用crypto.subtle.digest作为SHA256（如果可用）
+        if (typeof crypto !== 'undefined' && typeof crypto.subtle !== 'undefined' && typeof crypto.subtle.digest === 'function') {
+            const blockSize = 64; // SHA256 block size
+            let keyPadded = new Uint8Array(blockSize);
+            
+            if (keyBytes.length > blockSize) {
+                const hashedKey = await crypto.subtle.digest('SHA-256', keyBytes);
+                keyPadded.set(new Uint8Array(hashedKey));
+            } else {
+                keyPadded.set(keyBytes);
+            }
+            
+            const oKeyPad = new Uint8Array(blockSize);
+            const iKeyPad = new Uint8Array(blockSize);
+            
+            for (let i = 0; i < blockSize; i++) {
+                oKeyPad[i] = keyPadded[i] ^ 0x5c;
+                iKeyPad[i] = keyPadded[i] ^ 0x36;
+            }
+            
+            const innerData = new Uint8Array(iKeyPad.length + dataBytes.length);
+            innerData.set(iKeyPad);
+            innerData.set(dataBytes, iKeyPad.length);
+            
+            const innerHash = await crypto.subtle.digest('SHA-256', innerData);
+            
+            const outerData = new Uint8Array(oKeyPad.length + innerHash.byteLength);
+            outerData.set(oKeyPad);
+            outerData.set(new Uint8Array(innerHash), oKeyPad.length);
+            
+            const finalHash = await crypto.subtle.digest('SHA-256', outerData);
+            return new Uint8Array(finalHash);
+        } else {
+            // 如果连digest都不支持，使用更简单的哈希
+            throw new Error('浏览器不支持加密API，请使用现代浏览器');
+        }
+    }
+    
+    const passwordBytes = new TextEncoder().encode(password);
+    const saltBytes = new Uint8Array(salt);
+    
+    let result = new Uint8Array(keyLength);
+    let blockIndex = 1;
+    let resultOffset = 0;
+    
+    while (resultOffset < keyLength) {
+        // 创建块索引的字节表示
+        const blockIndexBytes = new Uint8Array(4);
+        blockIndexBytes[0] = (blockIndex >>> 24) & 0xFF;
+        blockIndexBytes[1] = (blockIndex >>> 16) & 0xFF;
+        blockIndexBytes[2] = (blockIndex >>> 8) & 0xFF;
+        blockIndexBytes[3] = blockIndex & 0xFF;
+        
+        // 第一次HMAC：salt + blockIndex
+        const saltWithIndex = new Uint8Array(saltBytes.length + 4);
+        saltWithIndex.set(saltBytes);
+        saltWithIndex.set(blockIndexBytes, saltBytes.length);
+        
+        let u = await hmacSha256(passwordBytes, saltWithIndex);
+        let result_block = new Uint8Array(u);
+        
+        // 迭代HMAC
+        for (let i = 1; i < iterations; i++) {
+            u = await hmacSha256(passwordBytes, u);
+            for (let j = 0; j < u.length; j++) {
+                result_block[j] ^= u[j];
+            }
+        }
+        
+        // 复制到结果中
+        const copyLength = Math.min(result_block.length, keyLength - resultOffset);
+        result.set(result_block.slice(0, copyLength), resultOffset);
+        resultOffset += copyLength;
+        blockIndex++;
+    }
+    
+    return result;
+}
+
+// 统一的PBKDF2接口（保持原函数名兼容性）
+async function simplePBKDF2(password, salt, iterations, keyLength) {
+    if (isCryptoSubtleSupported()) {
+        try {
+            return await pbkdf2WebCrypto(password, salt, iterations, keyLength);
+        } catch (error) {
+            console.warn('Web Crypto API失败，使用降级方案:', error);
+            return await pbkdf2Fallback(password, salt, iterations, keyLength);
+        }
+    } else {
+        console.warn('浏览器不支持Web Crypto API，使用降级方案');
+        return await pbkdf2Fallback(password, salt, iterations, keyLength);
+    }
 }
 
 // 验证新格式短密钥

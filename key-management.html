@@ -11,99 +11,11 @@
             box-sizing: border-box;
         }
 
-        /* 针对更小屏幕设备的额外优化 */
-        @media (max-width: 480px) {
-            body {
-                padding: 4px;
-            }
-
-            .container {
-                border-radius: 8px;
-            }
-
-            .main-content {
-                padding: 10px;
-            }
-
-            .verify-section {
-                padding: 12px;
-                margin-bottom: 15px;
-            }
-
-            .header {
-                padding: 15px 10px;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
-            }
-
-            .header p {
-                font-size: 0.95rem;
-            }
-
-            .verify-section h2 {
-                font-size: 1.2rem;
-                margin-bottom: 15px;
-            }
-
-            .input-group input {
-                padding: 10px 12px;
-                font-size: 0.9rem;
-            }
-
-            .btn {
-                padding: 10px 18px;
-                font-size: 0.9rem;
-            }
-
-            .controls {
-                gap: 12px;
-                margin-bottom: 15px;
-            }
-
-            .filter-tab {
-                padding: 6px 12px;
-                font-size: 0.85rem;
-            }
-
-            table {
-                font-size: 0.8rem;
-            }
-
-            th, td {
-                padding: 6px 4px;
-            }
-
-            .status-badge {
-                padding: 3px 6px;
-                font-size: 0.7rem;
-                min-width: 50px;
-            }
-
-            .btn-danger {
-                padding: 4px 8px;
-                font-size: 0.75rem;
-            }
-
-            .alert {
-                padding: 12px 15px;
-                font-size: 0.9rem;
-            }
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 8px;
-            }
         }
 
         .container {
@@ -137,26 +49,12 @@
             padding: 30px;
         }
 
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 15px;
-            }
-        }
-
         .verify-section {
             background: #f8fafc;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 30px;
             border: 2px solid #e2e8f0;
-        }
-
-        @media (max-width: 768px) {
-            .verify-section {
-                padding: 15px;
-                margin-bottom: 20px;
-                border-radius: 10px;
-            }
         }
 
         .verify-section h2 {
@@ -362,86 +260,208 @@
             color: #495057;
         }
 
+        /* 响应式设计 */
         @media (max-width: 768px) {
+            /* 切换到移动端视图 */
+            .desktop-view {
+                display: none;
+            }
+            
+            .mobile-view {
+                display: block;
+            }
+            
             .container {
+                padding: 8px;
                 margin: 0;
-                border-radius: 10px;
             }
-
-            .header {
-                padding: 20px 15px;
-            }
-
+            
             .header h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
+                margin-bottom: 15px;
             }
-
-            .verify-form {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .input-group {
-                min-width: 100%;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
+            
+            .verify-section {
                 margin-bottom: 20px;
             }
-
-            .search-box {
-                min-width: 100%;
+            
+            .verify-section h2 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
             }
-
+            
+            .verify-form {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .input-group input {
+                font-size: 16px; /* 防止iOS缩放 */
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 15px;
+                align-items: stretch;
+            }
+            
+            .search-box input {
+                font-size: 16px; /* 防止iOS缩放 */
+            }
+            
             .filter-tabs {
-                justify-content: center;
                 flex-wrap: wrap;
-                gap: 8px;
+                gap: 6px;
+                justify-content: center;
             }
-
+            
             .filter-tab {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-
-            .keys-table {
-                border-radius: 10px;
-                overflow-x: auto;
-            }
-
-            table {
-                font-size: 0.85rem;
-                min-width: 100%;
-            }
-
-            th, td {
-                padding: 8px 6px;
-                white-space: nowrap;
-            }
-
-            th:first-child, td:first-child {
-                position: sticky;
-                left: 0;
-                background: white;
-                z-index: 1;
-            }
-
-            th:first-child {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            }
-
-            .btn-danger {
-                padding: 6px 12px;
                 font-size: 0.8rem;
-            }
-
-            .status-badge {
-                padding: 4px 8px;
-                font-size: 0.75rem;
+                padding: 6px 10px;
                 min-width: 60px;
+                text-align: center;
+            }
+            
+            /* 移动端卡片样式 */
+            .keys-cards {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .key-card {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border: 1px solid #e2e8f0;
+            }
+            
+            .key-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 12px;
+            }
+            
+            .key-card-id {
+                font-weight: bold;
+                font-size: 0.9rem;
+                color: #1e293b;
+                word-break: break-all;
+                flex: 1;
+                margin-right: 10px;
+            }
+            
+            .key-card-status {
+                flex-shrink: 0;
+            }
+            
+            .key-card-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+            
+            .key-card-info-item {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .key-card-info-label {
+                font-size: 0.7rem;
+                color: #64748b;
+                margin-bottom: 2px;
+            }
+            
+            .key-card-info-value {
+                font-size: 0.8rem;
+                color: #1e293b;
+                font-weight: 500;
+            }
+            
+            .key-card-device {
+                margin-bottom: 12px;
+                padding: 8px;
+                background: #f8fafc;
+                border-radius: 6px;
+            }
+            
+            .key-card-device-label {
+                font-size: 0.7rem;
+                color: #64748b;
+                margin-bottom: 4px;
+            }
+            
+            .key-card-device-info {
+                font-size: 0.75rem;
+                color: #475569;
+            }
+            
+            .key-card-actions {
+                display: flex;
+                justify-content: flex-end;
+            }
+            
+            .loading-card {
+                background: white;
+                border-radius: 12px;
+                padding: 30px;
+                text-align: center;
+                color: #64748b;
+                font-size: 0.9rem;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            /* 提示信息优化 */
+            .alert {
+                font-size: 0.85rem;
+                padding: 10px 12px;
+                margin: 10px 0;
+            }
+        }
+        
+        /* 超小屏幕优化 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .verify-section h2 {
+                font-size: 1.2rem;
+            }
+            
+            .key-card {
+                padding: 12px;
+            }
+            
+            .key-card-id {
+                font-size: 0.85rem;
+            }
+            
+            .key-card-info {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            .key-card-device {
+                padding: 6px;
+            }
+            
+            .status-badge {
+                font-size: 0.55rem;
+                padding: 1px 4px;
+            }
+            
+            .btn {
+                font-size: 0.65rem;
+                padding: 3px 6px;
             }
         }
     </style>
@@ -481,8 +501,8 @@
                 </div>
             </div>
 
-            <!-- 密钥列表 -->
-            <div class="keys-table">
+            <!-- 密钥列表 - 桌面端表格 -->
+            <div class="keys-table desktop-view">
                 <table>
                     <thead>
                         <tr>
@@ -501,6 +521,11 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- 密钥列表 - 移动端卡片 -->
+            <div class="keys-cards mobile-view" id="keysCardsContainer">
+                <div class="loading-card">正在加载密钥数据...</div>
             </div>
         </div>
     </div>
@@ -696,8 +721,14 @@
             }
         }
 
-        // 渲染密钥表格
+        // 渲染密钥表格和卡片
         function renderKeysTable() {
+            renderDesktopTable();
+            renderMobileCards();
+        }
+        
+        // 渲染桌面端表格
+        function renderDesktopTable() {
             const tbody = document.getElementById('keysTableBody');
             
             if (filteredKeys.length === 0) {
@@ -729,6 +760,55 @@
                         <button class="btn btn-danger" onclick="deleteKey('${key.keyId}')">删除</button>
                     </td>
                 </tr>
+            `).join('');
+        }
+        
+        // 渲染移动端卡片
+        function renderMobileCards() {
+            const container = document.getElementById('keysCardsContainer');
+            
+            if (filteredKeys.length === 0) {
+                container.innerHTML = `
+                    <div class="loading-card">
+                        <h3>暂无密钥数据</h3>
+                        <p>请验证密钥或调整筛选条件</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredKeys.map(key => `
+                <div class="key-card">
+                    <div class="key-card-header">
+                        <div class="key-card-id">${key.keyId}</div>
+                        <div class="key-card-status">${getStatusBadge(key)}</div>
+                    </div>
+                    
+                    <div class="key-card-info">
+                        <div class="key-card-info-item">
+                            <div class="key-card-info-label">剩余时间</div>
+                            <div class="key-card-info-value">${formatRemainingTime(key.expiryTime, key.remainingTime)}</div>
+                        </div>
+                        <div class="key-card-info-item">
+                            <div class="key-card-info-label">过期时间</div>
+                            <div class="key-card-info-value">${new Date(key.expiryTime).toLocaleDateString('zh-CN')}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="key-card-device">
+                        <div class="key-card-device-label">设备信息</div>
+                        <div class="key-card-device-info">
+                            <div><strong>平台:</strong> ${key.deviceInfo?.platform || 'Unknown'}</div>
+                            <div style="margin-top: 4px; font-size: 0.7rem; color: #64748b;">
+                                ${(key.deviceInfo?.userAgent || '').substring(0, 60)}${(key.deviceInfo?.userAgent || '').length > 60 ? '...' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="key-card-actions">
+                        <button class="btn btn-danger" onclick="deleteKey('${key.keyId}')">删除</button>
+                    </div>
+                </div>
             `).join('');
         }
 

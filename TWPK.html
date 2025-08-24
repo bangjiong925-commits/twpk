@@ -3344,64 +3344,55 @@ try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyO
 // 页面加载时自动读取最新数据
 async function loadLatestData() {
     try {
-        // 首先尝试加载历史数据（3天的txt文件数据）
-        const historicalResponse = await fetch('/api/historical-data?days=3');
-        let historicalData = '';
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const currentTime = currentHour * 60 + currentMinute; // 转换为分钟
+        const cutoffTime = 7 * 60 + 5; // 7:05 = 425分钟
         
-        if (historicalResponse.ok) {
-            historicalData = await historicalResponse.text();
-            console.log('成功加载历史数据');
-        } else {
-            console.log('历史数据API不可用，尝试直接读取txt文件');
-            // 如果历史数据API不可用，尝试直接读取txt文件
-            const dates = [];
-            const today = new Date();
-            for (let i = 2; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(today.getDate() - i);
-                const dateStr = date.getFullYear().toString().slice(2) + 
-                               String(date.getMonth() + 1).padStart(2, '0') + 
-                               String(date.getDate()).padStart(2, '0');
-                dates.push(dateStr);
-            }
+        let allData = '';
+        
+        if (currentTime < cutoffTime) {
+            // 7:05之前，加载前一天的历史数据
+            console.log('当前时间在7:05之前，加载前一天的历史数据');
             
-            const historicalLines = [];
-            for (const date of dates) {
-                try {
-                    const response = await fetch(`/${date}.txt`);
-                    if (response.ok) {
-                        const data = await response.text();
-                        if (data.trim()) {
-                            historicalLines.push(data.trim());
-                        }
-                    }
-                } catch (error) {
-                    console.log(`无法加载 ${date}.txt:`, error);
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const dateStr = yesterday.toISOString().split('T')[0]; // YYYY-MM-DD格式
+            
+            const historicalResponse = await fetch(`/api/taiwan-pk10-data?date=${dateStr}&format=txt`);
+            
+            if (historicalResponse.ok) {
+                allData = await historicalResponse.text();
+                console.log(`成功加载前一天(${dateStr})的历史数据`);
+            } else {
+                console.log('前一天历史数据不可用，尝试加载实时数据');
+                // 如果前一天数据不可用，尝试加载实时数据作为备用
+                const currentResponse = await fetch('/api/database-data');
+                if (currentResponse.ok) {
+                    allData = await currentResponse.text();
+                    console.log('成功加载实时数据作为备用');
                 }
             }
-            historicalData = historicalLines.join('\n');
-        }
-        
-        // 然后尝试从数据库API读取今日实时数据
-        let currentData = '';
-        const response = await fetch('/api/taiwan-pk10-data');
-        if (response.ok) {
-            const apiData = await response.json();
-            if (apiData.success && apiData.data && apiData.data.length > 0) {
-                // 将API数据转换为文本格式
-                currentData = apiData.data.map(item => `${item.period} ${item.numbers.join(',')}`).join('\n');
-                console.log(`成功从数据库加载${apiData.data.length}期实时数据`);
+        } else {
+            // 7:05之后，加载实时数据
+            console.log('当前时间在7:05之后，加载实时数据');
+            
+            const currentResponse = await fetch('/api/database-data');
+            
+            if (currentResponse.ok) {
+                allData = await currentResponse.text();
+                console.log('成功加载实时数据');
+            } else {
+                console.log('实时数据不可用，尝试加载今天的历史数据');
+                // 如果实时数据不可用，尝试加载今天的历史数据作为备用
+                const today = now.toISOString().split('T')[0]; // YYYY-MM-DD格式
+                const historicalResponse = await fetch(`/api/taiwan-pk10-data?date=${today}&format=txt`);
+                if (historicalResponse.ok) {
+                    allData = await historicalResponse.text();
+                    console.log(`成功加载今天(${today})的历史数据作为备用`);
+                }
             }
-        }
-        
-        // 合并历史数据和实时数据
-        let allData = '';
-        if (historicalData && currentData) {
-            allData = historicalData + '\n' + currentData;
-        } else if (historicalData) {
-            allData = historicalData;
-        } else if (currentData) {
-            allData = currentData;
         }
         
         if (allData) {

@@ -356,6 +356,7 @@ const taiwanPk10Route = require('./routes/taiwan-pk10');
 const taiwanPk10DataRoute = require('./routes/taiwan-pk10-data');
 const taiwanPk10LiveRoute = require('./routes/taiwan-pk10-live');
 const updateTaiwanPk10Route = require('./routes/update-taiwan-pk10');
+const databaseDataRoute = require('./routes/database-data');
 
 // 健康检查端点（在其他路由之前）
 app.get('/health', (req, res) => {
@@ -408,6 +409,7 @@ app.use('/api/taiwan-pk10', taiwanPk10Route);
 app.use('/api/taiwan-pk10-data', taiwanPk10DataRoute);
 app.use('/api/taiwan-pk10-live', taiwanPk10LiveRoute);
 app.use('/api/update-taiwan-pk10', updateTaiwanPk10Route);
+app.use('/api/database-data', databaseDataRoute);
 
 // 静态文件路由
 app.get('/', (req, res) => {

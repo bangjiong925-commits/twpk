@@ -3345,14 +3345,16 @@ try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyO
 async function loadLatestData() {
     try {
         // 尝试从数据库API读取数据
-        const response = await fetch('/api/database-data?days=3&format=txt');
+        const response = await fetch('/api/taiwan-pk10-data');
         if (response.ok) {
-            const data = await response.text();
-            if (data.trim()) {
+            const apiData = await response.json();
+            if (apiData.success && apiData.data && apiData.data.length > 0) {
+                // 将API数据转换为文本格式
+                const textData = apiData.data.map(item => `${item.period}\t${item.numbers.join(' ')}`).join('\n');
                 const numbersInput = document.getElementById('numbersInput');
                 if (numbersInput) {
-                    numbersInput.value = data;
-                    console.log('成功从数据库加载最近3天的数据');
+                    numbersInput.value = textData;
+                    console.log(`成功从数据库加载${apiData.data.length}期数据`);
                         
                     // 自动触发计算分析（绕过密钥验证）
                     setTimeout(() => {

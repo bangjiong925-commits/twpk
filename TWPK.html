@@ -3344,168 +3344,135 @@ try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyO
 // 页面加载时自动读取最新数据
 async function loadLatestData() {
     try {
-        // 尝试从数据库API读取数据
+        // 首先尝试加载历史数据（3天的txt文件数据）
+        const historicalResponse = await fetch('/api/historical-data?days=3');
+        let historicalData = '';
+        
+        if (historicalResponse.ok) {
+            historicalData = await historicalResponse.text();
+            console.log('成功加载历史数据');
+        } else {
+            console.log('历史数据API不可用，尝试直接读取txt文件');
+            // 如果历史数据API不可用，尝试直接读取txt文件
+            const dates = [];
+            const today = new Date();
+            for (let i = 2; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                const dateStr = date.getFullYear().toString().slice(2) + 
+                               String(date.getMonth() + 1).padStart(2, '0') + 
+                               String(date.getDate()).padStart(2, '0');
+                dates.push(dateStr);
+            }
+            
+            const historicalLines = [];
+            for (const date of dates) {
+                try {
+                    const response = await fetch(`/${date}.txt`);
+                    if (response.ok) {
+                        const data = await response.text();
+                        if (data.trim()) {
+                            historicalLines.push(data.trim());
+                        }
+                    }
+                } catch (error) {
+                    console.log(`无法加载 ${date}.txt:`, error);
+                }
+            }
+            historicalData = historicalLines.join('\n');
+        }
+        
+        // 然后尝试从数据库API读取今日实时数据
+        let currentData = '';
         const response = await fetch('/api/taiwan-pk10-data');
         if (response.ok) {
             const apiData = await response.json();
             if (apiData.success && apiData.data && apiData.data.length > 0) {
                 // 将API数据转换为文本格式
-                const textData = apiData.data.map(item => `${item.period}\t${item.numbers.join(' ')}`).join('\n');
-                const numbersInput = document.getElementById('numbersInput');
-                if (numbersInput) {
-                    numbersInput.value = textData;
-                    console.log(`成功从数据库加载${apiData.data.length}期数据`);
+                currentData = apiData.data.map(item => `${item.period} ${item.numbers.join(',')}`).join('\n');
+                console.log(`成功从数据库加载${apiData.data.length}期实时数据`);
+            }
+        }
+        
+        // 合并历史数据和实时数据
+        let allData = '';
+        if (historicalData && currentData) {
+            allData = historicalData + '\n' + currentData;
+        } else if (historicalData) {
+            allData = historicalData;
+        } else if (currentData) {
+            allData = currentData;
+        }
+        
+        if (allData) {
+            const numbersInput = document.getElementById('numbersInput');
+            if (numbersInput) {
+                numbersInput.value = allData;
+                console.log('成功加载历史数据和实时数据');
+                    
+                // 自动触发计算分析（绕过密钥验证）
+                setTimeout(() => {
+                    try {
+                        // 直接处理数据，绕过密钥验证
+                        const t = document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);
+                        if (!t.length) {
+                            const output = document.getElementById('output');
+                            if (output) {
+                                output.innerHTML = `<div class="text-yellow-600">数据已加载但为空</div>`;
+                            }
+                            return;
+                        }
                         
-                    // 自动触发计算分析（绕过密钥验证）
-                    setTimeout(() => {
-                        try {
-                            // 直接处理数据，绕过密钥验证
-                            const t = document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);
-                            if (!t.length) {
-                                const output = document.getElementById('output');
-                                if (output) {
-                                    output.innerHTML = `<div class="text-yellow-600">数据已加载但为空</div>`;
-                                }
-                                return;
-                            }
-                            
-                            let e = 0;
-                            for (const n of t) {
-                                const t = E(n); // 使用现有的数据解析函数
-                                if (!t) continue;
-                                const {period: o, data: c} = t, i = c.join(",");
-                                if (!d.has(o) && !(r.length && r[r.length - 1].input === i)) {
-                                    r.push({period: o, data: c, input: i});
-                                    d.add(o);
-                                    e++;
-                                }
-                            }
-                            
-                            document.getElementById("numbersInput").value = "";
-                            document.getElementById("periodCount").textContent = r.length;
-                            r.sort((t, e) => {
-                                const n = t.period.toString();
-                                return e.period.toString().localeCompare(n);
-                            });
-                            
-                            // 调用表格渲染函数（绕过密钥验证）
-                            if (typeof L === 'function') {
-                                // 临时绕过密钥检查
-                                const originalAuthCheck = window._0xAuthCheck;
-                                window._0xAuthCheck = () => true;
-                                L();
-                                window._0xAuthCheck = originalAuthCheck;
-                            }
-                            
-                            const output = document.getElementById('output');
-                            if (output) {
-                                output.innerHTML = `<div class="text-green-600">已自动加载并处理数据库数据，共 ${e} 条有效记录，总计 ${r.length} 期数据</div>`;
-                            }
-                        } catch (error) {
-                            console.error('自动处理数据失败:', error);
-                            const output = document.getElementById('output');
-                            if (output) {
-                                output.innerHTML = `<div class="text-red-600">自动处理数据时出错: ${error.message}</div>`;
+                        let e = 0;
+                        for (const n of t) {
+                            const t = E(n); // 使用现有的数据解析函数
+                            if (!t) continue;
+                            const {period: o, data: c} = t, i = c.join(",");
+                            if (!d.has(o) && !(r.length && r[r.length - 1].input === i)) {
+                                r.push({period: o, data: c, input: i});
+                                d.add(o);
+                                e++;
                             }
                         }
-                    }, 100);
-                }
-                return;
-            }
-        }
-        
-        // 如果数据库API失败，尝试读取本地文件
-        const dates = [];
-        const today = new Date();
-        for (let i = 0; i < 3; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() - i);
-            const dateStr = date.getFullYear().toString() + 
-                           String(date.getMonth() + 1).padStart(2, '0') + 
-                           String(date.getDate()).padStart(2, '0');
-            dates.push(dateStr);
-        }
-        
-        for (const date of dates) {
-            try {
-                const response = await fetch(`/${date}.txt`);
-                if (response.ok) {
-                    const data = await response.text();
-                    if (data.trim()) {
-                        const numbersInput = document.getElementById('numbersInput');
-                        if (numbersInput) {
-                            numbersInput.value = data;
-                            console.log(`成功加载 ${date}.txt 文件`);
-                            
-                            // 自动触发计算分析（绕过密钥验证）
-                            setTimeout(() => {
-                                try {
-                                    // 直接处理数据，绕过密钥验证
-                                    const t = document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);
-                                    if (!t.length) {
-                                        const output = document.getElementById('output');
-                                        if (output) {
-                                            output.innerHTML = `<div class="text-yellow-600">数据已加载但为空</div>`;
-                                        }
-                                        return;
-                                    }
-                                    
-                                    let e = 0;
-                                    for (const n of t) {
-                                        const t = E(n); // 使用现有的数据解析函数
-                                        if (!t) continue;
-                                        const {period: o, data: c} = t, i = c.join(",");
-                                        if (!d.has(o) && !(r.length && r[r.length - 1].input === i)) {
-                                            r.push({period: o, data: c, input: i});
-                                            d.add(o);
-                                            e++;
-                                        }
-                                    }
-                                    
-                                    document.getElementById("numbersInput").value = "";
-                                    document.getElementById("periodCount").textContent = r.length;
-                                    r.sort((t, e) => {
-                                        const n = t.period.toString();
-                                        return e.period.toString().localeCompare(n);
-                                    });
-                                    
-                                    // 调用表格渲染函数（绕过密钥验证）
-                                    if (typeof L === 'function') {
-                                        // 临时绕过密钥检查
-                                        const originalAuthCheck = window._0xAuthCheck;
-                                        window._0xAuthCheck = () => true;
-                                        L();
-                                        window._0xAuthCheck = originalAuthCheck;
-                                    }
-                                    
-                                    const output = document.getElementById('output');
-                                    if (output) {
-                                        output.innerHTML = `<div class="text-green-600">已自动加载并处理 ${date} 的数据，共 ${e} 条有效记录，总计 ${r.length} 期数据</div>`;
-                                    }
-                                } catch (error) {
-                                    console.error('自动处理数据失败:', error);
-                                    const output = document.getElementById('output');
-                                    if (output) {
-                                        output.innerHTML = `<div class="text-red-600">自动处理数据时出错: ${error.message}</div>`;
-                                    }
-                                }
-                            }, 100);
+                        
+                        document.getElementById("numbersInput").value = "";
+                        document.getElementById("periodCount").textContent = r.length;
+                        r.sort((t, e) => {
+                            const n = t.period.toString();
+                            return e.period.toString().localeCompare(n);
+                        });
+                        
+                        // 调用表格渲染函数（绕过密钥验证）
+                        if (typeof L === 'function') {
+                            // 临时绕过密钥检查
+                            const originalAuthCheck = window._0xAuthCheck;
+                            window._0xAuthCheck = () => true;
+                            L();
+                            window._0xAuthCheck = originalAuthCheck;
                         }
-                        return;
+                        
+                        const output = document.getElementById('output');
+                        if (output) {
+                            output.innerHTML = `<div class="text-green-600">已自动加载历史数据和实时数据，共 ${e} 条有效记录，总计 ${r.length} 期数据</div>`;
+                        }
+                    } catch (error) {
+                        console.error('自动处理数据失败:', error);
+                        const output = document.getElementById('output');
+                        if (output) {
+                            output.innerHTML = `<div class="text-red-600">自动处理数据时出错: ${error.message}</div>`;
+                        }
                     }
-                }
-            } catch (e) {
-                console.log(`读取 ${date}.txt 失败:`, e);
-                continue;
+                }, 100);
             }
+            return;
         }
         
-        // 如果没有找到任何数据文件
+        // 如果没有找到任何数据
         const output = document.getElementById('output');
         if (output) {
-            output.innerHTML = '<div class="text-yellow-600">未找到可用的数据文件，请手动上传数据</div>';
+            output.innerHTML = '<div class="text-yellow-600">未找到可用的数据，请检查数据库连接或手动上传数据</div>';
         }
-        console.log('未找到任何可用的数据文件');
+        console.log('未找到任何可用的数据');
         
     } catch (error) {
         console.error('自动加载数据失败:', error);

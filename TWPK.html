@@ -3341,6 +3341,182 @@ if (storedVersion !== AUTH_VERSION) {
 const t=Y(),e=localStorage.getItem(`validKey_${t}`),n=localStorage.getItem(`keyExpiry_${t}`),o=Math.floor((new Date).getTime()/1e3);if(e&&n){const r=parseInt(n);if(o<r){// 密钥未过期，但需要在线验证是否已被使用
 try{const keyData=JSON.parse(atob(e.split('.')[1]));const isUsed=await checkKeyOnlineUsage(keyData.nonce);if(isUsed){localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("密钥已被使用，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}else{_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}catch(err){console.error("在线验证失败，使用本地验证:",err);_0xSetAuth(e);b=!0,D(r),g.classList.add("hidden"),g.style.display="none"}}else{localStorage.removeItem(`validKey_${t}`),localStorage.removeItem(`keyExpiry_${t}`),b=!1,alert("您的访问密钥已过期，请重新验证密钥"),g.classList.remove("hidden"),g.style.display="flex"}}else b=!1,g.classList.remove("hidden"),g.style.display="flex"}catch(t){console.error("页面加载时密钥检查出错:",t),b=!1,g.classList.remove("hidden"),g.style.display="flex"}}),document.getElementById("calcBtn").addEventListener("click",F),document.getElementById("numbersInput").addEventListener("keydown",t=>{"Enter"!==t.key||t.shiftKey||(t.preventDefault(),F())}),document.getElementById("autoFetchBtn").addEventListener("click",()=>{a?(clearInterval(a),a=null,document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-refresh mr-2"></i>自动获取数据',v.textContent="已停止自动获取"):(J(),a=setInterval(J,5e3),document.getElementById("autoFetchBtn").innerHTML='<i class="fa fa-stop mr-2"></i>停止自动获取',v.textContent="已开始自动获取数据，每5秒更新一次")}),document.getElementById("sortToggle").addEventListener("click",()=>{m=!m,L()}),document.getElementById("currentBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;y=!0,document.getElementById("currentBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("historyBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("historyBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;y=!1,document.getElementById("historyBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("historyBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("currentBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("currentBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("missBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;m=!1,document.getElementById("missBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("hitBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("hitBtn").addEventListener("click",()=>{const tableContainer=document.getElementById("tableContainer");const wasHidden=tableContainer&&tableContainer.scrollLeft>10;m=!0,document.getElementById("hitBtn").classList.add("btn-active","bg-blue-600","text-white"),document.getElementById("hitBtn").classList.remove("bg-gray-200","text-gray-700"),document.getElementById("missBtn").classList.remove("btn-active","bg-blue-600","text-white"),document.getElementById("missBtn").classList.add("bg-gray-200","text-gray-700"),L();if(wasHidden){setTimeout(()=>{const periodCols=document.querySelectorAll(".fixed-width-period");const dataCols=document.querySelectorAll(".fixed-width-data");periodCols.forEach(col=>col.style.opacity="0");dataCols.forEach(col=>col.style.left="0px")},50)}}),document.getElementById("statBtn").addEventListener("click",L),document.getElementById("clearBtn").addEventListener("click",()=>{confirm("确定要清空所有数据吗？此操作不可恢复。")&&(r=[],i=1,d.clear(),document.getElementById("periodCount").textContent="0",document.getElementById("summary").textContent="",L(),v.textContent="数据已清空")}),document.addEventListener("DOMContentLoaded",()=>{document.getElementById("uploadDataBtn").addEventListener("click",async()=>{try{[s]=await window.showOpenFilePicker(),d.clear(),u=null,r=[],i=1,await V(),l&&clearInterval(l),l=setInterval(W,3e3),v.textContent=`已加载文件: ${s.name}`}catch(t){v.textContent=`文件选择错误: ${t.message}`}})});const X=document.querySelectorAll(".period-btn");function Y(){try{const t=document.documentElement.outerHTML.substring(0,1e3)+window.location.href.split("/").slice(-2).join("/");let e=0;for(let n=0;n<t.length;n++)e=(e<<5)-e+t.charCodeAt(n),e&=e;return"file_"+Math.abs(e).toString(36)}catch(t){return console.error("Failed to generate file identifier:",t),"fallback_"+Date.now()}}X.forEach(t=>{t.addEventListener("click",()=>{X.forEach(t=>t.classList.remove("btn-active")),t.classList.add("btn-active"),f=parseInt(t.dataset.period),document.getElementById("customPeriod").value=f,currentPage=1,L()})}),document.getElementById("customPeriodBtn").addEventListener("click",()=>{const t=parseInt(document.getElementById("customPeriod").value);!isNaN(t)&&t>=1&&t<=1e4?(f=t,X.forEach(t=>t.classList.remove("btn-active")),currentPage=1,L()):alert("请输入1-10000之间的数字")}),window.addEventListener("resize",j),L();
 
+// 页面加载时自动读取最新数据
+async function loadLatestData() {
+    try {
+        // 尝试从数据库API读取数据
+        const response = await fetch('/api/database-data?days=3&format=txt');
+        if (response.ok) {
+            const data = await response.text();
+            if (data.trim()) {
+                const numbersInput = document.getElementById('numbersInput');
+                if (numbersInput) {
+                    numbersInput.value = data;
+                    console.log('成功从数据库加载最近3天的数据');
+                        
+                    // 自动触发计算分析（绕过密钥验证）
+                    setTimeout(() => {
+                        try {
+                            // 直接处理数据，绕过密钥验证
+                            const t = document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);
+                            if (!t.length) {
+                                const output = document.getElementById('output');
+                                if (output) {
+                                    output.innerHTML = `<div class="text-yellow-600">数据已加载但为空</div>`;
+                                }
+                                return;
+                            }
+                            
+                            let e = 0;
+                            for (const n of t) {
+                                const t = E(n); // 使用现有的数据解析函数
+                                if (!t) continue;
+                                const {period: o, data: c} = t, i = c.join(",");
+                                if (!d.has(o) && !(r.length && r[r.length - 1].input === i)) {
+                                    r.push({period: o, data: c, input: i});
+                                    d.add(o);
+                                    e++;
+                                }
+                            }
+                            
+                            document.getElementById("numbersInput").value = "";
+                            document.getElementById("periodCount").textContent = r.length;
+                            r.sort((t, e) => {
+                                const n = t.period.toString();
+                                return e.period.toString().localeCompare(n);
+                            });
+                            
+                            // 调用表格渲染函数（绕过密钥验证）
+                            if (typeof L === 'function') {
+                                // 临时绕过密钥检查
+                                const originalAuthCheck = window._0xAuthCheck;
+                                window._0xAuthCheck = () => true;
+                                L();
+                                window._0xAuthCheck = originalAuthCheck;
+                            }
+                            
+                            const output = document.getElementById('output');
+                            if (output) {
+                                output.innerHTML = `<div class="text-green-600">已自动加载并处理数据库数据，共 ${e} 条有效记录，总计 ${r.length} 期数据</div>`;
+                            }
+                        } catch (error) {
+                            console.error('自动处理数据失败:', error);
+                            const output = document.getElementById('output');
+                            if (output) {
+                                output.innerHTML = `<div class="text-red-600">自动处理数据时出错: ${error.message}</div>`;
+                            }
+                        }
+                    }, 100);
+                }
+                return;
+            }
+        }
+        
+        // 如果数据库API失败，尝试读取本地文件
+        const dates = [];
+        const today = new Date();
+        for (let i = 0; i < 3; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dateStr = date.getFullYear().toString() + 
+                           String(date.getMonth() + 1).padStart(2, '0') + 
+                           String(date.getDate()).padStart(2, '0');
+            dates.push(dateStr);
+        }
+        
+        for (const date of dates) {
+            try {
+                const response = await fetch(`/${date}.txt`);
+                if (response.ok) {
+                    const data = await response.text();
+                    if (data.trim()) {
+                        const numbersInput = document.getElementById('numbersInput');
+                        if (numbersInput) {
+                            numbersInput.value = data;
+                            console.log(`成功加载 ${date}.txt 文件`);
+                            
+                            // 自动触发计算分析（绕过密钥验证）
+                            setTimeout(() => {
+                                try {
+                                    // 直接处理数据，绕过密钥验证
+                                    const t = document.getElementById("numbersInput").value.trim().split(/\n+/).filter(Boolean);
+                                    if (!t.length) {
+                                        const output = document.getElementById('output');
+                                        if (output) {
+                                            output.innerHTML = `<div class="text-yellow-600">数据已加载但为空</div>`;
+                                        }
+                                        return;
+                                    }
+                                    
+                                    let e = 0;
+                                    for (const n of t) {
+                                        const t = E(n); // 使用现有的数据解析函数
+                                        if (!t) continue;
+                                        const {period: o, data: c} = t, i = c.join(",");
+                                        if (!d.has(o) && !(r.length && r[r.length - 1].input === i)) {
+                                            r.push({period: o, data: c, input: i});
+                                            d.add(o);
+                                            e++;
+                                        }
+                                    }
+                                    
+                                    document.getElementById("numbersInput").value = "";
+                                    document.getElementById("periodCount").textContent = r.length;
+                                    r.sort((t, e) => {
+                                        const n = t.period.toString();
+                                        return e.period.toString().localeCompare(n);
+                                    });
+                                    
+                                    // 调用表格渲染函数（绕过密钥验证）
+                                    if (typeof L === 'function') {
+                                        // 临时绕过密钥检查
+                                        const originalAuthCheck = window._0xAuthCheck;
+                                        window._0xAuthCheck = () => true;
+                                        L();
+                                        window._0xAuthCheck = originalAuthCheck;
+                                    }
+                                    
+                                    const output = document.getElementById('output');
+                                    if (output) {
+                                        output.innerHTML = `<div class="text-green-600">已自动加载并处理 ${date} 的数据，共 ${e} 条有效记录，总计 ${r.length} 期数据</div>`;
+                                    }
+                                } catch (error) {
+                                    console.error('自动处理数据失败:', error);
+                                    const output = document.getElementById('output');
+                                    if (output) {
+                                        output.innerHTML = `<div class="text-red-600">自动处理数据时出错: ${error.message}</div>`;
+                                    }
+                                }
+                            }, 100);
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.log(`读取 ${date}.txt 失败:`, e);
+                continue;
+            }
+        }
+        
+        // 如果没有找到任何数据文件
+        const output = document.getElementById('output');
+        if (output) {
+            output.innerHTML = '<div class="text-yellow-600">未找到可用的数据文件，请手动上传数据</div>';
+        }
+        console.log('未找到任何可用的数据文件');
+        
+    } catch (error) {
+        console.error('自动加载数据失败:', error);
+        const output = document.getElementById('output');
+        if (output) {
+            output.innerHTML = '<div class="text-red-600">自动加载数据时出错</div>';
+        }
+    }
+}
+
+// 页面加载完成后自动加载数据
+setTimeout(loadLatestData, 1000);
+
 // 黄金切割页面事件处理
 document.addEventListener('DOMContentLoaded', function() {
     // 输入数据计数

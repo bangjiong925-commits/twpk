@@ -1,7 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+
+// ES模块中获取__dirname的替代方案
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
@@ -418,15 +424,15 @@ app.use('/api/auto-fetch-save', autoFetchSaveRoute);
 
 // 静态文件路由
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/TWPK.html', (req, res) => {
-  res.sendFile(__dirname + '/TWPK.html');
+  res.sendFile(path.join(__dirname, 'TWPK.html'));
 });
 
 app.get('/key-management.html', (req, res) => {
-  res.sendFile(__dirname + '/key-management.html');
+  res.sendFile(path.join(__dirname, 'key-management.html'));
 });
 
 // 数据库连接检查中间件
@@ -652,7 +658,7 @@ app.use('/api/*', (req, res) => {
 // 对于非API路由的404，返回主页（SPA路由支持）
 app.use('*', (req, res) => {
   // 对于所有未匹配的路由，返回主页让前端路由处理
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // 启动服务器

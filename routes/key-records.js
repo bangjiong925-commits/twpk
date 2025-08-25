@@ -1,6 +1,6 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const KeyRecord = require('../models/KeyRecord');
+import express from 'express';
+import mongoose from 'mongoose';
+import KeyRecord from '../models/KeyRecord.js';
 const router = express.Router();
 
 // 数据库连接检查中间件
@@ -307,4 +307,4 @@ router.delete('/:keyId', checkDatabaseConnection, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

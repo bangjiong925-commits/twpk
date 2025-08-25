@@ -1,0 +1,2 @@
+2025-08-25 18:17:57 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:17:57 | ERROR    | api_client:test_connection:125 - API连接测试失败

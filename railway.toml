@@ -1,24 +1,63 @@
+# Railway多服务配置 - 台湾PK10数据抓取系统
+# 支持Node.js API服务器和Python数据抓取器
+
 [build]
 builder = "NIXPACKS"
 
 [deploy]
+# 主服务启动命令 - Node.js API服务器
 startCommand = "npm start"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
+# Python服务配置（后台数据抓取）
+[environments.production.services.python-scraper]
+startCommand = "python3 auto_scheduler.py"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
 [environments.production.variables]
+# Node.js环境配置
 NODE_ENV = "production"
 PORT = "$PORT"
+
+# Python环境配置
+PYTHON_VERSION = "3.11"
+PIP_NO_CACHE_DIR = "1"
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"
+
 # Puppeteer和Chrome优化配置
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
 PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium-browser"
 CHROME_BIN = "/usr/bin/chromium-browser"
+CHROME_NO_SANDBOX = "true"
+
+# Selenium和WebDriver配置
+WEBDRIVER_CHROME_DRIVER = "/usr/bin/chromedriver"
+CHROME_DRIVER_PATH = "/usr/bin/chromedriver"
+DISPLAY = ":99"
+
 # Railway环境标识
 RAILWAY_ENVIRONMENT = "true"
-# 内存优化
+RAILWAY_PROJECT_NAME = "twpk-data-system"
+
+# 内存和性能优化
 NODE_OPTIONS = "--max-old-space-size=4096"
-# 禁用Chrome沙盒（容器环境必需）
-CHROME_NO_SANDBOX = "true"
+MAX_OLD_SPACE_SIZE = "4096"
+
+# 时区配置
+TZ = "Asia/Taipei"
+
+# 数据抓取配置
+SCRAPE_SCHEDULE_START = "07:05"
+SCRAPE_SCHEDULE_END = "24:00"
+SCRAPE_INTERVAL_SECONDS = "75"
+MAX_RECORDS_PER_FILE = "1000"
+
+# 日志配置
+LOG_LEVEL = "INFO"
+LOG_FILE_PATH = "/tmp/auto_scheduler.log"
 
 [environments.production.plugins.mongodb]
 source = "mongodb"

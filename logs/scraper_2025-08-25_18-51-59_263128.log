@@ -1,0 +1,20 @@
+2025-08-25 18:51:59.273 | INFO     | __main__:run_scraper:565 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:52:04.407 | INFO     | __main__:setup_driver:90 - Chrome浏览器驱动设置完成
+2025-08-25 18:52:04.408 | INFO     | __main__:navigate_to_page:99 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 18:52:10.298 | INFO     | __main__:navigate_to_page:106 - 页面加载完成
+2025-08-25 18:52:10.473 | INFO     | __main__:click_pk10_option:152 - 找到台湾PK10选项: 台湾PK10
+2025-08-25 18:52:12.617 | INFO     | __main__:click_pk10_option:156 - 成功点击台湾PK10选项
+2025-08-25 18:52:12.642 | INFO     | __main__:navigate_to_page:110 - 成功切换到台湾PK10数据
+2025-08-25 18:52:12.863 | WARNING  | __main__:select_date:193 - 未找到日期选择器，使用默认日期
+2025-08-25 18:52:12.864 | INFO     | __main__:scrape_all_pages:490 - 正在抓取第 1 页数据
+2025-08-25 18:52:12.881 | INFO     | __main__:extract_lottery_data:207 - 第1页找到 3 个表格
+2025-08-25 18:52:12.914 | INFO     | __main__:extract_lottery_data:213 - 第1页选择表格 2，包含 50 行
+2025-08-25 18:52:12.933 | INFO     | __main__:extract_lottery_data:223 - 第1页找到 50 行数据
+2025-08-25 18:52:12.963 | ERROR    | __main__:extract_lottery_data:283 - 第1页提取数据失败: name 're' is not defined
+2025-08-25 18:52:12.964 | WARNING  | __main__:scrape_all_pages:498 - 第 1 页没有获取到数据
+2025-08-25 18:52:13.174 | INFO     | __main__:navigate_to_next_page:476 - 没有找到下一页按钮
+2025-08-25 18:52:13.175 | INFO     | __main__:scrape_all_pages:507 - 第 1 页后没有更多页面，抓取完成
+2025-08-25 18:52:13.176 | INFO     | __main__:scrape_all_pages:513 - 总共抓取了 1 页，获得 0 条数据
+2025-08-25 18:52:13.176 | INFO     | __main__:run_scraper:589 - 数据验证完成，有效数据: 0/0 条
+2025-08-25 18:52:13.177 | INFO     | __main__:run_scraper:613 - 抓取完成，共获得 0 条有效数据
+2025-08-25 18:52:13.402 | INFO     | __main__:cleanup:628 - 浏览器驱动已关闭

@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // 健康检查路由
@@ -23,4 +23,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

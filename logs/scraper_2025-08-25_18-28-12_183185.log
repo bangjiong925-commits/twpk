@@ -1,0 +1,51 @@
+2025-08-25 18:28:12.196 | INFO     | database_manager:_get_connection_string:46 - 使用数据库连接: mongodb://localhost:27017/taiwan_pk10_test...
+2025-08-25 18:28:12.212 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 18:28:12.323 | INFO     | __main__:initialize_components:116 - 调度器初始化完成
+2025-08-25 18:28:12.324 | INFO     | error_handler:__exit__:464 - 操作完成: 初始化组件，耗时: 3.36秒
+2025-08-25 18:28:12.326 | INFO     | __main__:run_manual_fetch_today:221 - 开始手动抓取今日数据
+2025-08-25 18:28:12.327 | INFO     | error_handler:__enter__:457 - 开始执行操作: 单次抓取 - 2025-08-25
+2025-08-25 18:28:12.327 | INFO     | __main__:run_single_scraping:137 - 开始抓取数据: 2025-08-25
+2025-08-25 18:28:12.329 | INFO     | python_scraper:run_scraper:454 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:28:15.979 | INFO     | python_scraper:setup_driver:78 - Chrome浏览器驱动设置完成
+2025-08-25 18:28:15.981 | INFO     | python_scraper:navigate_to_page:87 - 正在访问: https://www.twpk10.com
+2025-08-25 18:28:22.271 | ERROR    | python_scraper:navigate_to_page:101 - 导航到页面失败: Message: unknown error: net::ERR_CONNECTION_CLOSED
+  (Session info: chrome=139.0.7258.139)
+Stacktrace:
+0   chromedriver                        0x000000010147ef58 chromedriver + 5934936
+1   chromedriver                        0x00000001014764ea chromedriver + 5899498
+2   chromedriver                        0x0000000100f3ee00 chromedriver + 429568
+3   chromedriver                        0x0000000100f35db6 chromedriver + 392630
+4   chromedriver                        0x0000000100f27078 chromedriver + 331896
+5   chromedriver                        0x0000000100f28d90 chromedriver + 339344
+6   chromedriver                        0x0000000100f273fb chromedriver + 332795
+7   chromedriver                        0x0000000100f26e10 chromedriver + 331280
+8   chromedriver                        0x0000000100f26b1b chromedriver + 330523
+9   chromedriver                        0x0000000100f249d4 chromedriver + 322004
+10  chromedriver                        0x0000000100f2519a chromedriver + 323994
+11  chromedriver                        0x0000000100f42379 chromedriver + 443257
+12  chromedriver                        0x0000000100fdee25 chromedriver + 1084965
+13  chromedriver                        0x0000000100fb7062 chromedriver + 921698
+14  chromedriver                        0x0000000100fde1e8 chromedriver + 1081832
+15  chromedriver                        0x0000000100fb6e33 chromedriver + 921139
+16  chromedriver                        0x0000000100f8339b chromedriver + 709531
+17  chromedriver                        0x0000000100f84081 chromedriver + 712833
+18  chromedriver                        0x000000010143c650 chromedriver + 5662288
+19  chromedriver                        0x0000000101440514 chromedriver + 5678356
+20  chromedriver                        0x0000000101417302 chromedriver + 5509890
+21  chromedriver                        0x0000000101440fbf chromedriver + 5681087
+22  chromedriver                        0x00000001014062a4 chromedriver + 5440164
+23  chromedriver                        0x00000001014637d8 chromedriver + 5822424
+24  chromedriver                        0x00000001014639a0 chromedriver + 5822880
+25  chromedriver                        0x00000001014760c1 chromedriver + 5898433
+26  libsystem_pthread.dylib             0x00007ff81c8761d3 _pthread_start + 125
+27  libsystem_pthread.dylib             0x00007ff81c871bd3 thread_start + 15
+
+2025-08-25 18:28:22.366 | INFO     | python_scraper:cleanup:490 - 浏览器驱动已关闭
+2025-08-25 18:28:22.367 | WARNING  | __main__:run_single_scraping:183 - 未抓取到数据
+2025-08-25 18:28:22.368 | INFO     | error_handler:__exit__:464 - 操作完成: 单次抓取 - 2025-08-25，耗时: 10.04秒
+2025-08-25 18:28:22.369 | INFO     | __main__:stop:309 - 正在停止应用...
+2025-08-25 18:28:22.370 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:28:22.382 | INFO     | python_scraper:cleanup:490 - 浏览器驱动已关闭
+2025-08-25 18:28:22.387 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 18:28:22.389 | INFO     | error_handler:save_error_report:302 - 错误报告已保存: logs/error_report_20250825_182822.json
+2025-08-25 18:28:22.390 | INFO     | __main__:stop:329 - 应用已停止

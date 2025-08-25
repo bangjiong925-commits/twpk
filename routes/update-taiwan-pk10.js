@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
 // 更新台湾PK10数据API
@@ -48,4 +48,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

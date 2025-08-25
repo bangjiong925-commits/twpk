@@ -1,0 +1,26 @@
+2025-08-25 18:52:32.290 | INFO     | __main__:run_scraper:566 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:52:38.041 | INFO     | __main__:setup_driver:91 - Chrome浏览器驱动设置完成
+2025-08-25 18:52:38.042 | INFO     | __main__:navigate_to_page:100 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 18:52:44.086 | INFO     | __main__:navigate_to_page:107 - 页面加载完成
+2025-08-25 18:52:44.180 | INFO     | __main__:click_pk10_option:153 - 找到台湾PK10选项: 台湾PK10
+2025-08-25 18:52:46.292 | INFO     | __main__:click_pk10_option:157 - 成功点击台湾PK10选项
+2025-08-25 18:52:46.293 | INFO     | __main__:navigate_to_page:111 - 成功切换到台湾PK10数据
+2025-08-25 18:52:46.383 | WARNING  | __main__:select_date:194 - 未找到日期选择器，使用默认日期
+2025-08-25 18:52:46.384 | INFO     | __main__:scrape_all_pages:491 - 正在抓取第 1 页数据
+2025-08-25 18:52:46.418 | INFO     | __main__:extract_lottery_data:208 - 第1页找到 3 个表格
+2025-08-25 18:52:46.472 | INFO     | __main__:extract_lottery_data:214 - 第1页选择表格 2，包含 50 行
+2025-08-25 18:52:46.509 | INFO     | __main__:extract_lottery_data:224 - 第1页找到 50 行数据
+2025-08-25 18:52:46.656 | INFO     | __main__:extract_lottery_data:238 - 第1页第一行包含有效数据，从第一行开始读取
+2025-08-25 18:52:49.688 | INFO     | __main__:extract_lottery_data:281 - 第1页成功提取 50 条数据
+2025-08-25 18:52:49.688 | INFO     | __main__:scrape_all_pages:497 - 第 1 页获取到 50 条数据
+2025-08-25 18:52:49.792 | INFO     | __main__:navigate_to_next_page:477 - 没有找到下一页按钮
+2025-08-25 18:52:49.793 | INFO     | __main__:scrape_all_pages:508 - 第 1 页后没有更多页面，抓取完成
+2025-08-25 18:52:49.793 | INFO     | __main__:scrape_all_pages:514 - 总共抓取了 1 页，获得 50 条数据
+2025-08-25 18:52:49.794 | INFO     | __main__:run_scraper:590 - 数据验证完成，有效数据: 50/50 条
+2025-08-25 18:52:49.804 | INFO     | __main__:save_to_json:554 - 数据已保存到: data/taiwan_pk10_data_20250825_185249.json
+2025-08-25 18:52:49.810 | INFO     | __main__:save_to_json:555 - 最新数据已保存到: data/latest_taiwan_pk10_data.json
+2025-08-25 18:52:50.310 | INFO     | __main__:connect_mongodb:644 - 成功连接到MongoDB数据库: taiwan_pk10
+2025-08-25 18:52:50.326 | ERROR    | __main__:save_to_mongodb:713 - 保存数据到MongoDB失败: cannot encode object: datetime.date(2025, 8, 25), of type: <class 'datetime.date'>
+2025-08-25 18:52:50.574 | ERROR    | __main__:run_scraper:610 - 保存到MongoDB失败
+2025-08-25 18:52:50.575 | INFO     | __main__:run_scraper:614 - 抓取完成，共获得 50 条有效数据
+2025-08-25 18:52:50.769 | INFO     | __main__:cleanup:629 - 浏览器驱动已关闭

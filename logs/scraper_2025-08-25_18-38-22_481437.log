@@ -1,0 +1,21 @@
+2025-08-25 18:38:22.493 | INFO     | __main__:run_scraper:534 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:38:25.878 | INFO     | __main__:setup_driver:78 - Chrome浏览器驱动设置完成
+2025-08-25 18:38:25.879 | INFO     | __main__:navigate_to_page:87 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 18:38:31.566 | INFO     | __main__:navigate_to_page:94 - 页面加载完成
+2025-08-25 18:38:31.619 | INFO     | __main__:click_pk10_option:140 - 找到台湾PK10选项: 台湾PK10
+2025-08-25 18:38:33.692 | INFO     | __main__:click_pk10_option:144 - 成功点击台湾PK10选项
+2025-08-25 18:38:33.693 | INFO     | __main__:navigate_to_page:98 - 成功切换到台湾PK10数据
+2025-08-25 18:38:33.741 | WARNING  | __main__:select_date:181 - 未找到日期选择器，使用默认日期
+2025-08-25 18:38:33.741 | INFO     | __main__:scrape_all_pages:460 - 正在抓取第 1 页数据
+2025-08-25 18:38:33.751 | INFO     | __main__:extract_lottery_data:195 - 找到 3 个表格
+2025-08-25 18:38:33.774 | INFO     | __main__:extract_lottery_data:201 - 选择表格 2，包含 50 行
+2025-08-25 18:38:33.794 | INFO     | __main__:extract_lottery_data:211 - 找到 50 行数据
+2025-08-25 18:38:36.238 | INFO     | __main__:extract_lottery_data:250 - 成功提取 49 条数据
+2025-08-25 18:38:36.239 | INFO     | __main__:scrape_all_pages:466 - 第 1 页获取到 49 条数据
+2025-08-25 18:38:38.410 | INFO     | __main__:navigate_to_next_page:446 - 没有找到下一页按钮
+2025-08-25 18:38:38.410 | INFO     | __main__:scrape_all_pages:476 - 没有更多页面，抓取完成
+2025-08-25 18:38:38.411 | INFO     | __main__:scrape_all_pages:482 - 总共抓取了 1 页，获得 49 条数据
+2025-08-25 18:38:38.415 | INFO     | __main__:save_to_json:522 - 数据已保存到: data/taiwan_pk10_data_20250825_183838.json
+2025-08-25 18:38:38.415 | INFO     | __main__:save_to_json:523 - 最新数据已保存到: data/latest_taiwan_pk10_data.json
+2025-08-25 18:38:38.416 | INFO     | __main__:run_scraper:555 - 抓取完成，共获得 49 条数据
+2025-08-25 18:38:38.549 | INFO     | __main__:cleanup:570 - 浏览器驱动已关闭

@@ -1,0 +1,270 @@
+2025-08-25 19:11:40,226 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:11:40,276 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:11:40,277 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:11:40,430 - __main__ - ERROR - 获取最新开奖时间失败: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+2025-08-25 19:11:40,433 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:11:40,433 - __main__ - INFO - ==================================================
+2025-08-25 19:11:40,433 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:11:40,433 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:11:40,433 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:11:40,434 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:11:41,385 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:11:42,345 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:11:43,098 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:11:56,332 - __main__ - WARNING - 未能抓取到最新数据
+2025-08-25 19:11:56,332 - __main__ - WARNING - 未获取到最新数据，跳过本次周期
+2025-08-25 19:11:56,333 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:11:56,333 - __main__ - INFO - ==================================================
+2025-08-25 19:11:56,360 - __main__ - ERROR - 获取最新开奖时间失败: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+2025-08-25 19:13:26,024 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:13:26,025 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:13:26,028 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10961a340>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/2a1a3e7a1761ee226cc21dad605ee7d8
+2025-08-25 19:13:26,029 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10907d670>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/2a1a3e7a1761ee226cc21dad605ee7d8
+2025-08-25 19:13:26,031 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10907d7c0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/2a1a3e7a1761ee226cc21dad605ee7d8
+2025-08-25 19:13:26,039 - __main__ - INFO - 资源清理完成
+2025-08-25 19:13:26,041 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:13:32,707 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:13:32,739 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:13:32,739 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:13:32,958 - __main__ - ERROR - 获取最新开奖时间失败: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+2025-08-25 19:13:32,959 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:13:32,959 - __main__ - INFO - ==================================================
+2025-08-25 19:13:32,959 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:13:32,959 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:13:32,959 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:13:32,960 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:13:33,241 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:13:33,948 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:13:35,727 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:13:48,545 - __main__ - INFO - 成功抓取最新数据: 期号=114048054
+2025-08-25 19:13:48,545 - __main__ - ERROR - 检查期号是否存在失败: 'TaiwanPK10Scraper' object has no attribute 'db_manager'
+2025-08-25 19:13:48,545 - __main__ - INFO - 抓取到数据: 期号=114048054
+2025-08-25 19:13:48,545 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:13:48,545 - __main__ - ERROR - 数据不完整，跳过保存
+2025-08-25 19:13:48,545 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:13:48,545 - __main__ - INFO - ==================================================
+2025-08-25 19:13:48,596 - __main__ - ERROR - 获取最新开奖时间失败: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+2025-08-25 19:14:58,520 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:14:58,520 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:14:58,523 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10409c760>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/ae06ea5aea7aab304ff8509e530c45e1
+2025-08-25 19:14:58,525 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10409cf40>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/ae06ea5aea7aab304ff8509e530c45e1
+2025-08-25 19:14:58,527 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10409ccd0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/ae06ea5aea7aab304ff8509e530c45e1
+2025-08-25 19:14:58,532 - __main__ - INFO - 资源清理完成
+2025-08-25 19:14:58,532 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:15:05,593 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:15:05,636 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:15:05,636 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:15:05,755 - __main__ - ERROR - 获取最新开奖时间失败: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+2025-08-25 19:15:05,758 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:15:05,758 - __main__ - INFO - ==================================================
+2025-08-25 19:15:05,758 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:15:05,760 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:15:05,762 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:15:05,768 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:15:06,095 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:15:06,843 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:15:07,640 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:15:20,311 - __main__ - INFO - 成功抓取最新数据: 期号=114048054
+2025-08-25 19:15:20,364 - __main__ - ERROR - 检查期号是否存在失败: 'DatabaseManager' object has no attribute 'get_collection'
+2025-08-25 19:15:20,366 - __main__ - INFO - 抓取到数据: 期号=114048054
+2025-08-25 19:15:20,366 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:15:20,366 - __main__ - ERROR - 数据不完整，跳过保存
+2025-08-25 19:15:20,366 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:15:20,366 - __main__ - INFO - ==================================================
+2025-08-25 19:15:20,413 - __main__ - ERROR - 获取最新开奖时间失败: Collection objects do not implement truth value testing or bool(). Please compare with None instead: collection is not None
+2025-08-25 19:17:17,076 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:17:17,076 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:17:17,078 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111476970>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/fc7cba01a2a5a8ac752035c05f8c622a
+2025-08-25 19:17:17,080 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111476fd0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/fc7cba01a2a5a8ac752035c05f8c622a
+2025-08-25 19:17:17,081 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1114765b0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/fc7cba01a2a5a8ac752035c05f8c622a
+2025-08-25 19:17:17,086 - __main__ - INFO - 资源清理完成
+2025-08-25 19:17:17,086 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:17:23,445 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:17:23,478 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:17:23,478 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:17:23,919 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:17:23,919 - __main__ - INFO - ==================================================
+2025-08-25 19:17:23,919 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:17:23,919 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:17:23,919 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:17:23,920 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:17:24,268 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:17:24,974 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:17:25,767 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:17:38,997 - __main__ - INFO - 成功抓取最新数据: 期号=114048055
+2025-08-25 19:17:39,039 - __main__ - INFO - 期号 114048055 不存在于数据库中
+2025-08-25 19:17:39,041 - __main__ - INFO - 抓取到数据: 期号=114048055
+2025-08-25 19:17:39,041 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:17:39,041 - __main__ - ERROR - 数据不完整，跳过保存
+2025-08-25 19:17:39,041 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:17:39,041 - __main__ - INFO - ==================================================
+2025-08-25 19:19:11,835 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:19:11,835 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:19:11,838 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10e75c0d0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/0c0318737eb10ec87d3910f763c966ac
+2025-08-25 19:19:11,839 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10e75caf0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/0c0318737eb10ec87d3910f763c966ac
+2025-08-25 19:19:11,841 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10e75ca00>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/0c0318737eb10ec87d3910f763c966ac
+2025-08-25 19:19:11,847 - __main__ - INFO - 资源清理完成
+2025-08-25 19:19:11,847 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:19:21,050 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:19:21,080 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:19:21,081 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:19:21,285 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:19:21,285 - __main__ - INFO - ==================================================
+2025-08-25 19:19:21,286 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:19:21,286 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:19:21,286 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:19:21,291 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:19:22,106 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:19:22,899 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:19:23,593 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:19:37,337 - __main__ - INFO - 成功抓取最新数据: 期号=114048055
+2025-08-25 19:19:37,393 - __main__ - INFO - 期号 114048055 不存在于数据库中
+2025-08-25 19:19:37,395 - __main__ - INFO - 抓取到数据: 期号=114048055
+2025-08-25 19:19:37,395 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:19:37,395 - __main__ - INFO - 数据验证 - 期号: 114048055, 开奖号码: 10,4,2,1,5,6,3,9,7,8
+2025-08-25 19:19:37,396 - __main__ - INFO - 步骤3: 保存新数据到数据库
+2025-08-25 19:19:37,396 - __main__ - INFO - 开始保存新数据到数据库: 期号=114048055
+2025-08-25 19:19:37,421 - __main__ - INFO - 期号 114048055 不存在于数据库中
+2025-08-25 19:19:37,424 - __main__ - ERROR - 数据不完整，无法保存: period=114048055, numbers=[]
+2025-08-25 19:19:37,424 - __main__ - ERROR - ❌ 新数据保存失败: 期号=114048055
+2025-08-25 19:19:37,424 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:19:37,425 - __main__ - INFO - ==================================================
+2025-08-25 19:21:06,864 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:21:06,864 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:21:06,867 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117f6970>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/f3bca6857a4c49d6376d64dde23bd946
+2025-08-25 19:21:06,869 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117f68b0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/f3bca6857a4c49d6376d64dde23bd946
+2025-08-25 19:21:06,871 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1117f6f40>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/f3bca6857a4c49d6376d64dde23bd946
+2025-08-25 19:21:06,878 - __main__ - INFO - 资源清理完成
+2025-08-25 19:21:06,878 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:21:14,219 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:21:14,271 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:21:14,271 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:21:14,359 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:21:14,359 - __main__ - INFO - ==================================================
+2025-08-25 19:21:14,359 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:21:14,359 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:21:14,359 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:21:14,360 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:21:14,782 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:21:15,499 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:21:16,234 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:21:29,454 - __main__ - INFO - 成功抓取最新数据: 期号=114048055
+2025-08-25 19:21:29,572 - __main__ - INFO - 期号 114048055 不存在于数据库中
+2025-08-25 19:21:29,574 - __main__ - INFO - 抓取到数据: 期号=114048055
+2025-08-25 19:21:29,574 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:21:29,575 - __main__ - INFO - 数据验证 - 期号: 114048055, 开奖号码: 10,4,2,1,5,6,3,9,7,8
+2025-08-25 19:21:29,575 - __main__ - INFO - 步骤3: 保存新数据到数据库
+2025-08-25 19:21:29,575 - __main__ - INFO - 开始保存新数据到数据库: 期号=114048055
+2025-08-25 19:21:29,596 - __main__ - INFO - 期号 114048055 不存在于数据库中
+2025-08-25 19:21:29,598 - __main__ - INFO - 调试 - 原始draw_numbers: 10,4,2,1,5,6,3,9,7,8, 类型: <class 'str'>
+2025-08-25 19:21:29,598 - __main__ - INFO - 调试 - 转换后numbers_list: [10, 4, 2, 1, 5, 6, 3, 9, 7, 8], 类型: <class 'list'>
+2025-08-25 19:21:29,598 - __main__ - INFO - 调试 - db_data: {'period': '114048055', 'numbers': [10, 4, 2, 1, 5, 6, 3, 9, 7, 8], 'date': '2025-08-25', 'time': '19:15', 'source': 'python-scraper', 'is_valid': True, 'scraped_at': '2025-08-25T19:21:29.294010'}
+2025-08-25 19:21:29,684 - __main__ - ERROR - 保存数据到数据库时发生错误: 'DatabaseManager' object has no attribute 'save_data'
+2025-08-25 19:21:29,684 - __main__ - ERROR - ❌ 新数据保存失败: 期号=114048055
+2025-08-25 19:21:29,684 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:21:29,684 - __main__ - INFO - ==================================================
+2025-08-25 19:22:23,204 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:22:23,205 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:22:23,210 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111553eb0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/b5b24317d1ecbd624152facdbb280301
+2025-08-25 19:22:23,214 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111553370>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/b5b24317d1ecbd624152facdbb280301
+2025-08-25 19:22:23,216 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111656790>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/b5b24317d1ecbd624152facdbb280301
+2025-08-25 19:22:23,228 - __main__ - INFO - 资源清理完成
+2025-08-25 19:22:23,228 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:22:31,784 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:22:31,823 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:22:31,823 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:22:31,859 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:22:31,859 - __main__ - INFO - ==================================================
+2025-08-25 19:22:31,859 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:22:31,859 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:22:31,860 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:22:31,860 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:22:32,296 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:22:33,322 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:22:34,014 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:22:47,364 - __main__ - INFO - 成功抓取最新数据: 期号=114048056
+2025-08-25 19:22:47,651 - __main__ - INFO - 期号 114048056 不存在于数据库中
+2025-08-25 19:22:47,655 - __main__ - INFO - 抓取到数据: 期号=114048056
+2025-08-25 19:22:47,655 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:22:47,655 - __main__ - INFO - 数据验证 - 期号: 114048056, 开奖号码: 8,9,10,1,2,7,3,4,5,6
+2025-08-25 19:22:47,655 - __main__ - INFO - 步骤3: 保存新数据到数据库
+2025-08-25 19:22:47,655 - __main__ - INFO - 开始保存新数据到数据库: 期号=114048056
+2025-08-25 19:22:47,734 - __main__ - INFO - 期号 114048056 不存在于数据库中
+2025-08-25 19:22:47,737 - __main__ - ERROR - 保存数据到数据库时发生错误: local variable 'datetime' referenced before assignment
+2025-08-25 19:22:47,738 - __main__ - ERROR - ❌ 新数据保存失败: 期号=114048056
+2025-08-25 19:22:47,738 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:22:47,738 - __main__ - INFO - ==================================================
+2025-08-25 19:27:47,557 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:27:47,559 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:27:47,573 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11115c760>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/cce05c20e3422911ce56c31b42a7bef5
+2025-08-25 19:27:47,587 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11115cb80>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/cce05c20e3422911ce56c31b42a7bef5
+2025-08-25 19:27:47,605 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x11115caf0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/cce05c20e3422911ce56c31b42a7bef5
+2025-08-25 19:27:47,639 - __main__ - INFO - 资源清理完成
+2025-08-25 19:27:47,639 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:27:57,920 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:27:57,953 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:27:57,953 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:27:58,066 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:27:58,066 - __main__ - INFO - ==================================================
+2025-08-25 19:27:58,066 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:27:58,067 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:27:58,067 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:27:58,067 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:27:59,249 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:28:00,111 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:28:00,790 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:28:15,280 - __main__ - INFO - 成功抓取最新数据: 期号=114048057
+2025-08-25 19:28:15,486 - __main__ - INFO - 期号 114048057 不存在于数据库中
+2025-08-25 19:28:15,489 - __main__ - INFO - 抓取到数据: 期号=114048057
+2025-08-25 19:28:15,489 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:28:15,489 - __main__ - INFO - 数据验证 - 期号: 114048057, 开奖号码: 5,6,2,10,1,8,9,3,7,4
+2025-08-25 19:28:15,489 - __main__ - INFO - 步骤3: 保存新数据到数据库
+2025-08-25 19:28:15,489 - __main__ - INFO - 开始保存新数据到数据库: 期号=114048057
+2025-08-25 19:28:15,512 - __main__ - INFO - 期号 114048057 不存在于数据库中
+2025-08-25 19:28:15,514 - __main__ - INFO - 调试 - 原始draw_numbers: 5,6,2,10,1,8,9,3,7,4, 类型: <class 'str'>
+2025-08-25 19:28:15,514 - __main__ - INFO - 调试 - 转换后numbers_list: [5, 6, 2, 10, 1, 8, 9, 3, 7, 4], 类型: <class 'list'>
+2025-08-25 19:28:15,514 - __main__ - INFO - 调试 - db_data: {'period': '114048057', 'numbers': [5, 6, 2, 10, 1, 8, 9, 3, 7, 4], 'date': '2025-08-25', 'time': '19:25', 'source': 'python-scraper', 'is_valid': True, 'scraped_at': '2025-08-25T19:28:15.170912'}
+2025-08-25 19:28:15,539 - __main__ - ERROR - 保存数据到数据库时发生错误: __init__() got an unexpected keyword argument 'scraped_at'
+2025-08-25 19:28:15,539 - __main__ - ERROR - ❌ 新数据保存失败: 期号=114048057
+2025-08-25 19:28:15,539 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:28:15,539 - __main__ - INFO - ==================================================
+2025-08-25 19:28:51,061 - __main__ - INFO - 接收到信号 15，正在停止调度器...
+2025-08-25 19:28:51,061 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:28:51,063 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111460f40>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/d2889c64e1956b827abbeb3f9f4b9e96
+2025-08-25 19:28:51,065 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111460ac0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/d2889c64e1956b827abbeb3f9f4b9e96
+2025-08-25 19:28:51,067 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x111460df0>: Failed to establish a new connection: [Errno 61] Connection refused')': /session/d2889c64e1956b827abbeb3f9f4b9e96
+2025-08-25 19:28:51,072 - __main__ - INFO - 资源清理完成
+2025-08-25 19:28:51,073 - __main__ - INFO - 正在停止智能调度器...
+2025-08-25 19:28:59,135 - __main__ - INFO - 启动智能定时抓取调度器
+2025-08-25 19:28:59,163 - __main__ - INFO - 智能调度器初始化完成
+2025-08-25 19:28:59,163 - __main__ - INFO - 智能调度器启动中...
+2025-08-25 19:28:59,346 - __main__ - INFO - 未找到历史数据，立即执行首次抓取
+2025-08-25 19:28:59,346 - __main__ - INFO - ==================================================
+2025-08-25 19:28:59,346 - __main__ - INFO - 开始执行抓取周期...
+2025-08-25 19:28:59,347 - __main__ - INFO - 步骤1: 抓取最新数据
+2025-08-25 19:28:59,347 - __main__ - INFO - 开始抓取最新一期数据
+2025-08-25 19:28:59,348 - WDM - INFO - ====== WebDriver manager ======
+2025-08-25 19:28:59,802 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:29:00,594 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-08-25 19:29:01,355 - WDM - INFO - Driver [/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-08-25 19:29:13,780 - __main__ - INFO - 成功抓取最新数据: 期号=114048057
+2025-08-25 19:29:13,812 - __main__ - INFO - 期号 114048057 不存在于数据库中
+2025-08-25 19:29:13,818 - __main__ - INFO - 抓取到数据: 期号=114048057
+2025-08-25 19:29:13,818 - __main__ - INFO - 步骤2: 验证数据完整性
+2025-08-25 19:29:13,818 - __main__ - INFO - 数据验证 - 期号: 114048057, 开奖号码: 5,6,2,10,1,8,9,3,7,4
+2025-08-25 19:29:13,818 - __main__ - INFO - 步骤3: 保存新数据到数据库
+2025-08-25 19:29:13,818 - __main__ - INFO - 开始保存新数据到数据库: 期号=114048057
+2025-08-25 19:29:13,885 - __main__ - INFO - 期号 114048057 不存在于数据库中
+2025-08-25 19:29:13,886 - __main__ - INFO - 调试 - 原始draw_numbers: 5,6,2,10,1,8,9,3,7,4, 类型: <class 'str'>
+2025-08-25 19:29:13,887 - __main__ - INFO - 调试 - 转换后numbers_list: [5, 6, 2, 10, 1, 8, 9, 3, 7, 4], 类型: <class 'list'>
+2025-08-25 19:29:13,887 - __main__ - INFO - 调试 - db_data: {'period': '114048057', 'numbers': [5, 6, 2, 10, 1, 8, 9, 3, 7, 4], 'date': '2025-08-25', 'time': '19:25', 'source': 'python-scraper', 'is_valid': True, 'scraped_at': '2025-08-25T19:29:13.629988'}
+2025-08-25 19:29:13,946 - __main__ - INFO - 成功保存数据到数据库: 期号=114048057
+2025-08-25 19:29:13,946 - __main__ - INFO - 新数据保存成功: 期号 114048057
+2025-08-25 19:29:13,946 - __main__ - INFO - 步骤4: 更新网页显示
+2025-08-25 19:29:13,946 - __main__ - INFO - 开始更新网页显示: 期号=114048057
+2025-08-25 19:29:13,946 - __main__ - WARNING - JSON文件不存在: /Users/a1234/Documents/代码/TWPKCN/myyz/latest_taiwan_pk10_data.json
+2025-08-25 19:29:13,946 - __main__ - INFO - 网页显示更新成功: 期号=114048057
+2025-08-25 19:29:13,947 - __main__ - INFO - 网页显示更新成功
+2025-08-25 19:29:13,947 - __main__ - INFO - ✅ 抓取周期完成: 成功处理期号 114048057
+2025-08-25 19:29:13,947 - __main__ - INFO - 抓取周期结束
+2025-08-25 19:29:13,947 - __main__ - INFO - ==================================================

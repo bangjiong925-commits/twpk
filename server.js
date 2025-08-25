@@ -1,7 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 // Railway环境中PORT可能被MongoDB占用，需要特殊处理
@@ -349,14 +350,15 @@ if (!process.env.DATABASE_URL) {
 connectWithRetry();
 
 // 导入API路由
-const healthRoute = require('./routes/health');
-const keyRecordsRoute = require('./routes/key-records');
-const statsRoute = require('./routes/stats');
-const taiwanPk10Route = require('./routes/taiwan-pk10');
-const taiwanPk10DataRoute = require('./routes/taiwan-pk10-data');
-const taiwanPk10LiveRoute = require('./routes/taiwan-pk10-live');
-const updateTaiwanPk10Route = require('./routes/update-taiwan-pk10');
-const databaseDataRoute = require('./routes/database-data');
+import healthRoute from './routes/health.js';
+import keyRecordsRoute from './routes/key-records.js';
+import statsRoute from './routes/stats.js';
+import taiwanPk10Route from './routes/taiwan-pk10.js';
+import taiwanPk10DataRoute from './routes/taiwan-pk10-data.js';
+import taiwanPk10LiveRoute from './routes/taiwan-pk10-live.js';
+import updateTaiwanPk10Route from './routes/update-taiwan-pk10.js';
+import databaseDataRoute from './routes/database-data.js';
+import autoFetchSaveRoute from './routes/auto-fetch-save.js';
 
 // 健康检查端点（在其他路由之前）
 app.get('/health', (req, res) => {
@@ -368,7 +370,7 @@ app.get('/health', (req, res) => {
     3: 'disconnecting'
   }[dbStatus] || 'unknown';
   
-  const isHealthy = global.dbAvailable && dbStatus === 1;
+  const isHealthy = dbStatus === 1;
   
   res.status(isHealthy ? 200 : 503).json({
     status: isHealthy ? 'healthy' : 'unhealthy',
@@ -376,7 +378,7 @@ app.get('/health', (req, res) => {
     version: process.env.npm_package_version || '1.0.0',
     environment: process.env.NODE_ENV || 'production',
     database: {
-      available: global.dbAvailable,
+      available: dbStatus === 1,
       status: dbStatusText,
       readyState: dbStatus,
       host: process.env.MONGOHOST || 'localhost',
@@ -410,6 +412,9 @@ app.use('/api/taiwan-pk10-data', taiwanPk10DataRoute);
 app.use('/api/taiwan-pk10-live', taiwanPk10LiveRoute);
 app.use('/api/update-taiwan-pk10', updateTaiwanPk10Route);
 app.use('/api/database-data', databaseDataRoute);
+app.use('/api/auto-fetch-save', autoFetchSaveRoute);
+
+
 
 // 静态文件路由
 app.get('/', (req, res) => {
@@ -451,6 +456,131 @@ const checkDatabaseConnection = (req, res, next) => {
   }
   next();
 };
+
+// 手动抓取当天数据API
+app.post('/api/manual-fetch-today', checkDatabaseConnection, async (req, res) => {
+  try {
+    console.log('开始手动抓取当天数据...');
+    
+    // 动态导入抓取器
+    const TaiwanPK10Scraper = (await import('./auto-scraper.js')).default;
+    const { default: TaiwanPK10Data } = await import('./models/TaiwanPK10Data.js');
+    const fs = await import('fs/promises');
+    
+    // 创建抓取器实例
+    const scraper = new TaiwanPK10Scraper();
+    
+    // 执行抓取
+    const result = await scraper.run();
+    
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        error: '抓取失败',
+        message: result.error || '未知错误'
+      });
+    }
+    
+    console.log('抓取完成，开始保存数据到数据库...');
+    
+    // 读取抓取的数据文件并保存到数据库
+    try {
+      const data = await fs.readFile('./taiwan_pk10_latest_scraped.json', 'utf8');
+      const scrapedData = JSON.parse(data);
+      
+      let savedCount = 0;
+      let duplicateCount = 0;
+      let errorCount = 0;
+      
+      // 处理所有页面的数据
+      for (const pageData of scrapedData.data) {
+        for (const record of pageData.records) {
+          try {
+            const period = record.column_1;
+            const numbersStr = record.formatted.split(' ')[1];
+            const drawNumbers = numbersStr.split(',').map(num => parseInt(num.trim()));
+            
+            // 解析时间
+            const timeStr = record.formatted.split(' ')[0];
+            const [hours, minutes, seconds] = timeStr.split(':').map(num => parseInt(num));
+            
+            const drawDate = new Date();
+            drawDate.setHours(hours, minutes, seconds, 0);
+            
+            // 检查是否已存在
+            const existingRecord = await TaiwanPK10Data.findOne({ period });
+            
+            if (!existingRecord) {
+              const newRecord = new TaiwanPK10Data({
+                period,
+                drawNumbers,
+                drawDate,
+                drawTime: timeStr,
+                scrapedAt: new Date()
+              });
+              
+              await newRecord.save();
+              savedCount++;
+            } else {
+              duplicateCount++;
+            }
+          } catch (error) {
+            console.error(`保存记录失败:`, error);
+            errorCount++;
+          }
+        }
+      }
+      
+      console.log(`数据保存完成: 新保存${savedCount}条, 重复跳过${duplicateCount}条, 错误${errorCount}条`);
+    } catch (saveError) {
+      console.error('保存数据到数据库失败:', saveError);
+    }
+    
+    // 获取今天的数据
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const todayData = await TaiwanPK10Data.find({
+      drawDate: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    }).sort({ period: -1 }).limit(100);
+    
+    // 格式化数据为网页需要的格式
+    const formattedData = todayData.map(item => ({
+      period: item.period,
+      drawNumbers: item.drawNumbers,
+      drawDate: item.drawDate,
+      drawTime: item.drawTime
+    }));
+    
+    console.log(`手动抓取完成，获取到 ${formattedData.length} 条当天数据`);
+    
+    res.json({
+      success: true,
+      message: '手动抓取当天数据成功',
+      data: formattedData,
+      count: formattedData.length,
+      scrapeResult: {
+        totalPages: result.totalPages,
+        totalRecords: result.totalRecords
+      },
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('手动抓取API错误:', error);
+    res.status(500).json({
+      success: false,
+      error: '服务器内部错误',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
 
 // 数据查询和比对API（新增功能）
 app.post('/api/data/query', checkDatabaseConnection, async (req, res) => {
@@ -530,4 +660,4 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`服务器运行在端口 ${PORT}`);
 });
 
-module.exports = app;
+export default app;

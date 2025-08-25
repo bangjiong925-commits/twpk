@@ -1,0 +1,58 @@
+2025-08-25 18:54:22.546 | INFO     | __main__:run_scraper:598 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:54:26.314 | INFO     | __main__:setup_driver:91 - Chrome浏览器驱动设置完成
+2025-08-25 18:54:26.315 | INFO     | __main__:navigate_to_page:100 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 18:54:31.827 | INFO     | __main__:navigate_to_page:107 - 页面加载完成
+2025-08-25 18:54:31.970 | INFO     | __main__:click_pk10_option:153 - 找到台湾PK10选项: 台湾PK10
+2025-08-25 18:54:34.040 | INFO     | __main__:click_pk10_option:157 - 成功点击台湾PK10选项
+2025-08-25 18:54:34.040 | INFO     | __main__:navigate_to_page:111 - 成功切换到台湾PK10数据
+2025-08-25 18:54:34.095 | WARNING  | __main__:select_date:194 - 未找到日期选择器，使用默认日期
+2025-08-25 18:54:34.095 | INFO     | __main__:scrape_all_pages:523 - 正在抓取第 1 页数据
+2025-08-25 18:54:34.109 | INFO     | __main__:extract_lottery_data:208 - 第1页找到 3 个表格
+2025-08-25 18:54:34.156 | INFO     | __main__:extract_lottery_data:214 - 第1页选择表格 2，包含 50 行
+2025-08-25 18:54:34.193 | INFO     | __main__:extract_lottery_data:224 - 第1页找到 50 行数据
+2025-08-25 18:54:34.230 | INFO     | __main__:extract_lottery_data:238 - 第1页第一行包含有效数据，从第一行开始读取
+2025-08-25 18:54:36.253 | INFO     | __main__:extract_lottery_data:281 - 第1页成功提取 50 条数据
+2025-08-25 18:54:36.253 | INFO     | __main__:scrape_all_pages:529 - 第 1 页获取到 50 条数据
+2025-08-25 18:54:40.470 | INFO     | __main__:navigate_to_next_page:490 - 已点击翻页按钮: <button type="button" class="btn-next is-last" aria-label="下一页" aria-disabled="false"><i class="el-i
+2025-08-25 18:54:42.475 | INFO     | __main__:scrape_all_pages:523 - 正在抓取第 2 页数据
+2025-08-25 18:54:42.492 | INFO     | __main__:extract_lottery_data:208 - 第2页找到 3 个表格
+2025-08-25 18:54:42.535 | INFO     | __main__:extract_lottery_data:214 - 第2页选择表格 2，包含 50 行
+2025-08-25 18:54:42.549 | INFO     | __main__:extract_lottery_data:224 - 第2页找到 50 行数据
+2025-08-25 18:54:42.589 | INFO     | __main__:extract_lottery_data:238 - 第2页第一行包含有效数据，从第一行开始读取
+2025-08-25 18:54:44.552 | INFO     | __main__:extract_lottery_data:281 - 第2页成功提取 50 条数据
+2025-08-25 18:54:44.552 | INFO     | __main__:scrape_all_pages:529 - 第 2 页获取到 50 条数据
+2025-08-25 18:54:48.680 | INFO     | __main__:navigate_to_next_page:490 - 已点击翻页按钮: <button type="button" class="btn-next is-last" aria-label="下一页" aria-disabled="true" disabled=""><i 
+2025-08-25 18:54:50.684 | INFO     | __main__:scrape_all_pages:523 - 正在抓取第 3 页数据
+2025-08-25 18:54:50.694 | INFO     | __main__:extract_lottery_data:208 - 第3页找到 3 个表格
+2025-08-25 18:54:50.730 | INFO     | __main__:extract_lottery_data:214 - 第3页选择表格 2，包含 42 行
+2025-08-25 18:54:50.789 | INFO     | __main__:extract_lottery_data:224 - 第3页找到 42 行数据
+2025-08-25 18:54:50.832 | INFO     | __main__:extract_lottery_data:238 - 第3页第一行包含有效数据，从第一行开始读取
+2025-08-25 18:54:52.635 | INFO     | __main__:extract_lottery_data:281 - 第3页成功提取 42 条数据
+2025-08-25 18:54:52.636 | INFO     | __main__:scrape_all_pages:529 - 第 3 页获取到 42 条数据
+2025-08-25 18:54:56.923 | INFO     | __main__:navigate_to_next_page:504 - 尝试通过键盘翻页
+2025-08-25 18:54:58.926 | INFO     | __main__:scrape_all_pages:523 - 正在抓取第 4 页数据
+2025-08-25 18:54:58.935 | INFO     | __main__:extract_lottery_data:208 - 第4页找到 3 个表格
+2025-08-25 18:54:58.972 | INFO     | __main__:extract_lottery_data:214 - 第4页选择表格 2，包含 42 行
+2025-08-25 18:54:58.991 | INFO     | __main__:extract_lottery_data:224 - 第4页找到 42 行数据
+2025-08-25 18:54:59.039 | INFO     | __main__:extract_lottery_data:238 - 第4页第一行包含有效数据，从第一行开始读取
+2025-08-25 18:55:00.836 | INFO     | __main__:extract_lottery_data:281 - 第4页成功提取 42 条数据
+2025-08-25 18:55:00.836 | INFO     | __main__:scrape_all_pages:529 - 第 4 页获取到 42 条数据
+2025-08-25 18:55:05.109 | INFO     | __main__:navigate_to_next_page:504 - 尝试通过键盘翻页
+2025-08-25 18:55:07.115 | INFO     | __main__:scrape_all_pages:523 - 正在抓取第 5 页数据
+2025-08-25 18:55:07.122 | INFO     | __main__:extract_lottery_data:208 - 第5页找到 3 个表格
+2025-08-25 18:55:07.160 | INFO     | __main__:extract_lottery_data:214 - 第5页选择表格 2，包含 42 行
+2025-08-25 18:55:07.178 | INFO     | __main__:extract_lottery_data:224 - 第5页找到 42 行数据
+2025-08-25 18:55:07.216 | INFO     | __main__:extract_lottery_data:238 - 第5页第一行包含有效数据，从第一行开始读取
+2025-08-25 18:55:08.897 | INFO     | __main__:extract_lottery_data:281 - 第5页成功提取 42 条数据
+2025-08-25 18:55:08.897 | INFO     | __main__:scrape_all_pages:529 - 第 5 页获取到 42 条数据
+2025-08-25 18:55:08.897 | INFO     | __main__:scrape_all_pages:535 - 已达到最大页数 5，抓取完成
+2025-08-25 18:55:08.898 | INFO     | __main__:scrape_all_pages:546 - 总共抓取了 5 页，获得 226 条数据
+2025-08-25 18:55:08.898 | INFO     | __main__:run_scraper:622 - 数据验证完成，有效数据: 226/226 条
+2025-08-25 18:55:08.912 | INFO     | __main__:save_to_json:586 - 数据已保存到: data/taiwan_pk10_data_20250825_185508.json
+2025-08-25 18:55:08.913 | INFO     | __main__:save_to_json:587 - 最新数据已保存到: data/latest_taiwan_pk10_data.json
+2025-08-25 18:55:08.959 | INFO     | __main__:connect_mongodb:676 - 成功连接到MongoDB数据库: taiwan_pk10
+2025-08-25 18:55:10.210 | INFO     | __main__:save_to_mongodb:725 - 成功保存 226 条数据到MongoDB
+2025-08-25 18:55:10.212 | ERROR    | __main__:save_to_mongodb:745 - 保存数据到MongoDB失败: cannot encode object: datetime.date(2025, 8, 25), of type: <class 'datetime.date'>
+2025-08-25 18:55:10.216 | ERROR    | __main__:run_scraper:642 - 保存到MongoDB失败
+2025-08-25 18:55:10.217 | INFO     | __main__:run_scraper:646 - 抓取完成，共获得 226 条有效数据
+2025-08-25 18:55:10.380 | INFO     | __main__:cleanup:661 - 浏览器驱动已关闭

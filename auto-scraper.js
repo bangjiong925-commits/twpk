@@ -1,15 +1,20 @@
 // 自动化台湾PK10数据抓取脚本
-const puppeteer = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium');
-const fs = require('fs').promises;
-const path = require('path');
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class TaiwanPK10Scraper {
     constructor() {
         this.browser = null;
         this.page = null;
         this.allData = [];
-        this.targetDate = '24'; // 目标日期
+        this.targetDate = new Date().getDate().toString(); // 当天日期
         this.totalPages = 5; // 总页数
     }
 
@@ -79,7 +84,7 @@ class TaiwanPK10Scraper {
 
     async navigateToSite() {
         console.log('导航到台湾宾果网站...');
-        await this.page.goto('https://台湾宾果.com', {
+        await this.page.goto('https://xn--kpro5poukl1g.com/#/', {
             waitUntil: 'networkidle2',
             timeout: 30000
         });
@@ -440,12 +445,29 @@ class TaiwanPK10Scraper {
         try {
             console.log('开始自动化数据抓取...');
             
+            console.log('步骤1: 初始化浏览器...');
             await this.init();
+            console.log('步骤1完成: 浏览器初始化成功');
+            
+            console.log('步骤2: 导航到网站...');
             await this.navigateToSite();
+            console.log('步骤2完成: 网站导航成功');
+            
+            console.log('步骤3: 选择台湾PK10...');
             await this.selectTaiwanPK10();
+            console.log('步骤3完成: 台湾PK10选择成功');
+            
+            console.log('步骤4: 选择日期...');
             await this.selectDate();
+            console.log('步骤4完成: 日期选择成功');
+            
+            console.log('步骤5: 抓取所有页面数据...');
             await this.scrapeAllPages();
+            console.log('步骤5完成: 数据抓取成功');
+            
+            console.log('步骤6: 保存数据...');
             const savedFile = await this.saveData();
+            console.log('步骤6完成: 数据保存成功');
             
             console.log('数据抓取完成!');
             console.log(`抓取的数据已保存到: ${savedFile}`);
@@ -458,18 +480,21 @@ class TaiwanPK10Scraper {
             };
         } catch (error) {
             console.error('数据抓取过程中出错:', error);
+            console.error('错误堆栈:', error.stack);
             return {
                 success: false,
                 error: error.message
             };
         } finally {
+            console.log('清理资源...');
             await this.cleanup();
+            console.log('资源清理完成');
         }
     }
 }
 
 // 如果直接运行此脚本
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const scraper = new TaiwanPK10Scraper();
     scraper.run().then(result => {
         console.log('抓取结果:', result);
@@ -480,4 +505,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = TaiwanPK10Scraper;
+export default TaiwanPK10Scraper;

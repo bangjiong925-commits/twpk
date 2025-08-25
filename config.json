@@ -1,0 +1,80 @@
+{
+  "scraping": {
+    "headless": true,
+    "max_pages": 5,
+    "timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 2.0,
+    "page_load_timeout": 20,
+    "element_wait_timeout": 10,
+    "scroll_pause_time": 2,
+    "target_url": "https://www.twpk10.com/",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "database": {
+    "connection_timeout": 10000,
+    "server_selection_timeout": 5000,
+    "socket_timeout": 30000,
+    "max_pool_size": 10,
+    "min_pool_size": 1,
+    "max_idle_time": 30000,
+    "retry_writes": true,
+    "w": "majority",
+    "read_preference": "primary",
+    "cleanup_days": 30
+  },
+  "scheduling": {
+    "scraping_interval": 30,
+    "cleanup_hour": 2,
+    "cleanup_minute": 0,
+    "api_sync_interval": 60,
+    "enable_scheduler": true,
+    "timezone": "Asia/Shanghai"
+  },
+  "api": {
+    "base_url": "http://localhost:3000",
+    "timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 1.0,
+    "enable_api_sync": true,
+    "endpoints": {
+      "health": "/api/health",
+      "manual_fetch": "/api/manual-fetch-today",
+      "update_data": "/api/taiwan-pk10/update",
+      "get_latest": "/api/taiwan-pk10/latest",
+      "get_by_date": "/api/taiwan-pk10/date"
+    }
+  },
+  "logging": {
+    "log_dir": "logs",
+    "log_level": "INFO",
+    "retention_days": 7,
+    "max_file_size": "10 MB",
+    "backup_count": 5,
+    "enable_console": true,
+    "enable_file": true,
+    "enable_json": false,
+    "log_format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} | {message}"
+  },
+  "error_handling": {
+    "max_error_threshold": 10,
+    "error_window_minutes": 60,
+    "enable_error_reports": true,
+    "error_report_interval": 24,
+    "critical_error_notification": true
+  },
+  "performance": {
+    "enable_performance_monitoring": true,
+    "slow_operation_threshold": 30.0,
+    "memory_usage_threshold": 80.0,
+    "cpu_usage_threshold": 80.0
+  },
+  "data_validation": {
+    "enable_data_validation": true,
+    "min_records_per_day": 10,
+    "max_records_per_day": 1000,
+    "validate_period_format": true,
+    "validate_draw_numbers": true,
+    "validate_draw_time": true
+  }
+}

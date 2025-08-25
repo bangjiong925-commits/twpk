@@ -1,0 +1,7 @@
+2025-08-25 18:16:33.923 | INFO     | __main__:initialize_components:116 - 调度器初始化完成
+2025-08-25 18:16:33.925 | INFO     | error_handler:__exit__:464 - 操作完成: 初始化组件，耗时: 3.89秒
+2025-08-25 18:16:33.926 | INFO     | __main__:stop:309 - 正在停止应用...
+2025-08-25 18:16:33.927 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:16:33.929 | INFO     | database_manager:close_connection:338 - 数据库连接已关闭
+2025-08-25 18:16:33.931 | INFO     | error_handler:save_error_report:302 - 错误报告已保存: logs/error_report_20250825_181633.json
+2025-08-25 18:16:33.933 | INFO     | __main__:stop:329 - 应用已停止

@@ -1,0 +1,19 @@
+2025-08-25 18:16:30.682 | INFO     | database_manager:_create_indexes:108 - 数据库索引创建完成
+2025-08-25 18:16:30.683 | INFO     | database_manager:connect:83 - 成功连接到MongoDB数据库: taiwanpk10
+2025-08-25 18:16:30.683 | INFO     | __main__:initialize_components:100 - 数据库管理器初始化完成
+2025-08-25 18:16:30.684 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 18:16:30.698 | WARNING  | api_client:_make_request:101 - 请求失败 (尝试 1/3): HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1110cb130>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-08-25 18:16:31.702 | WARNING  | api_client:_make_request:101 - 请求失败 (尝试 2/3): HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1110cb3d0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-08-25 18:16:33.707 | WARNING  | api_client:_make_request:101 - 请求失败 (尝试 3/3): HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1110cb730>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-08-25 18:16:33.708 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:16:33.709 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:16:33.709 | WARNING  | __main__:initialize_components:108 - API连接测试失败，将跳过API同步功能
+2025-08-25 18:16:33.718 | INFO     | database_manager:_get_connection_string:46 - 使用数据库连接: mongodb://localhost:27017/taiwan_pk10_test...
+2025-08-25 18:16:33.732 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 18:16:33.923 | INFO     | __main__:initialize_components:116 - 调度器初始化完成
+2025-08-25 18:16:33.925 | INFO     | error_handler:__exit__:464 - 操作完成: 初始化组件，耗时: 3.89秒
+2025-08-25 18:16:33.926 | INFO     | __main__:stop:309 - 正在停止应用...
+2025-08-25 18:16:33.927 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:16:33.929 | INFO     | database_manager:close_connection:338 - 数据库连接已关闭
+2025-08-25 18:16:33.931 | INFO     | error_handler:save_error_report:302 - 错误报告已保存: logs/error_report_20250825_181633.json
+2025-08-25 18:16:33.933 | INFO     | __main__:stop:329 - 应用已停止

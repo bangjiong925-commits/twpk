@@ -1,5 +1,5 @@
-const express = require('express');
-const KeyRecord = require('../models/KeyRecord');
+import express from 'express';
+import KeyRecord from '../models/KeyRecord.js';
 const router = express.Router();
 
 // 获取统计数据
@@ -176,4 +176,4 @@ router.get('/detailed', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

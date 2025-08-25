@@ -1,4 +1,4 @@
-const chromium = require('@sparticuz/chromium');
+import chromium from '@sparticuz/chromium';
 
 // Puppeteer配置 - 针对Railway容器环境优化
 const puppeteerConfig = {
@@ -74,7 +74,13 @@ async function createBrowser(puppeteer) {
   }
 }
 
-module.exports = {
+export default {
+  puppeteerConfig,
+  getRailwayPuppeteerConfig,
+  createBrowser
+};
+
+export {
   puppeteerConfig,
   getRailwayPuppeteerConfig,
   createBrowser

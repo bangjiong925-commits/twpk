@@ -1,32 +1,43 @@
-const cron = require('node-cron');
-const puppeteer = require('puppeteer');
-const mongoose = require('mongoose');
-const TaiwanPK10Data = require('./models/TaiwanPK10Data');
-require('dotenv').config();
+import cron from 'node-cron';
+import mongoose from 'mongoose';
+import TaiwanPK10Data from './models/TaiwanPK10Data.js';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const execAsync = promisify(exec);
 
 class DataScheduler {
   constructor() {
-    this.browser = null;
     this.isRunning = false;
     this.currentTask = null;
     this.dailyCleanupTask = null;
   }
 
+  async scrapeData() {
+    try {
+      // 执行数据抓取
+      const result = await execAsync('node auto-scraper.js');
+      console.log('抓取完成:', result.stdout);
+      
+      // 将抓取的数据保存到数据库
+      console.log('开始保存数据到数据库...');
+      const saveResult = await execAsync('node save-to-database.mjs');
+      console.log('数据库保存完成:', saveResult.stdout);
+      
+      return { scrape: result, save: saveResult };
+    } catch (error) {
+      console.error('抓取或保存失败:', error.message);
+      throw error;
+    }
+  }
+
   async init() {
     try {
       // 连接数据库
-      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/twpk10', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
+      await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/twpk10');
       console.log('数据库连接成功');
-
-      // 启动浏览器
-      this.browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-      console.log('浏览器启动成功');
 
       this.startScheduler();
     } catch (error) {
@@ -36,15 +47,31 @@ class DataScheduler {
   }
 
   startScheduler() {
-    // 每5分钟执行一次数据抓取（仅在7:05-23:59之间）
-    this.currentTask = cron.schedule('*/5 * * * *', async () => {
+    // 每分钟检查一次，在开奖时间后1分15秒执行抓取
+    this.currentTask = cron.schedule('* * * * *', async () => {
       const now = new Date();
       const hour = now.getHours();
       const minute = now.getMinutes();
+      const second = now.getSeconds();
       
       // 检查时间范围：7:05-23:59
       if (hour < 7 || (hour === 7 && minute < 5) || hour >= 24) {
-        console.log(`当前时间 ${hour}:${minute.toString().padStart(2, '0')} 不在抓取时间范围内`);
+        return;
+      }
+
+      // 计算是否为开奖后倒计时75秒的时间点
+      // 开奖时间：每5分钟的第5秒（如7:05:05, 7:10:05, 7:15:05等）
+      // 抓取时间：开奖后75秒（如7:06:20, 7:11:20, 7:16:20等）
+      const isTargetMinute = minute % 5 === 1; // 检查是否为开奖后1分钟
+      const isTargetSecond = second >= 15 && second <= 25; // 在15-25秒之间执行（75秒后的时间窗口）
+      const isDrawTime = isTargetMinute && isTargetSecond;
+      
+      // 每分钟的第0秒和目标时间窗口打印调试信息
+      if (second === 0 || (isTargetMinute && second >= 15 && second <= 25)) {
+        console.log(`时间检查: ${hour}:${minute}:${second}, 目标分钟: ${isTargetMinute}, 目标秒: ${isTargetSecond}, 触发: ${isDrawTime}`);
+      }
+      
+      if (!isDrawTime) {
         return;
       }
 
@@ -55,9 +82,8 @@ class DataScheduler {
 
       try {
         this.isRunning = true;
-        console.log(`开始执行数据抓取 - ${now.toLocaleString()}`);
+        console.log(`开始抓取数据 - ${hour}:${minute}:${second}`);
         await this.scrapeData();
-        console.log(`数据抓取完成 - ${new Date().toLocaleString()}`);
       } catch (error) {
         console.error('数据抓取失败:', error);
       } finally {
@@ -83,124 +109,37 @@ class DataScheduler {
     });
 
     console.log('定时任务已启动');
-    console.log('数据抓取时间：每天7:05-23:59，每5分钟一次');
+    console.log('数据抓取时间：每天7:05-23:59，每期开奖后倒计时75秒执行');
     console.log('数据清理时间：每天凌晨1:00');
+    
+    // 启动时立即抓取一次数据
+    console.log('启动时立即抓取数据...');
+    this.scrapeData().then(() => {
+      console.log('启动抓取完成');
+    }).catch(error => {
+      console.error('启动抓取失败:', error.message);
+    });
   }
 
   async scrapeData() {
-    if (!this.browser) {
-      throw new Error('浏览器未初始化');
-    }
-
-    const page = await this.browser.newPage();
-    
     try {
-      // 设置页面
-      await page.setViewport({ width: 1920, height: 1080 });
-      await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36');
+      console.log('开始抓取数据...');
       
-      // 导航到目标页面
-      await page.goto('https://www.twpk10.com/', {
-        waitUntil: 'networkidle2',
-        timeout: 30000
-      });
-
-      // 选择台湾PK10
-      await page.waitForSelector('.game-list', { timeout: 10000 });
-      const taiwanPK10Link = await page.$('a[href*="taiwan"]');
-      if (taiwanPK10Link) {
-        await taiwanPK10Link.click();
-        await page.waitForNavigation({ waitUntil: 'networkidle2' });
+      // 调用现有的抓取脚本
+      const { stdout, stderr } = await execAsync('node auto-scraper.js');
+      
+      if (stderr) {
+        console.error('抓取脚本错误:', stderr);
+      } else {
+        console.log('抓取完成:', stdout);
       }
-
-      // 获取今天的数据
-      const today = new Date();
-      const dateStr = today.toISOString().split('T')[0].replace(/-/g, '');
-      
-      await this.scrapePageData(page, dateStr);
-      
-    } finally {
-      await page.close();
-    }
-  }
-
-  async scrapePageData(page, dateStr) {
-    try {
-      // 等待数据表格加载
-      await page.waitForSelector('.lottery-table, .data-table, table', { timeout: 10000 });
-      
-      // 抓取数据
-      const data = await page.evaluate(() => {
-        const rows = document.querySelectorAll('tr');
-        const results = [];
-        
-        for (const row of rows) {
-          const cells = row.querySelectorAll('td');
-          if (cells.length >= 3) {
-            const period = cells[0]?.textContent?.trim();
-            const numbersText = cells[1]?.textContent?.trim();
-            const timeText = cells[2]?.textContent?.trim();
-            
-            if (period && numbersText && timeText) {
-              // 解析开奖号码
-              const numbers = numbersText.split(/[\s,]+/).map(n => parseInt(n)).filter(n => !isNaN(n));
-              
-              if (numbers.length >= 10) {
-                // 处理1和0合并为10的逻辑
-                const processedNumbers = [];
-                for (let i = 0; i < numbers.length; i++) {
-                  if (numbers[i] === 1 && i + 1 < numbers.length && numbers[i + 1] === 0) {
-                    processedNumbers.push(10);
-                    i++; // 跳过下一个0
-                  } else {
-                    processedNumbers.push(numbers[i]);
-                  }
-                }
-                
-                if (processedNumbers.length === 10) {
-                  results.push({
-                    period,
-                    numbers: processedNumbers,
-                    time: timeText
-                  });
-                }
-              }
-            }
-          }
-        }
-        
-        return results;
-      });
-      
-      // 保存数据到数据库
-      let savedCount = 0;
-      for (const item of data) {
-        try {
-          const drawDate = new Date();
-          
-          const existingData = await TaiwanPK10Data.findOne({ period: item.period });
-          if (!existingData) {
-            await TaiwanPK10Data.create({
-              period: item.period,
-              drawNumbers: item.numbers,
-              drawDate: drawDate,
-              drawTime: item.time,
-              dataSource: 'auto-scraper'
-            });
-            savedCount++;
-          }
-        } catch (error) {
-          console.error(`保存数据失败 (期号: ${item.period}):`, error.message);
-        }
-      }
-      
-      console.log(`抓取到 ${data.length} 条数据，新保存 ${savedCount} 条`);
       
     } catch (error) {
-      console.error('抓取页面数据失败:', error);
-      throw error;
+      console.error('抓取数据失败:', error);
     }
   }
+
+
 
   stop() {
     if (this.currentTask) {
@@ -211,11 +150,6 @@ class DataScheduler {
     if (this.dailyCleanupTask) {
       this.dailyCleanupTask.stop();
       console.log('数据清理任务已停止');
-    }
-    
-    if (this.browser) {
-      this.browser.close();
-      console.log('浏览器已关闭');
     }
   }
 
@@ -236,8 +170,9 @@ process.on('SIGINT', () => scheduler.gracefulShutdown());
 process.on('SIGTERM', () => scheduler.gracefulShutdown());
 
 // 启动调度器
-if (require.main === module) {
+// 检查是否为直接运行
+if (import.meta.url.startsWith('file:') && process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())) {
   scheduler.init().catch(console.error);
 }
 
-module.exports = DataScheduler;
+export default DataScheduler;

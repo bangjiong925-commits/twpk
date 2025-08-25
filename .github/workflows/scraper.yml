@@ -1,0 +1,260 @@
+name: Taiwan PK10 Data Scraper
+
+# 定时触发数据抓取
+on:
+  schedule:
+    # 每5分钟运行一次（GitHub Actions最小间隔）
+    # 注意：实际抓取间隔由应用内部控制（75秒）
+    - cron: '*/5 * * * *'
+  
+  # 手动触发
+  workflow_dispatch:
+    inputs:
+      action:
+        description: '抓取动作'
+        required: true
+        default: 'scrape'
+        type: choice
+        options:
+          - scrape
+          - health
+          - status
+      
+      force:
+        description: '强制执行（忽略时间限制）'
+        required: false
+        default: false
+        type: boolean
+
+# 环境变量
+env:
+  VERCEL_APP_URL: ${{ secrets.VERCEL_APP_URL }}  # 在GitHub Secrets中设置
+  TIMEZONE: 'Asia/Taipei'
+
+jobs:
+  # 数据抓取任务
+  scrape-data:
+    runs-on: ubuntu-latest
+    
+    # 只在台湾时间7:00-24:00之间运行
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'schedule' && 
+       (github.event.schedule == '*/5 * * * *' && 
+        contains('7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23', format('{0}', (github.event.repository.pushed_at | strftime: '%H' | plus: 8) % 24))))
+    
+    steps:
+      - name: 设置时区
+        run: |
+          sudo timedatectl set-timezone Asia/Taipei
+          echo "当前时间: $(date)"
+      
+      - name: 检查应用状态
+        id: health-check
+        run: |
+          echo "检查应用健康状态..."
+          
+          # 检查环境变量
+          if [ -z "$VERCEL_APP_URL" ]; then
+            echo "❌ VERCEL_APP_URL 未设置"
+            echo "请在GitHub仓库的Settings > Secrets中添加VERCEL_APP_URL"
+            exit 1
+          fi
+          
+          # 健康检查
+          health_response=$(curl -s -w "%{http_code}" -o /tmp/health.json "$VERCEL_APP_URL/scheduler?action=health" || echo "000")
+          
+          if [ "$health_response" = "200" ]; then
+            echo "✅ 应用健康检查通过"
+            echo "health_status=ok" >> $GITHUB_OUTPUT
+          else
+            echo "❌ 应用健康检查失败 (HTTP: $health_response)"
+            echo "health_status=failed" >> $GITHUB_OUTPUT
+            
+            # 显示错误详情
+            if [ -f "/tmp/health.json" ]; then
+              echo "错误详情:"
+              cat /tmp/health.json
+            fi
+          fi
+      
+      - name: 触发数据抓取
+        if: steps.health-check.outputs.health_status == 'ok'
+        run: |
+          echo "触发数据抓取..."
+          
+          # 获取动作参数
+          action="${{ github.event.inputs.action || 'scrape' }}"
+          force="${{ github.event.inputs.force || 'false' }}"
+          
+          # 构建请求URL
+          url="$VERCEL_APP_URL/scheduler?action=$action"
+          if [ "$force" = "true" ]; then
+            url="$url&force=true"
+          fi
+          
+          echo "请求URL: $url"
+          
+          # 发送抓取请求
+          scrape_response=$(curl -s -w "%{http_code}" -o /tmp/scrape.json "$url" || echo "000")
+          
+          echo "响应状态码: $scrape_response"
+          
+          if [ "$scrape_response" = "200" ]; then
+            echo "✅ 数据抓取请求成功"
+            
+            # 显示响应内容
+            if [ -f "/tmp/scrape.json" ]; then
+              echo "响应内容:"
+              cat /tmp/scrape.json | jq . 2>/dev/null || cat /tmp/scrape.json
+            fi
+          else
+            echo "❌ 数据抓取请求失败 (HTTP: $scrape_response)"
+            
+            # 显示错误详情
+            if [ -f "/tmp/scrape.json" ]; then
+              echo "错误详情:"
+              cat /tmp/scrape.json
+            fi
+            
+            exit 1
+          fi
+      
+      - name: 验证抓取结果
+        if: steps.health-check.outputs.health_status == 'ok'
+        run: |
+          echo "验证抓取结果..."
+          
+          # 等待一段时间让数据处理完成
+          sleep 10
+          
+          # 检查最新数据
+          latest_response=$(curl -s -w "%{http_code}" -o /tmp/latest.json "$VERCEL_APP_URL/latest-data" || echo "000")
+          
+          if [ "$latest_response" = "200" ]; then
+            echo "✅ 最新数据获取成功"
+            
+            # 显示最新数据信息
+            if [ -f "/tmp/latest.json" ]; then
+              echo "最新数据:"
+              cat /tmp/latest.json | jq '.data[0] | {issue, time, numbers}' 2>/dev/null || echo "数据格式解析失败"
+            fi
+          else
+            echo "⚠️ 最新数据获取失败 (HTTP: $latest_response)"
+          fi
+          
+          # 检查统计信息
+          stats_response=$(curl -s -w "%{http_code}" -o /tmp/stats.json "$VERCEL_APP_URL/stats" || echo "000")
+          
+          if [ "$stats_response" = "200" ]; then
+            echo "✅ 统计信息获取成功"
+            
+            # 显示统计信息
+            if [ -f "/tmp/stats.json" ]; then
+              echo "统计信息:"
+              cat /tmp/stats.json | jq '{total_records, collections_count, latest_issue}' 2>/dev/null || echo "统计信息解析失败"
+            fi
+          else
+            echo "⚠️ 统计信息获取失败 (HTTP: $stats_response)"
+          fi
+      
+      - name: 发送通知（失败时）
+        if: failure()
+        run: |
+          echo "🚨 数据抓取任务失败"
+          echo "时间: $(date)"
+          echo "仓库: ${{ github.repository }}"
+          echo "工作流: ${{ github.workflow }}"
+          echo "运行ID: ${{ github.run_id }}"
+          
+          # 这里可以添加其他通知方式，如:
+          # - 发送邮件
+          # - 发送Slack消息
+          # - 发送微信通知
+          # - 调用Webhook
+
+  # 每日统计任务
+  daily-stats:
+    runs-on: ubuntu-latest
+    
+    # 每天台湾时间23:55运行
+    if: github.event.schedule == '55 15 * * *'  # UTC时间15:55 = 台湾时间23:55
+    
+    steps:
+      - name: 生成每日统计报告
+        run: |
+          echo "生成每日统计报告..."
+          
+          if [ -z "$VERCEL_APP_URL" ]; then
+            echo "❌ VERCEL_APP_URL 未设置"
+            exit 1
+          fi
+          
+          # 获取统计信息
+          stats_response=$(curl -s -w "%{http_code}" -o /tmp/daily_stats.json "$VERCEL_APP_URL/stats" || echo "000")
+          
+          if [ "$stats_response" = "200" ]; then
+            echo "📊 每日统计报告 - $(date '+%Y-%m-%d')"
+            echo "================================"
+            
+            if [ -f "/tmp/daily_stats.json" ]; then
+              cat /tmp/daily_stats.json | jq .
+            fi
+            
+            echo "================================"
+            echo "报告生成时间: $(date)"
+          else
+            echo "❌ 统计信息获取失败"
+          fi
+
+  # 健康检查任务
+  health-monitor:
+    runs-on: ubuntu-latest
+    
+    # 每小时运行一次健康检查
+    if: github.event.schedule == '0 * * * *'
+    
+    steps:
+      - name: 系统健康检查
+        run: |
+          echo "执行系统健康检查..."
+          
+          if [ -z "$VERCEL_APP_URL" ]; then
+            echo "❌ VERCEL_APP_URL 未设置"
+            exit 1
+          fi
+          
+          # 检查各个端点
+          endpoints=(
+            "/health"
+            "/latest-data"
+            "/stats"
+            "/scheduler?action=health"
+          )
+          
+          failed_count=0
+          total_count=${#endpoints[@]}
+          
+          echo "检查 $total_count 个端点..."
+          
+          for endpoint in "${endpoints[@]}"; do
+            url="$VERCEL_APP_URL$endpoint"
+            response=$(curl -s -w "%{http_code}" -o /dev/null "$url" || echo "000")
+            
+            if [ "$response" = "200" ]; then
+              echo "✅ $endpoint - OK"
+            else
+              echo "❌ $endpoint - FAILED (HTTP: $response)"
+              failed_count=$((failed_count + 1))
+            fi
+          done
+          
+          success_count=$((total_count - failed_count))
+          echo "健康检查完成: $success_count/$total_count 通过"
+          
+          if [ $failed_count -gt 0 ]; then
+            echo "🚨 发现 $failed_count 个端点异常"
+            exit 1
+          else
+            echo "✅ 所有端点正常"
+          fi

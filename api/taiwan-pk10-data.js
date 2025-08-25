@@ -5,7 +5,7 @@ import TaiwanPK10Data from '../models/TaiwanPK10Data.js';
 const connectDB = async () => {
     if (mongoose.connection.readyState === 0) {
         try {
-            const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/taiwan_pk10';
+            const mongoURI = process.env.DATABASE_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/twpk10';
             await mongoose.connect(mongoURI);
             console.log('MongoDB连接成功');
         } catch (error) {
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     try {
         await connectDB();
         
-        const { days = 3, date, format = 'json' } = req.query;
+        const { days = 3, date, format = 'json', all = false } = req.query;
         
         let query = {};
         
@@ -46,6 +46,9 @@ export default async function handler(req, res) {
                 $gte: targetDate,
                 $lt: nextDate
             };
+        } else if (all === 'true' || all === true) {
+            // 查询所有数据，不限制日期
+            // query 保持为空对象，查询所有数据
         } else {
             // 查询最近几天的数据
             const daysNum = parseInt(days);
@@ -59,10 +62,15 @@ export default async function handler(req, res) {
             };
         }
         
+        console.log('查询条件:', JSON.stringify(query));
+        console.log('查询参数:', { days, date, format, all });
+        
         const data = await TaiwanPK10Data.find(query)
             .sort({ period: -1 })
             .select('period drawNumbers drawDate drawTime')
             .lean();
+            
+        console.log('查询结果数量:', data.length);
         
         if (format === 'txt') {
             // 返回文本格式

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const keyRecordSchema = new mongoose.Schema({
   keyId: {
@@ -68,4 +68,5 @@ keyRecordSchema.virtual('remainingTime').get(function() {
 // 确保虚拟字段在JSON序列化时包含
 keyRecordSchema.set('toJSON', { virtuals: true });
 
-module.exports = mongoose.model('KeyRecord', keyRecordSchema);
+const KeyRecord = mongoose.model('KeyRecord', keyRecordSchema);
+export default KeyRecord;

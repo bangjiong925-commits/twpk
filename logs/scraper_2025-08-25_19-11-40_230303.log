@@ -1,0 +1,19 @@
+2025-08-25 19:11:40.247 | INFO     | database_manager:_get_connection_string:46 - 使用数据库连接: mongodb://localhost:27017/taiwan_pk10_test...
+2025-08-25 19:11:40.275 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 19:11:40.428 | INFO     | database_manager:_create_indexes:108 - 数据库索引创建完成
+2025-08-25 19:11:40.429 | INFO     | database_manager:connect:83 - 成功连接到MongoDB数据库: taiwanpk10
+2025-08-25 19:11:40.432 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 19:11:40.433 | INFO     | python_scraper:scrape_latest_single_record:739 - 开始抓取最新一期台湾PK10数据
+2025-08-25 19:11:45.389 | INFO     | python_scraper:setup_driver:91 - Chrome浏览器驱动设置完成
+2025-08-25 19:11:45.390 | INFO     | python_scraper:navigate_to_page:100 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 19:11:51.077 | INFO     | python_scraper:navigate_to_page:107 - 页面加载完成
+2025-08-25 19:11:51.129 | INFO     | python_scraper:click_pk10_option:153 - 找到台湾PK10选项: 台湾PK10
+2025-08-25 19:11:53.210 | INFO     | python_scraper:click_pk10_option:157 - 成功点击台湾PK10选项
+2025-08-25 19:11:53.211 | INFO     | python_scraper:navigate_to_page:111 - 成功切换到台湾PK10数据
+2025-08-25 19:11:56.213 | ERROR    | python_scraper:scrape_latest_single_record:790 - 抓取最新数据失败: extract_lottery_data() got an unexpected keyword argument 'page_number'
+2025-08-25 19:11:56.332 | INFO     | python_scraper:cleanup:801 - 浏览器驱动已关闭
+2025-08-25 19:11:56.359 | INFO     | database_manager:_create_indexes:108 - 数据库索引创建完成
+2025-08-25 19:11:56.360 | INFO     | database_manager:connect:83 - 成功连接到MongoDB数据库: taiwanpk10
+2025-08-25 19:11:56.362 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 19:13:26.037 | INFO     | python_scraper:cleanup:801 - 浏览器驱动已关闭
+2025-08-25 19:13:26.038 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭

@@ -1,0 +1,3 @@
+2025-08-25 18:42:09.191 | INFO     | __main__:run_scraper:552 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:42:11.164 | ERROR    | __main__:setup_driver:81 - 设置浏览器驱动失败: Could not reach host. Are you offline?
+2025-08-25 18:42:11.165 | ERROR    | __main__:run_scraper:577 - 运行抓取器失败: Could not reach host. Are you offline?

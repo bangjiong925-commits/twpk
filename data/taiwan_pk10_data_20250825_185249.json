@@ -1,0 +1,1002 @@
+[
+  {
+    "period": "114048050",
+    "drawNumbers": [
+      2,
+      7,
+      3,
+      1,
+      9,
+      5,
+      6,
+      10,
+      4,
+      8
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:50",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796894"
+  },
+  {
+    "period": "114048049",
+    "drawNumbers": [
+      1,
+      3,
+      7,
+      5,
+      4,
+      9,
+      10,
+      8,
+      6,
+      2
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:45",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796913"
+  },
+  {
+    "period": "114048048",
+    "drawNumbers": [
+      4,
+      9,
+      7,
+      2,
+      8,
+      6,
+      5,
+      1,
+      10,
+      3
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:40",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796921"
+  },
+  {
+    "period": "114048047",
+    "drawNumbers": [
+      8,
+      2,
+      6,
+      1,
+      10,
+      5,
+      7,
+      3,
+      4,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:35",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796928"
+  },
+  {
+    "period": "114048046",
+    "drawNumbers": [
+      4,
+      8,
+      5,
+      7,
+      1,
+      2,
+      9,
+      3,
+      6,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:30",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796935"
+  },
+  {
+    "period": "114048045",
+    "drawNumbers": [
+      3,
+      5,
+      8,
+      1,
+      7,
+      10,
+      6,
+      4,
+      2,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:25",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796944"
+  },
+  {
+    "period": "114048044",
+    "drawNumbers": [
+      7,
+      1,
+      6,
+      3,
+      9,
+      4,
+      2,
+      8,
+      10,
+      5
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:20",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796952"
+  },
+  {
+    "period": "114048043",
+    "drawNumbers": [
+      2,
+      3,
+      5,
+      6,
+      10,
+      1,
+      7,
+      9,
+      4,
+      8
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:15",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796959"
+  },
+  {
+    "period": "114048042",
+    "drawNumbers": [
+      8,
+      9,
+      10,
+      2,
+      5,
+      7,
+      6,
+      4,
+      1,
+      3
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:10",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796966"
+  },
+  {
+    "period": "114048041",
+    "drawNumbers": [
+      10,
+      5,
+      3,
+      6,
+      8,
+      9,
+      2,
+      4,
+      7,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:05",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796974"
+  },
+  {
+    "period": "114048040",
+    "drawNumbers": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      8,
+      9,
+      4,
+      10,
+      6
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "18:00",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796981"
+  },
+  {
+    "period": "114048039",
+    "drawNumbers": [
+      1,
+      6,
+      9,
+      8,
+      4,
+      7,
+      2,
+      5,
+      10,
+      3
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:55",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796989"
+  },
+  {
+    "period": "114048038",
+    "drawNumbers": [
+      4,
+      2,
+      1,
+      9,
+      8,
+      10,
+      5,
+      6,
+      3,
+      7
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:50",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.796995"
+  },
+  {
+    "period": "114048037",
+    "drawNumbers": [
+      5,
+      1,
+      2,
+      3,
+      8,
+      6,
+      9,
+      7,
+      4,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:45",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797001"
+  },
+  {
+    "period": "114048036",
+    "drawNumbers": [
+      6,
+      7,
+      1,
+      2,
+      4,
+      9,
+      8,
+      3,
+      5,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:40",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797009"
+  },
+  {
+    "period": "114048035",
+    "drawNumbers": [
+      4,
+      5,
+      2,
+      8,
+      9,
+      10,
+      3,
+      6,
+      1,
+      7
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:35",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797016"
+  },
+  {
+    "period": "114048034",
+    "drawNumbers": [
+      10,
+      8,
+      3,
+      6,
+      9,
+      2,
+      7,
+      1,
+      5,
+      4
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:30",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797024"
+  },
+  {
+    "period": "114048033",
+    "drawNumbers": [
+      4,
+      6,
+      3,
+      1,
+      9,
+      8,
+      10,
+      5,
+      2,
+      7
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:25",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797032"
+  },
+  {
+    "period": "114048032",
+    "drawNumbers": [
+      6,
+      3,
+      4,
+      5,
+      9,
+      10,
+      1,
+      8,
+      7,
+      2
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:20",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797039"
+  },
+  {
+    "period": "114048031",
+    "drawNumbers": [
+      7,
+      3,
+      10,
+      9,
+      2,
+      5,
+      4,
+      8,
+      6,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:15",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797047"
+  },
+  {
+    "period": "114048030",
+    "drawNumbers": [
+      2,
+      10,
+      8,
+      5,
+      6,
+      7,
+      3,
+      1,
+      4,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:10",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797054"
+  },
+  {
+    "period": "114048029",
+    "drawNumbers": [
+      4,
+      3,
+      5,
+      7,
+      9,
+      8,
+      2,
+      1,
+      6,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:05",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797061"
+  },
+  {
+    "period": "114048028",
+    "drawNumbers": [
+      7,
+      9,
+      6,
+      10,
+      3,
+      2,
+      5,
+      4,
+      8,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "17:00",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797067"
+  },
+  {
+    "period": "114048027",
+    "drawNumbers": [
+      8,
+      9,
+      1,
+      5,
+      6,
+      2,
+      7,
+      4,
+      3,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:55",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797074"
+  },
+  {
+    "period": "114048026",
+    "drawNumbers": [
+      9,
+      2,
+      1,
+      4,
+      3,
+      7,
+      8,
+      6,
+      10,
+      5
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:50",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797082"
+  },
+  {
+    "period": "114048025",
+    "drawNumbers": [
+      9,
+      6,
+      8,
+      7,
+      2,
+      4,
+      5,
+      3,
+      10,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:45",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797090"
+  },
+  {
+    "period": "114048024",
+    "drawNumbers": [
+      3,
+      10,
+      9,
+      1,
+      6,
+      4,
+      5,
+      7,
+      2,
+      8
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:40",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797099"
+  },
+  {
+    "period": "114048023",
+    "drawNumbers": [
+      3,
+      9,
+      8,
+      1,
+      2,
+      5,
+      4,
+      6,
+      7,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:35",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797107"
+  },
+  {
+    "period": "114048022",
+    "drawNumbers": [
+      10,
+      2,
+      4,
+      1,
+      7,
+      8,
+      5,
+      3,
+      6,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:30",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797116"
+  },
+  {
+    "period": "114048021",
+    "drawNumbers": [
+      4,
+      5,
+      10,
+      7,
+      6,
+      1,
+      2,
+      8,
+      3,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:25",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797124"
+  },
+  {
+    "period": "114048020",
+    "drawNumbers": [
+      9,
+      10,
+      4,
+      2,
+      3,
+      1,
+      7,
+      5,
+      6,
+      8
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:20",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797131"
+  },
+  {
+    "period": "114048019",
+    "drawNumbers": [
+      4,
+      6,
+      8,
+      10,
+      3,
+      2,
+      5,
+      9,
+      1,
+      7
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:15",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797138"
+  },
+  {
+    "period": "114048018",
+    "drawNumbers": [
+      7,
+      1,
+      4,
+      6,
+      5,
+      3,
+      8,
+      10,
+      9,
+      2
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:10",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797146"
+  },
+  {
+    "period": "114048017",
+    "drawNumbers": [
+      5,
+      3,
+      10,
+      7,
+      8,
+      9,
+      2,
+      1,
+      6,
+      4
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:05",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797155"
+  },
+  {
+    "period": "114048016",
+    "drawNumbers": [
+      3,
+      7,
+      10,
+      5,
+      2,
+      1,
+      6,
+      4,
+      8,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "16:00",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797163"
+  },
+  {
+    "period": "114048015",
+    "drawNumbers": [
+      3,
+      2,
+      4,
+      1,
+      9,
+      10,
+      8,
+      5,
+      7,
+      6
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:55",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797171"
+  },
+  {
+    "period": "114048014",
+    "drawNumbers": [
+      7,
+      2,
+      3,
+      5,
+      9,
+      8,
+      10,
+      1,
+      4,
+      6
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:50",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797181"
+  },
+  {
+    "period": "114048013",
+    "drawNumbers": [
+      4,
+      9,
+      3,
+      8,
+      5,
+      6,
+      10,
+      1,
+      7,
+      2
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:45",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797190"
+  },
+  {
+    "period": "114048012",
+    "drawNumbers": [
+      5,
+      1,
+      8,
+      4,
+      9,
+      10,
+      2,
+      6,
+      3,
+      7
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:40",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797200"
+  },
+  {
+    "period": "114048011",
+    "drawNumbers": [
+      4,
+      8,
+      2,
+      7,
+      9,
+      6,
+      5,
+      3,
+      1,
+      10
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:35",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797206"
+  },
+  {
+    "period": "114048010",
+    "drawNumbers": [
+      2,
+      6,
+      7,
+      5,
+      4,
+      10,
+      8,
+      3,
+      9,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:30",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797215"
+  },
+  {
+    "period": "114048009",
+    "drawNumbers": [
+      9,
+      2,
+      8,
+      10,
+      6,
+      3,
+      5,
+      7,
+      4,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:25",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797225"
+  },
+  {
+    "period": "114048008",
+    "drawNumbers": [
+      10,
+      3,
+      7,
+      9,
+      5,
+      6,
+      8,
+      2,
+      1,
+      4
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:20",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797234"
+  },
+  {
+    "period": "114048007",
+    "drawNumbers": [
+      6,
+      5,
+      3,
+      4,
+      1,
+      9,
+      7,
+      2,
+      10,
+      8
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:15",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797242"
+  },
+  {
+    "period": "114048006",
+    "drawNumbers": [
+      6,
+      2,
+      1,
+      10,
+      7,
+      8,
+      4,
+      9,
+      3,
+      5
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:10",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797250"
+  },
+  {
+    "period": "114048005",
+    "drawNumbers": [
+      10,
+      9,
+      2,
+      1,
+      6,
+      8,
+      4,
+      3,
+      5,
+      7
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:05",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797259"
+  },
+  {
+    "period": "114048004",
+    "drawNumbers": [
+      9,
+      10,
+      2,
+      3,
+      6,
+      8,
+      7,
+      1,
+      5,
+      4
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "15:00",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797268"
+  },
+  {
+    "period": "114048003",
+    "drawNumbers": [
+      8,
+      7,
+      6,
+      4,
+      10,
+      3,
+      2,
+      5,
+      1,
+      9
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "14:55",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797276"
+  },
+  {
+    "period": "114048002",
+    "drawNumbers": [
+      3,
+      6,
+      4,
+      9,
+      7,
+      8,
+      5,
+      2,
+      10,
+      1
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "14:50",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797285"
+  },
+  {
+    "period": "114048001",
+    "drawNumbers": [
+      8,
+      5,
+      2,
+      4,
+      1,
+      3,
+      10,
+      7,
+      9,
+      6
+    ],
+    "drawDate": "2025-08-25T00:00:00",
+    "drawTime": "14:45",
+    "dataSource": "python-scraper",
+    "isValid": true,
+    "scrapedAt": "2025-08-25T18:52:49.797294"
+  }
+]

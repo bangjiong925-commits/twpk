@@ -1,0 +1,27 @@
+2025-08-25 18:30:35.622 | INFO     | __main__:initialize_components:116 - 调度器初始化完成
+2025-08-25 18:30:35.625 | INFO     | error_handler:__exit__:464 - 操作完成: 初始化组件，耗时: 3.26秒
+2025-08-25 18:30:35.630 | INFO     | __main__:run_manual_fetch_today:221 - 开始手动抓取今日数据
+2025-08-25 18:30:35.633 | INFO     | error_handler:__enter__:457 - 开始执行操作: 单次抓取 - 2025-08-25
+2025-08-25 18:30:35.635 | INFO     | __main__:run_single_scraping:137 - 开始抓取数据: 2025-08-25
+2025-08-25 18:30:35.637 | INFO     | python_scraper:run_scraper:454 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:30:39.983 | INFO     | python_scraper:setup_driver:78 - Chrome浏览器驱动设置完成
+2025-08-25 18:30:39.985 | INFO     | python_scraper:navigate_to_page:87 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 18:30:45.521 | INFO     | python_scraper:navigate_to_page:94 - 页面加载完成
+2025-08-25 18:30:45.608 | WARNING  | python_scraper:select_date:131 - 未找到日期选择器，使用默认日期
+2025-08-25 18:30:45.609 | INFO     | python_scraper:scrape_all_pages:380 - 正在抓取第 1 页数据
+2025-08-25 18:30:45.689 | INFO     | python_scraper:extract_lottery_data:168 - 找到 1 行数据
+2025-08-25 18:30:45.690 | INFO     | python_scraper:extract_lottery_data:207 - 成功提取 0 条数据
+2025-08-25 18:30:45.691 | WARNING  | python_scraper:scrape_all_pages:388 - 第 1 页没有获取到数据
+2025-08-25 18:30:47.857 | INFO     | python_scraper:navigate_to_next_page:366 - 没有找到下一页按钮
+2025-08-25 18:30:47.858 | INFO     | python_scraper:scrape_all_pages:396 - 没有更多页面，抓取完成
+2025-08-25 18:30:47.858 | INFO     | python_scraper:scrape_all_pages:402 - 总共抓取了 1 页，获得 0 条数据
+2025-08-25 18:30:47.859 | INFO     | python_scraper:run_scraper:475 - 抓取完成，共获得 0 条数据
+2025-08-25 18:30:47.970 | INFO     | python_scraper:cleanup:490 - 浏览器驱动已关闭
+2025-08-25 18:30:47.972 | WARNING  | __main__:run_single_scraping:183 - 未抓取到数据
+2025-08-25 18:30:47.973 | INFO     | error_handler:__exit__:464 - 操作完成: 单次抓取 - 2025-08-25，耗时: 12.34秒
+2025-08-25 18:30:47.974 | INFO     | __main__:stop:309 - 正在停止应用...
+2025-08-25 18:30:47.975 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:30:47.990 | INFO     | python_scraper:cleanup:490 - 浏览器驱动已关闭
+2025-08-25 18:30:47.993 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 18:30:47.995 | INFO     | error_handler:save_error_report:302 - 错误报告已保存: logs/error_report_20250825_183047.json
+2025-08-25 18:30:47.998 | INFO     | __main__:stop:329 - 应用已停止

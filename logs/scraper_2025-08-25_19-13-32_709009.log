@@ -1,0 +1,25 @@
+2025-08-25 19:13:32.720 | INFO     | database_manager:_get_connection_string:46 - 使用数据库连接: mongodb://localhost:27017/taiwan_pk10_test...
+2025-08-25 19:13:32.737 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 19:13:32.957 | INFO     | database_manager:_create_indexes:108 - 数据库索引创建完成
+2025-08-25 19:13:32.958 | INFO     | database_manager:connect:83 - 成功连接到MongoDB数据库: taiwanpk10
+2025-08-25 19:13:32.959 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 19:13:32.959 | INFO     | python_scraper:scrape_latest_single_record:739 - 开始抓取最新一期台湾PK10数据
+2025-08-25 19:13:37.510 | INFO     | python_scraper:setup_driver:91 - Chrome浏览器驱动设置完成
+2025-08-25 19:13:37.511 | INFO     | python_scraper:navigate_to_page:100 - 正在访问: https://xn--kpro5poukl1g.com/#/
+2025-08-25 19:13:43.056 | INFO     | python_scraper:navigate_to_page:107 - 页面加载完成
+2025-08-25 19:13:43.109 | INFO     | python_scraper:click_pk10_option:153 - 找到台湾PK10选项: 台湾PK10
+2025-08-25 19:13:45.228 | INFO     | python_scraper:click_pk10_option:157 - 成功点击台湾PK10选项
+2025-08-25 19:13:45.229 | INFO     | python_scraper:navigate_to_page:111 - 成功切换到台湾PK10数据
+2025-08-25 19:13:48.243 | INFO     | python_scraper:extract_lottery_data:208 - 第1页找到 3 个表格
+2025-08-25 19:13:48.266 | INFO     | python_scraper:extract_lottery_data:214 - 第1页选择表格 2，包含 50 行
+2025-08-25 19:13:48.277 | INFO     | python_scraper:extract_lottery_data:224 - 第1页找到 50 行数据
+2025-08-25 19:13:48.311 | INFO     | python_scraper:extract_lottery_data:238 - 第1页第一行包含有效数据，从第一行开始读取
+2025-08-25 19:13:48.387 | INFO     | python_scraper:extract_lottery_data:248 - 第1页已达到最大记录数限制: 1
+2025-08-25 19:13:48.388 | INFO     | python_scraper:extract_lottery_data:286 - 第1页成功提取 1 条数据
+2025-08-25 19:13:48.389 | INFO     | python_scraper:scrape_latest_single_record:767 - 成功抓取最新数据: 期号=114048054
+2025-08-25 19:13:48.544 | INFO     | python_scraper:cleanup:801 - 浏览器驱动已关闭
+2025-08-25 19:13:48.594 | INFO     | database_manager:_create_indexes:108 - 数据库索引创建完成
+2025-08-25 19:13:48.595 | INFO     | database_manager:connect:83 - 成功连接到MongoDB数据库: taiwanpk10
+2025-08-25 19:13:48.597 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 19:14:58.531 | INFO     | python_scraper:cleanup:801 - 浏览器驱动已关闭
+2025-08-25 19:14:58.532 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭

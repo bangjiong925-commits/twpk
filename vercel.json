@@ -1,30 +1,107 @@
 {
-  "functions": {
-    "api/taiwan-pk10-live.js": {
-      "maxDuration": 30
-    },
-    "api/update-taiwan-pk10.js": {
-      "maxDuration": 45
-    }
-  },
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "src": "server.js",
+      "use": "@vercel/node"
     },
     {
-      "source": "/key-management.html",
-      "destination": "/key-management.html"
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     },
     {
-      "source": "/TWPK.html",
-      "destination": "/TWPK.html"
+      "src": "auto_scheduler.py",
+      "use": "@vercel/python"
     },
     {
-      "source": "/((?!api|key-management\\.html|TWPK\\.html).*)",
-      "destination": "/index.html"
+      "src": "python_scraper.py",
+      "use": "@vercel/python"
     }
   ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/health.js"
+    },
+    {
+      "src": "/taiwan-pk10-data",
+      "dest": "/api/taiwan-pk10-data.js"
+    },
+    {
+      "src": "/taiwan-pk10-live",
+      "dest": "/api/taiwan-pk10-live.js"
+    },
+    {
+      "src": "/latest-data",
+      "dest": "/api/latest-data.js"
+    },
+    {
+      "src": "/historical-data",
+      "dest": "/api/historical-data.js"
+    },
+    {
+      "src": "/stats",
+      "dest": "/api/stats.js"
+    },
+    {
+      "src": "/database-data",
+      "dest": "/api/database-data.js"
+    },
+    {
+      "src": "/key-records",
+      "dest": "/api/key-records.js"
+    },
+    {
+      "src": "/verify-key",
+      "dest": "/api/verify-key.js"
+    },
+    {
+      "src": "/update-taiwan-pk10",
+      "dest": "/api/update-taiwan-pk10.js"
+    },
+    {
+      "src": "/taiwan-pk10",
+      "dest": "/api/taiwan-pk10.js"
+    },
+    {
+      "src": "/nonce/(.*)",
+      "dest": "/api/nonce/$1"
+    },
+    {
+      "src": "/scheduler",
+      "dest": "/auto_scheduler.py"
+    },
+    {
+      "src": "/scraper",
+      "dest": "/python_scraper.py"
+    },
+    {
+      "src": "/(.*\\.(html|css|js|png|jpg|jpeg|gif|svg|ico|json|txt))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 30
+    },
+    "auto_scheduler.py": {
+      "maxDuration": 300
+    },
+    "python_scraper.py": {
+      "maxDuration": 60
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
   "headers": [
     {
       "source": "/api/(.*)",
@@ -35,13 +112,19 @@
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, OPTIONS"
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, User-Agent"
+          "value": "Content-Type, Authorization"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
   ]
 }

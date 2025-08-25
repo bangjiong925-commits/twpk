@@ -1,5 +1,5 @@
-const express = require('express');
-const TaiwanPK10Data = require('../models/TaiwanPK10Data');
+import express from 'express';
+import TaiwanPK10Data from '../models/TaiwanPK10Data.js';
 const router = express.Router();
 
 // GET /api/database-data
@@ -49,4 +49,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

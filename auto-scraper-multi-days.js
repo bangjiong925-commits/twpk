@@ -1,6 +1,11 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// ES模块中获取__filename和__dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // 配置
 const CONFIG = {
@@ -155,9 +160,18 @@ async function main() {
     
     try {
         console.log('启动浏览器...');
-        browser = await puppeteer.launch({
+        const puppeteer = await import('puppeteer-core');
+        const chromium = await import('@sparticuz/chromium');
+        
+        browser = await puppeteer.default.launch({
+            executablePath: await chromium.default.executablePath(),
             headless: CONFIG.headless,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ]
         });
         
         const page = await browser.newPage();
@@ -226,8 +240,10 @@ async function main() {
 }
 
 // 执行主函数
-if (require.main === module) {
+// 检查是否直接运行此文件
+if (import.meta.url === `file://${process.argv[1]}`) {
     main().catch(console.error);
 }
 
-module.exports = { main, scrapeDataForDate, formatNumbers, saveDataAsTxt };
+export default { main, scrapeDataForDate, formatNumbers, saveDataAsTxt };
+export { main, scrapeDataForDate, formatNumbers, saveDataAsTxt };

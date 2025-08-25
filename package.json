@@ -1,6 +1,7 @@
 {
   "name": "twpk-key-validator-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "跨平台密钥验证后端服务",
   "main": "server.js",
   "scripts": {
@@ -15,7 +16,12 @@
     "fetch-status": "echo 'Auto-fetch scripts have been removed'",
     "schedule": "node scheduler.js",
     "schedule-start": "node scheduler.js",
-    "schedule-dev": "nodemon scheduler.js"
+    "schedule-dev": "nodemon scheduler.js",
+    "railway:start": "node server.js",
+    "railway:python": "python3 railway_python_start.py",
+    "railway:install": "npm ci && pip install -r requirements.txt",
+    "railway:build": "echo 'Build completed for Railway deployment'",
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
   "keywords": [
     "key-validation",
@@ -27,24 +33,24 @@
   "author": "TWPK Team",
   "license": "MIT",
   "dependencies": {
-    "@sparticuz/chromium": "^119.0.2",
-    "@vercel/kv": "^0.2.4",
+    "@sparticuz/chromium": "^126.0.0",
+    "@vercel/kv": "^3.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "jsdom": "^26.1.0",
-    "mongoose": "^8.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsdom": "^25.0.0",
+    "mongoose": "^8.7.0",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
-    "puppeteer": "^21.11.0",
-    "puppeteer-core": "^21.11.0",
-    "redis": "^4.6.5"
+    "puppeteer-core": "^24.9.0",
+    "redis": "^4.7.0",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22",
-    "terser": "^5.43.1"
+    "nodemon": "^3.1.4",
+    "terser": "^5.34.1"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   }
 }

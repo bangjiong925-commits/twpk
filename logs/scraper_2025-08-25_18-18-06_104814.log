@@ -1,0 +1,29 @@
+2025-08-25 18:18:06.114 | INFO     | __main__:initialize_components:94 - 抓取器初始化完成
+2025-08-25 18:18:06.115 | INFO     | database_manager:_get_connection_string:46 - 使用数据库连接: mongodb://localhost:27017/taiwan_pk10_test...
+2025-08-25 18:18:06.212 | INFO     | database_manager:_create_indexes:108 - 数据库索引创建完成
+2025-08-25 18:18:06.213 | INFO     | database_manager:connect:83 - 成功连接到MongoDB数据库: taiwanpk10
+2025-08-25 18:18:06.214 | INFO     | __main__:initialize_components:100 - 数据库管理器初始化完成
+2025-08-25 18:18:06.215 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 18:18:06.228 | WARNING  | api_client:_make_request:101 - 请求失败 (尝试 1/3): HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x112092340>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-08-25 18:18:07.233 | WARNING  | api_client:_make_request:101 - 请求失败 (尝试 2/3): HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x1120925e0>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-08-25 18:18:09.240 | WARNING  | api_client:_make_request:101 - 请求失败 (尝试 3/3): HTTPConnectionPool(host='localhost', port=3000): Max retries exceeded with url: /api/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x112092940>: Failed to establish a new connection: [Errno 61] Connection refused'))
+2025-08-25 18:18:09.240 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:18:09.241 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:18:09.241 | WARNING  | __main__:initialize_components:108 - API连接测试失败，将跳过API同步功能
+2025-08-25 18:18:09.251 | INFO     | database_manager:_get_connection_string:46 - 使用数据库连接: mongodb://localhost:27017/taiwan_pk10_test...
+2025-08-25 18:18:09.267 | INFO     | api_client:__init__:61 - API客户端初始化完成，基础URL: http://localhost:3000
+2025-08-25 18:18:09.362 | INFO     | __main__:initialize_components:116 - 调度器初始化完成
+2025-08-25 18:18:09.364 | INFO     | error_handler:__exit__:464 - 操作完成: 初始化组件，耗时: 3.26秒
+2025-08-25 18:18:09.365 | INFO     | __main__:run_manual_fetch_today:221 - 开始手动抓取今日数据
+2025-08-25 18:18:09.366 | INFO     | error_handler:__enter__:457 - 开始执行操作: 单次抓取 - 2025-08-25
+2025-08-25 18:18:09.367 | INFO     | __main__:run_single_scraping:137 - 开始抓取数据: 2025-08-25
+2025-08-25 18:18:09.368 | INFO     | python_scraper:run_scraper:448 - 开始运行台湾PK10数据抓取器
+2025-08-25 18:18:19.824 | ERROR    | python_scraper:setup_driver:75 - 设置浏览器驱动失败: [Errno 8] Exec format error: '/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver'
+2025-08-25 18:18:19.826 | ERROR    | python_scraper:run_scraper:473 - 运行抓取器失败: [Errno 8] Exec format error: '/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver'
+2025-08-25 18:18:19.827 | WARNING  | __main__:run_single_scraping:183 - 未抓取到数据
+2025-08-25 18:18:19.828 | INFO     | error_handler:__exit__:464 - 操作完成: 单次抓取 - 2025-08-25，耗时: 10.46秒
+2025-08-25 18:18:19.828 | INFO     | __main__:stop:309 - 正在停止应用...
+2025-08-25 18:18:19.829 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:18:19.832 | INFO     | database_manager:close_connection:339 - 数据库连接已关闭
+2025-08-25 18:18:19.833 | INFO     | error_handler:save_error_report:302 - 错误报告已保存: logs/error_report_20250825_181819.json
+2025-08-25 18:18:19.834 | INFO     | __main__:stop:329 - 应用已停止

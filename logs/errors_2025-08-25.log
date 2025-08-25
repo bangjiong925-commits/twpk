@@ -1,0 +1,87 @@
+2025-08-25 18:16:33 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:16:33 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:16:33 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:17:12 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:17:12 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:17:13 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:18:09 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:18:09 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:18:19 | ERROR    | python_scraper:setup_driver:75 - 设置浏览器驱动失败: [Errno 8] Exec format error: '/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver'
+2025-08-25 18:18:19 | ERROR    | python_scraper:run_scraper:473 - 运行抓取器失败: [Errno 8] Exec format error: '/Users/a1234/.wdm/drivers/chromedriver/mac64/139.0.7258.138/chromedriver-mac-x64/THIRD_PARTY_NOTICES.chromedriver'
+2025-08-25 18:18:19 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:25:41 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:25:41 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:25:55 | ERROR    | python_scraper:navigate_to_page:101 - 导航到页面失败: Message: unknown error: net::ERR_CONNECTION_CLOSED
+  (Session info: chrome=139.0.7258.139)
+Stacktrace:
+0   chromedriver                        0x0000000105564f58 chromedriver + 5934936
+1   chromedriver                        0x000000010555c4ea chromedriver + 5899498
+2   chromedriver                        0x0000000105024e00 chromedriver + 429568
+3   chromedriver                        0x000000010501bdb6 chromedriver + 392630
+4   chromedriver                        0x000000010500d078 chromedriver + 331896
+5   chromedriver                        0x000000010500ed90 chromedriver + 339344
+6   chromedriver                        0x000000010500d3fb chromedriver + 332795
+7   chromedriver                        0x000000010500ce10 chromedriver + 331280
+8   chromedriver                        0x000000010500cb1b chromedriver + 330523
+9   chromedriver                        0x000000010500a9d4 chromedriver + 322004
+10  chromedriver                        0x000000010500b19a chromedriver + 323994
+11  chromedriver                        0x0000000105028379 chromedriver + 443257
+12  chromedriver                        0x00000001050c4e25 chromedriver + 1084965
+13  chromedriver                        0x000000010509d062 chromedriver + 921698
+14  chromedriver                        0x00000001050c41e8 chromedriver + 1081832
+15  chromedriver                        0x000000010509ce33 chromedriver + 921139
+16  chromedriver                        0x000000010506939b chromedriver + 709531
+17  chromedriver                        0x000000010506a081 chromedriver + 712833
+18  chromedriver                        0x0000000105522650 chromedriver + 5662288
+19  chromedriver                        0x0000000105526514 chromedriver + 5678356
+20  chromedriver                        0x00000001054fd302 chromedriver + 5509890
+21  chromedriver                        0x0000000105526fbf chromedriver + 5681087
+22  chromedriver                        0x00000001054ec2a4 chromedriver + 5440164
+23  chromedriver                        0x00000001055497d8 chromedriver + 5822424
+24  chromedriver                        0x00000001055499a0 chromedriver + 5822880
+25  chromedriver                        0x000000010555c0c1 chromedriver + 5898433
+26  libsystem_pthread.dylib             0x00007ff81c8761d3 _pthread_start + 125
+27  libsystem_pthread.dylib             0x00007ff81c871bd3 thread_start + 15
+
+2025-08-25 18:25:55 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:27:23 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:27:23 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:27:23 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:28:12 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:28:12 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:28:22 | ERROR    | python_scraper:navigate_to_page:101 - 导航到页面失败: Message: unknown error: net::ERR_CONNECTION_CLOSED
+  (Session info: chrome=139.0.7258.139)
+Stacktrace:
+0   chromedriver                        0x000000010147ef58 chromedriver + 5934936
+1   chromedriver                        0x00000001014764ea chromedriver + 5899498
+2   chromedriver                        0x0000000100f3ee00 chromedriver + 429568
+3   chromedriver                        0x0000000100f35db6 chromedriver + 392630
+4   chromedriver                        0x0000000100f27078 chromedriver + 331896
+5   chromedriver                        0x0000000100f28d90 chromedriver + 339344
+6   chromedriver                        0x0000000100f273fb chromedriver + 332795
+7   chromedriver                        0x0000000100f26e10 chromedriver + 331280
+8   chromedriver                        0x0000000100f26b1b chromedriver + 330523
+9   chromedriver                        0x0000000100f249d4 chromedriver + 322004
+10  chromedriver                        0x0000000100f2519a chromedriver + 323994
+11  chromedriver                        0x0000000100f42379 chromedriver + 443257
+12  chromedriver                        0x0000000100fdee25 chromedriver + 1084965
+13  chromedriver                        0x0000000100fb7062 chromedriver + 921698
+14  chromedriver                        0x0000000100fde1e8 chromedriver + 1081832
+15  chromedriver                        0x0000000100fb6e33 chromedriver + 921139
+16  chromedriver                        0x0000000100f8339b chromedriver + 709531
+17  chromedriver                        0x0000000100f84081 chromedriver + 712833
+18  chromedriver                        0x000000010143c650 chromedriver + 5662288
+19  chromedriver                        0x0000000101440514 chromedriver + 5678356
+20  chromedriver                        0x0000000101417302 chromedriver + 5509890
+21  chromedriver                        0x0000000101440fbf chromedriver + 5681087
+22  chromedriver                        0x00000001014062a4 chromedriver + 5440164
+23  chromedriver                        0x00000001014637d8 chromedriver + 5822424
+24  chromedriver                        0x00000001014639a0 chromedriver + 5822880
+25  chromedriver                        0x00000001014760c1 chromedriver + 5898433
+26  libsystem_pthread.dylib             0x00007ff81c8761d3 _pthread_start + 125
+27  libsystem_pthread.dylib             0x00007ff81c871bd3 thread_start + 15
+
+2025-08-25 18:28:22 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running
+2025-08-25 18:30:35 | ERROR    | api_client:_make_request:103 - 请求最终失败: http://localhost:3000/api/health
+2025-08-25 18:30:35 | ERROR    | api_client:test_connection:125 - API连接测试失败
+2025-08-25 18:30:47 | ERROR    | scheduler:stop:317 - 停止调度器失败: Scheduler is not running

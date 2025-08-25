@@ -1,0 +1,59 @@
+# Nixpacks配置文件 - Railway部署优化
+# 支持Node.js + Python混合环境
+
+[variables]
+# 构建时环境变量
+NODE_VERSION = "18"
+PYTHON_VERSION = "3.11"
+PIP_VERSION = "23.3"
+
+[phases.setup]
+# 安装系统依赖
+nixPkgs = [
+  "nodejs_18",
+  "python311",
+  "python311Packages.pip",
+  "chromium",
+  "chromedriver",
+  "xvfb-run",
+  "dbus",
+  "fontconfig",
+  "freetype",
+  "stdenv.cc.cc.lib"
+]
+
+# 设置环境变量
+[phases.setup.nixpkgsArchive]
+archive = "ba913eda2df8eb72147259189d55932012df6301"
+
+[phases.install]
+# 安装Node.js依赖
+cmds = [
+  "npm ci --only=production",
+  "pip install --no-cache-dir -r requirements.txt"
+]
+
+[phases.build]
+# 构建阶段（如果需要）
+cmds = [
+  "echo 'Build phase completed'"
+]
+
+[start]
+# 默认启动命令
+cmd = "npm start"
+
+# 多进程支持
+[processes]
+web = "npm start"
+worker = "python3 railway_python_start.py"
+
+# 环境优化
+[env]
+NODE_ENV = "production"
+PYTHONUNBUFFERED = "1"
+PYTHONDONTWRITEBYTECODE = "1"
+CHROME_BIN = "/nix/store/*/bin/chromium"
+CHROME_DRIVER_PATH = "/nix/store/*/bin/chromedriver"
+DISPLAY = ":99"
+CHROME_NO_SANDBOX = "true"
